@@ -17,7 +17,9 @@ class MyApp extends StatelessWidget {
         // "hot reload" (press "r" in the console where you ran "flutter run",
         // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
         // counter didn't reset back to zero; the application is not restarted.
+        brightness: Brightness.light,
         primarySwatch: Colors.blue,
+        accentColor: Colors.pinkAccent,
       ),
       home: new MyHomePage(title: 'Fit'),
     );
@@ -69,36 +71,96 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: new Text(widget.title),
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.settings),
+            tooltip: 'Settings',
+            onPressed: () {}
+          ),
+        ],
       ),
-      body: new Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: new Padding(
+        padding: new EdgeInsets.symmetric(vertical: 16.0, horizontal: 4.0),
         child: new Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug paint" (press "p" in the console where you ran
-          // "flutter run", or select "Toggle Debug Paint" from the Flutter tool
-          // window in IntelliJ) to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display3,
-            ),
-            new Text(
+        // Column is also layout widget. It takes a list of children and
+        // arranges them vertically. By default, it sizes itself to fit its
+        // children horizontally, and tries to be as tall as its parent.
+        //
+        // Invoke "debug paint" (press "p" in the console where you ran
+        // "flutter run", or select "Toggle Debug Paint" from the Flutter tool
+        // window in IntelliJ) to see the wireframe for each widget.
+        //
+        // Column has various properties to control how it sizes itself and
+        // how it positions its children. Here we use mainAxisAlignment to
+        // center the children vertically; the main axis here is the vertical
+        // axis because Columns are vertical (the cross axis would be
+        // horizontal).
+        children: <Widget>[
+          new Text(
+            '$_counter',
+            style: Theme.of(context).textTheme.display3,
+          ),
+          new Padding(
+            padding: new EdgeInsets.only(bottom: 16.0),
+            child: new Text(
               'Steps',
               style: Theme.of(context).textTheme.display1,
             ),
-          ],
-        ),
+          ),
+          new Card(
+            child: new Column(
+              children: <Widget>[
+                new Padding(
+                padding: new EdgeInsets.symmetric(vertical: 16.0),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Row(
+                      children: <Widget>[
+                        new IconTheme(
+                          data: new IconThemeData(
+                            color: Colors.grey,
+                            size: 64.0
+                          ),
+                          child: new Icon(Icons.directions_walk),
+                        ),
+                        new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text('15', style: new TextStyle(fontSize: 36.0),),
+                            new Text('pushups everyday')
+                          ],
+                        ),
+                      ],
+                    ),
+                    new Padding(
+                      padding: new EdgeInsets.only(right: 32.0),
+                      child: new Text('START', style: new TextStyle(color: Colors.blue, fontWeight: FontWeight.w500)),
+                    ),
+                  ],
+                ),
+                ),
+                new Divider(height: 2.0,),
+                new Padding(
+                  padding: new EdgeInsets.all(12.0),
+                  child: new Row(
+                    children: <Widget>[
+                      new Icon(Icons.check, color: Colors.green),
+                      new Padding(
+                        padding: new EdgeInsets.only(left: 12.0),
+                        child: new Text(
+                          'Completed',
+                          style: new TextStyle(color: Colors.green),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: _incrementCounter,
