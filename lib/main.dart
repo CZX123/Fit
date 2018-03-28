@@ -7,7 +7,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Fit',
       theme: new ThemeData(
         // This is the theme of your application.
         //
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(title: 'Flutter Demo Home Page'),
+      home: new MyHomePage(title: 'Fit'),
     );
   }
 }
@@ -90,10 +90,11 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             new Text(
-              'You have pushed the button this many times:',
+              '$_counter',
+              style: Theme.of(context).textTheme.display3,
             ),
             new Text(
-              '$_counter',
+              'Steps',
               style: Theme.of(context).textTheme.display1,
             ),
           ],
@@ -104,6 +105,18 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: new Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+      bottomNavigationBar: new BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          new BottomNavigationBarItem(
+            icon: new Icon(Icons.directions_run),
+            title: new Text('Exercise')
+          ),
+          new BottomNavigationBarItem(
+            icon: new Icon(Icons.fastfood),
+            title: new Text('Diet')
+          ),
+        ],
+      )
     );
   }
 }
