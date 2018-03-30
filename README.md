@@ -1,6 +1,6 @@
-# fit
+# Fit
 
-A new Flutter project.
+An all-in-one fitness app.
 
 ## Getting Started
 

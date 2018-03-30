@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         // counter didn't reset back to zero; the application is not restarted.
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
-        accentColor: Colors.pinkAccent,
+        accentColor: Colors.limeAccent,
       ),
       home: new MyHomePage(title: 'Fit'),
     );
@@ -60,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final Orientation orientation = MediaQuery.of(context).orientation;
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -79,88 +80,206 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: new Padding(
-        padding: new EdgeInsets.symmetric(vertical: 16.0, horizontal: 4.0),
-        child: new Column(
-        // Column is also layout widget. It takes a list of children and
-        // arranges them vertically. By default, it sizes itself to fit its
-        // children horizontally, and tries to be as tall as its parent.
-        //
-        // Invoke "debug paint" (press "p" in the console where you ran
-        // "flutter run", or select "Toggle Debug Paint" from the Flutter tool
-        // window in IntelliJ) to see the wireframe for each widget.
-        //
-        // Column has various properties to control how it sizes itself and
-        // how it positions its children. Here we use mainAxisAlignment to
-        // center the children vertically; the main axis here is the vertical
-        // axis because Columns are vertical (the cross axis would be
-        // horizontal).
-        children: <Widget>[
-          new Text(
-            '$_counter',
-            style: Theme.of(context).textTheme.display3,
+      body: new Container(
+        decoration: new BoxDecoration(
+          gradient: new LinearGradient(
+            begin: const Alignment(0.0, -1.0),
+            end: const Alignment(0.0, 0.6),
+            colors: <Color>[
+              const Color(0xFF2196F3),
+              const Color(0x112196F3)
+            ],
           ),
-          new Padding(
-            padding: new EdgeInsets.only(bottom: 16.0),
-            child: new Text(
-              'Steps',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ),
-          new Card(
-            child: new Column(
-              children: <Widget>[
-                new Padding(
-                padding: new EdgeInsets.symmetric(vertical: 16.0),
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+        child: new CustomScrollView(
+          slivers: <Widget>[
+            new SliverPadding(
+              padding: new EdgeInsets.all(16.0),
+              sliver: new SliverToBoxAdapter(
+                child: new Column(
                   children: <Widget>[
-                    new Row(
-                      children: <Widget>[
-                        new IconTheme(
-                          data: new IconThemeData(
-                            color: Colors.grey,
-                            size: 64.0
-                          ),
-                          child: new Icon(Icons.directions_walk),
-                        ),
-                        new Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            new Text('15', style: new TextStyle(fontSize: 36.0),),
-                            new Text('pushups everyday')
-                          ],
-                        ),
-                      ],
+                    new Text(
+                      '$_counter',
+                      style: new TextStyle(
+                        color: Colors.white,
+                        fontSize: 56.0,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    new Padding(
-                      padding: new EdgeInsets.only(right: 32.0),
-                      child: new Text('START', style: new TextStyle(color: Colors.blue, fontWeight: FontWeight.w500)),
+                    new Text(
+                      _counter == 1 ? 'Step' : 'Steps',
+                      style: new TextStyle(
+                        color: Colors.white,
+                        fontSize: 36.0,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
-                ),
-                new Divider(height: 2.0,),
-                new Padding(
-                  padding: new EdgeInsets.all(12.0),
-                  child: new Row(
-                    children: <Widget>[
-                      new Icon(Icons.check, color: Colors.green),
-                      new Padding(
-                        padding: new EdgeInsets.only(left: 12.0),
-                        child: new Text(
-                          'Completed',
-                          style: new TextStyle(color: Colors.green),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
-      ),
+            new SliverPadding(
+              padding: new EdgeInsets.all(8.0),
+              sliver: new SliverGrid.count(
+                crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                children: <Widget>[
+                  new RaisedButton(
+                    color: Colors.white,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.all(
+                        const Radius.circular(8.0),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: new Container(
+                      padding: new EdgeInsets.all(8.0),
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new IconTheme(
+                            data: new IconThemeData(
+                              size: 64.0,
+                              color: Colors.blue,
+                            ),
+                            child: new Icon(Icons.directions_run),
+                          ),
+                          new Text(
+                            'Running',
+                            textAlign: TextAlign.center,
+                            style: new TextStyle(
+                              color: Colors.black87,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w500,
+                              ),
+                          ),
+                          new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new IconTheme(
+                                data: new IconThemeData(
+                                  color: Colors.green,
+                                ),
+                                child: new Icon(Icons.check),
+                              ),
+                              new Text(
+                                ' Completed',
+                                style: new TextStyle(
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  new RaisedButton(
+                    color: Colors.white,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.all(
+                        const Radius.circular(8.0),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: new Container(
+                      padding: new EdgeInsets.all(8.0),
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new IconTheme(
+                            data: new IconThemeData(
+                              size: 64.0,
+                              color: Colors.blue,
+                            ),
+                            child: new Icon(Icons.directions_walk),
+                          ),
+                          new Text(
+                            'Random',
+                            textAlign: TextAlign.center,
+                            style: new TextStyle(
+                              color: Colors.black87,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w500,
+                              ),
+                          ),
+                          new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new IconTheme(
+                                data: new IconThemeData(
+                                  color: Colors.purple,
+                                ),
+                                child: new Icon(Icons.timer),
+                              ),
+                              new Text(
+                                ' Pending',
+                                style: new TextStyle(
+                                  color: Colors.purple,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  new RaisedButton(
+                    color: Colors.white,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.all(
+                        const Radius.circular(8.0),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: new Container(
+                      padding: new EdgeInsets.all(8.0),
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new IconTheme(
+                            data: new IconThemeData(
+                              size: 64.0,
+                              color: Colors.blue,
+                            ),
+                            child: new Icon(Icons.directions_walk),
+                          ),
+                          new Text(
+                            'Random',
+                            textAlign: TextAlign.center,
+                            style: new TextStyle(
+                              color: Colors.black87,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w500,
+                              ),
+                          ),
+                          new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new IconTheme(
+                                data: new IconThemeData(
+                                  color: Colors.red,
+                                ),
+                                child: new Icon(Icons.warning),
+                              ),
+                              new Text(
+                                ' Incomplete',
+                                style: new TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: _incrementCounter,
