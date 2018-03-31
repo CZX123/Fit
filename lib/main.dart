@@ -1,22 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import './newTask.dart';
+import './settings.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Fit',
       theme: new ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-        // counter didn't reset back to zero; the application is not restarted.
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
         accentColor: Colors.limeAccent,
@@ -45,7 +39,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _counter = 500;
+  bool _homePage = true;
 
   void _incrementCounter() {
     setState(() {
@@ -55,6 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+    });
+  }
+
+  void _determineHomePage(int index) {
+    setState(() {
+      (index == 0) ? _homePage = true : _homePage = false;
     });
   }
 
@@ -76,11 +77,18 @@ class _MyHomePageState extends State<MyHomePage> {
           new IconButton(
             icon: new Icon(Icons.settings),
             tooltip: 'Settings',
-            onPressed: () {}
+            onPressed: () {
+              Navigator.push(
+                context,
+                new MaterialPageRoute(
+                  builder: (context) => new SettingsScreen(),
+                )
+              );
+            },
           ),
         ],
       ),
-      body: new Container(
+      body: _homePage ? new Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
             begin: const Alignment(0.0, -1.0),
@@ -125,168 +133,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSpacing: 8.0,
                 crossAxisSpacing: 8.0,
                 children: <Widget>[
-                  new RaisedButton(
-                    color: Colors.white,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.all(
-                        const Radius.circular(8.0),
-                      ),
-                    ),
+                  new Activity(
+                    image: new AssetImage('assets/icons/pushup.webp'),
+                    name: 'Push Ups',
+                    completionState: 'Completed',
                     onPressed: () {},
-                    child: new Container(
-                      padding: new EdgeInsets.all(8.0),
-                      child: new Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          new IconTheme(
-                            data: new IconThemeData(
-                              size: 64.0,
-                              color: Colors.blue,
-                            ),
-                            child: new Icon(Icons.directions_run),
-                          ),
-                          new Text(
-                            'Running',
-                            textAlign: TextAlign.center,
-                            style: new TextStyle(
-                              color: Colors.black87,
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w500,
-                              ),
-                          ),
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              new IconTheme(
-                                data: new IconThemeData(
-                                  color: Colors.green,
-                                ),
-                                child: new Icon(Icons.check),
-                              ),
-                              new Text(
-                                ' Completed',
-                                style: new TextStyle(
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
                   ),
-                  new RaisedButton(
-                    color: Colors.white,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.all(
-                        const Radius.circular(8.0),
-                      ),
-                    ),
+                  new Activity(
+                    image: new AssetImage('assets/icons/cycling.webp'),
+                    name: 'Cycling',
+                    completionState: 'Pending',
                     onPressed: () {},
-                    child: new Container(
-                      padding: new EdgeInsets.all(8.0),
-                      child: new Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          new IconTheme(
-                            data: new IconThemeData(
-                              size: 64.0,
-                              color: Colors.blue,
-                            ),
-                            child: new Icon(Icons.directions_walk),
-                          ),
-                          new Text(
-                            'Random',
-                            textAlign: TextAlign.center,
-                            style: new TextStyle(
-                              color: Colors.black87,
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w500,
-                              ),
-                          ),
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              new IconTheme(
-                                data: new IconThemeData(
-                                  color: Colors.purple,
-                                ),
-                                child: new Icon(Icons.timer),
-                              ),
-                              new Text(
-                                ' Pending',
-                                style: new TextStyle(
-                                  color: Colors.purple,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
                   ),
-                  new RaisedButton(
-                    color: Colors.white,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.all(
-                        const Radius.circular(8.0),
-                      ),
-                    ),
+                  new Activity(
+                    image: new AssetImage('assets/icons/running.webp'),
+                    name: 'Running',
+                    completionState: 'Incomplete',
                     onPressed: () {},
-                    child: new Container(
-                      padding: new EdgeInsets.all(8.0),
-                      child: new Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          new IconTheme(
-                            data: new IconThemeData(
-                              size: 64.0,
-                              color: Colors.blue,
-                            ),
-                            child: new Icon(Icons.directions_walk),
-                          ),
-                          new Text(
-                            'Random',
-                            textAlign: TextAlign.center,
-                            style: new TextStyle(
-                              color: Colors.black87,
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w500,
-                              ),
-                          ),
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              new IconTheme(
-                                data: new IconThemeData(
-                                  color: Colors.red,
-                                ),
-                                child: new Icon(Icons.warning),
-                              ),
-                              new Text(
-                                ' Incomplete',
-                                style: new TextStyle(
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
                   ),
                 ],
               ),
             ),
           ],
         ),
+      ) : new Center(
+        child: new Text("You're Fat"),
       ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _incrementCounter,
+      floatingActionButton: (_homePage) ? new FloatingActionButton(
+        // onPressed: _incrementCounter,
+        onPressed: () {
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (context) => new NewTaskScreen()
+            )
+          );
+        },
         tooltip: 'Increment',
         child: new Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ) : null,
       bottomNavigationBar: new BottomNavigationBar(
+        currentIndex: (_homePage) ? 0 : 1,
         items: <BottomNavigationBarItem>[
           new BottomNavigationBarItem(
             icon: new Icon(Icons.directions_run),
@@ -294,10 +181,142 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           new BottomNavigationBarItem(
             icon: new Icon(Icons.fastfood),
-            title: new Text('Diet')
+            title: new Text('Diet'),
           ),
         ],
+        onTap: _determineHomePage,
       )
     );
+  }
+}
+
+class Activity extends StatelessWidget {
+  const Activity({
+    this.icon: const Icon(Icons.help),
+    this.image,
+    @required this.name,
+    @required this.completionState,
+    @required this.onPressed,
+  });
+  final Icon icon;
+  final ImageProvider<dynamic> image;
+  final String name;
+  final String completionState;
+  final VoidCallback onPressed;
+  @override
+  Widget build(BuildContext context) {
+    return new RaisedButton(
+      color: Colors.white,
+      shape: new RoundedRectangleBorder(
+        borderRadius: new BorderRadius.all(
+          const Radius.circular(8.0),
+        ),
+      ),
+      onPressed: onPressed,
+      child: new Container(
+        padding: new EdgeInsets.all(8.0),
+        child: new Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            (image != null)
+              ? new Image(
+                  height: 64.0,
+                  image: image,
+                )
+              : new IconTheme(
+                data: new IconThemeData(
+                  size: 64.0,
+                  color: Colors.blue,
+                ),
+                child: icon,
+                ),
+            new Text(
+              name,
+              textAlign: TextAlign.center,
+              style: new TextStyle(
+                color: Colors.black87,
+                fontSize: 24.0,
+                fontWeight: FontWeight.w500,
+                ),
+            ),
+            new CompletionState(completionState),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CompletionState extends StatelessWidget {
+  const CompletionState(this.completionState);
+  final String completionState;
+  @override
+  Widget build(BuildContext context) {
+    if (completionState == 'Completed') {
+      return new Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          new IconTheme(
+            data: new IconThemeData(
+              color: Colors.green,
+            ),
+            child: new Icon(Icons.check_circle),
+          ),
+          new Padding(
+            padding: new EdgeInsets.only(left: 4.0),
+            child: new Text(
+              'Completed',
+              style: new TextStyle(
+                color: Colors.green,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    else if (completionState == 'Pending') {
+      return new Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          new IconTheme(
+            data: new IconThemeData(
+              color: Colors.purple,
+            ),
+            child: new Icon(Icons.timer),
+          ),
+          new Padding(
+            padding: new EdgeInsets.only(left: 4.0),
+            child: new Text(
+              'Pending',
+              style: new TextStyle(
+                color: Colors.purple,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    else {
+      return new Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          new IconTheme(
+            data: new IconThemeData(
+              color: Colors.red,
+            ),
+            child: new Icon(Icons.warning),
+          ),
+          new Padding(
+            padding: new EdgeInsets.only(left: 4.0),
+            child: new Text(
+              'Incomplete',
+              style: new TextStyle(
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
 }

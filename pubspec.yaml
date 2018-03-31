@@ -24,6 +24,16 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/icons/6-pack.webp
+    - assets/icons/aerobics.webp
+    - assets/icons/crunches.webp
+    - assets/icons/cycling.webp
+    - assets/icons/planking.webp
+    - assets/icons/pushup.webp
+    - assets/icons/running.webp
+    - assets/icons/situp.webp
+    - assets/icons/walking.webp
 
   # To add assets to your application, add an assets section, like this:
   # assets:
