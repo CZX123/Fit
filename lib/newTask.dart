@@ -93,7 +93,7 @@ class Package extends StatelessWidget {
               : new IconTheme(
                 data: new IconThemeData(
                   size: 64.0,
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                 ),
                 child: icon,
                 ),
@@ -142,7 +142,7 @@ class Task extends StatelessWidget {
               : new IconTheme(
                 data: new IconThemeData(
                   size: 28.0,
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                 ),
                 child: icon,
               ),

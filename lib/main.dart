@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
-        accentColor: Colors.limeAccent,
+        accentColor: Colors.deepOrangeAccent,
       ),
       home: new MyHomePage(title: 'Fit'),
     );
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new CustomScrollView(
           slivers: <Widget>[
             new SliverPadding(
-              padding: new EdgeInsets.all(16.0),
+              padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
               sliver: new SliverToBoxAdapter(
                 child: new Column(
                   children: <Widget>[
@@ -132,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
                 mainAxisSpacing: 8.0,
                 crossAxisSpacing: 8.0,
+                childAspectRatio: (orientation == Orientation.portrait) ? 1.1 : 1.3,
                 children: <Widget>[
                   new Activity(
                     image: new AssetImage('assets/icons/pushup.webp'),
@@ -226,7 +227,7 @@ class Activity extends StatelessWidget {
               : new IconTheme(
                 data: new IconThemeData(
                   size: 64.0,
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                 ),
                 child: icon,
                 ),
