@@ -64,11 +64,13 @@ class Package extends StatelessWidget {
   const Package({
     this.icon: const Icon(Icons.help),
     this.image,
+    this.color: Colors.blue,
     @required this.name,
     @required this.onPressed,
   });
   final Icon icon;
   final ImageProvider<dynamic> image;
+  final Color color;
   final String name;
   final VoidCallback onPressed;
   Widget build(BuildContext context) {
@@ -93,7 +95,7 @@ class Package extends StatelessWidget {
               : new IconTheme(
                 data: new IconThemeData(
                   size: 64.0,
-                  color: Theme.of(context).primaryColor,
+                  color: color,
                 ),
                 child: icon,
                 ),

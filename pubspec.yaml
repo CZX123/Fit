@@ -34,6 +34,10 @@ flutter:
     - assets/icons/running.webp
     - assets/icons/situp.webp
     - assets/icons/walking.webp
+    - assets/diet-icons/apple.webp
+    - assets/diet-icons/broccoli.webp
+    - assets/diet-icons/carrot.webp
+    - assets/diet-icons/detox.webp
 
   # To add assets to your application, add an assets section, like this:
   # assets:
