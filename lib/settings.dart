@@ -19,6 +19,16 @@ class SettingsScreen extends StatelessWidget {
             subtitle: new Text('Current Theme: Light'),
             onTap: () {},
           ),
+          new ListTile(
+            title: new Text('Notifications'),
+            subtitle: new Text('Choose when to notify you before each activity'),
+            onTap: () {},
+          ),
+          new ListTile(
+            title: new Text('More Stuff'),
+            subtitle: new Text('To be available in future updates'),
+            onTap: () {},
+          ),
         ],
       ),
     );

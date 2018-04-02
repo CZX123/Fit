@@ -101,7 +101,6 @@ class Package extends StatelessWidget {
               name,
               textAlign: TextAlign.center,
               style: new TextStyle(
-                color: Colors.black54,
                 fontSize: 20.0,
                 fontWeight: FontWeight.w400,
                 ),
@@ -151,8 +150,9 @@ class Task extends StatelessWidget {
               child: new Text(
                 name,
                 style: new TextStyle(
+                  color: Colors.black,
                   fontSize: 18.0,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -169,7 +169,7 @@ class NewTaskScreen extends StatelessWidget {
     final Orientation orientation = MediaQuery.of(context).orientation;
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('New Task'),
+        title: new Text('New Activity'),
       ),
       body: new CustomScrollView(
         slivers: <Widget>[
@@ -190,17 +190,17 @@ class NewTaskScreen extends StatelessWidget {
             padding: new EdgeInsets.all(8.0),
             sliver: new SliverGrid.count(
               crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-              childAspectRatio: 1.3,
+              childAspectRatio: (orientation == Orientation.portrait) ? 1.4 : 1.6,
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 8.0,
               children: <Widget>[
                 new Package(
-                  icon: new Icon(Icons.directions_run),
+                  image: new AssetImage('assets/icons/running.webp'),
                   name: 'NAPFA',
                   onPressed: () {},
                 ),
                 new Package(
-                  icon: new Icon(Icons.accessibility_new),
+                  image: new AssetImage('assets/icons/6-pack.webp'),
                   name: '6-Pack',
                   onPressed: () {},
                 ),
@@ -220,49 +220,52 @@ class NewTaskScreen extends StatelessWidget {
               ),
             ),
           ),
-          new SliverGrid(
-            delegate: new SliverChildListDelegate(
-              <Widget>[
-                new Task(
-                  image: new AssetImage('assets/icons/crunches.webp'),
-                  name: 'Crunches',
-                  onPressed: () {},
-                ),
-                new Task(
-                  image: new AssetImage('assets/icons/cycling.webp'),
-                  name: 'Cycling',
-                  onPressed: () {},
-                ),
-                new Task(
-                  image: new AssetImage('assets/icons/planking.webp'),
-                  name: 'Planking',
-                  onPressed: () {},
-                ),
-                new Task(
-                  image: new AssetImage('assets/icons/pushup.webp'),
-                  name: 'Push Ups',
-                  onPressed: () {},
-                ),
-                new Task(
-                  image: new AssetImage('assets/icons/running.webp'),
-                  name: 'Running',
-                  onPressed: () {},
-                ),
-                new Task(
-                  image: new AssetImage('assets/icons/situp.webp'),
-                  name: 'Situps',
-                  onPressed: () {},
-                ),
-                new Task(
-                  image: new AssetImage('assets/icons/walking.webp'),
-                  name: 'Walking',
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            gridDelegate: new SliverGridDelegateWithFixedCrossAxisCountAndMainAxisLength(
-              crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-              mainAxisLength: 48.0
+          new SliverPadding(
+            padding: new EdgeInsets.only(bottom: 32.0),
+            sliver: new SliverGrid(
+              delegate: new SliverChildListDelegate(
+                <Widget>[
+                  new Task(
+                    image: new AssetImage('assets/icons/crunches.webp'),
+                    name: 'Crunches',
+                    onPressed: () {},
+                  ),
+                  new Task(
+                    image: new AssetImage('assets/icons/cycling.webp'),
+                    name: 'Cycling',
+                    onPressed: () {},
+                  ),
+                  new Task(
+                    image: new AssetImage('assets/icons/planking.webp'),
+                    name: 'Planking',
+                    onPressed: () {},
+                  ),
+                  new Task(
+                    image: new AssetImage('assets/icons/pushup.webp'),
+                    name: 'Push Ups',
+                    onPressed: () {},
+                  ),
+                  new Task(
+                    image: new AssetImage('assets/icons/running.webp'),
+                    name: 'Running',
+                    onPressed: () {},
+                  ),
+                  new Task(
+                    image: new AssetImage('assets/icons/situp.webp'),
+                    name: 'Situps',
+                    onPressed: () {},
+                  ),
+                  new Task(
+                    image: new AssetImage('assets/icons/walking.webp'),
+                    name: 'Walking',
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              gridDelegate: new SliverGridDelegateWithFixedCrossAxisCountAndMainAxisLength(
+                crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
+                mainAxisLength: 48.0
+              ),
             ),
           ),
         ],

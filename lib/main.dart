@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             new SliverPadding(
-              padding: new EdgeInsets.all(8.0),
+              padding: new EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 24.0),
               sliver: new SliverGrid.count(
                 crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
                 mainAxisSpacing: 8.0,
@@ -236,7 +236,7 @@ class Activity extends StatelessWidget {
               textAlign: TextAlign.center,
               style: new TextStyle(
                 color: Colors.black87,
-                fontSize: 24.0,
+                fontSize: 20.0,
                 fontWeight: FontWeight.w500,
                 ),
             ),
