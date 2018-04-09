@@ -2,10 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import './exercise.dart';
 import './diet.dart';
-import './newTask.dart';
+import './newActivity.dart';
 import './settings.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  MaterialPageRoute.debugEnableFadingRoutes = true;
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -18,6 +21,98 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.deepOrangeAccent,
       ),
       home: new MyHomePage(title: 'Fit'),
+    );
+  }
+}
+
+class NavigationView {
+  NavigationView({
+    Color color,
+    Widget child,
+    TickerProvider vsync,
+  }) : _color = color,
+       _child = child,
+       controller = new AnimationController(
+         duration: kThemeAnimationDuration,
+         vsync: vsync,
+       ) {
+         _animation = new CurvedAnimation(
+           parent: controller,
+           curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+         );
+       }
+
+  final Color _color;
+  final Widget _child;
+  final AnimationController controller;
+  CurvedAnimation _animation;
+
+  FadeTransition transition(BuildContext context) {
+    return new FadeTransition(
+      opacity: _animation,
+      child: new SingleChildScrollView(
+        child: new Stack(
+          children: <Widget>[
+             new Positioned.fill(
+              // bottom: width / 2.8,
+              child: new DecoratedBox(
+                decoration: new BoxDecoration(
+                  gradient: new LinearGradient(
+                    begin: FractionalOffset.topCenter,
+                    end: FractionalOffset.bottomCenter,
+                    colors: <Color>[
+                      _color,
+                      Colors.grey[100],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // TODO: Find a better bottom banner image. Something more subtle.
+            /* new Positioned(
+              left: 0.0,
+              right: 0.0,
+              bottom: 0.0,
+              height: width / 2.8,
+              child: new Container(
+                alignment: Alignment.bottomCenter,
+                color: Colors.grey[100],
+                child: new Image.asset(
+                  'assets/banners/exercise.webp',
+                ),
+              ),
+            ), */
+            new SlideTransition(
+              position: new Tween<Offset>(
+                begin: const Offset(0.0, 0.02), // Slightly down.
+                end: Offset.zero,
+              ).animate(_animation),
+              child: _child,
+            ),
+            new Positioned(
+              top: 28.0,
+              right: 4.0,
+              child: new Material(
+                type: MaterialType.circle,
+                color: Colors.transparent,
+                child: new IconButton(
+                  color: Colors.white,
+                  icon: new Icon(Icons.settings),
+                  tooltip: 'Settings',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => new SettingsScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -40,90 +135,115 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _counter = 500;
-  bool _homePage = true;
+  int _currentIndex = 0;
+  List<NavigationView> _navigationViews;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _navigationViews = <NavigationView>[
+      new NavigationView(
+        color: Colors.blue,
+        child: new ExerciseScreen(
+          counter: _counter,
+        ),
+        vsync: this,
+      ),
+      new NavigationView(
+        color: Colors.green,
+        child: new DietScreen(),
+        vsync: this,
+      ),
+    ];
+    for (NavigationView view in _navigationViews)
+      view.controller.addListener(_rebuild);
+    _navigationViews[_currentIndex].controller.value = 1.0;
   }
 
-  void _determineHomePage(int index) {
-    setState(() {
-      (index == 0) ? _homePage = true : _homePage = false;
+  @override
+  void dispose() {
+    for (NavigationView view in _navigationViews)
+      view.controller.dispose();
+    super.dispose();
+  }
+
+  void _rebuild() {
+    setState((){});
+  }
+
+  Widget _buildTransitionsStack() {
+    final List<FadeTransition> transitions = <FadeTransition>[];
+
+    for (NavigationView view in _navigationViews)
+      transitions.add(view.transition(context));
+
+    transitions.sort((FadeTransition a, FadeTransition b) {
+      final Animation<double> aAnimation = a.opacity;
+      final Animation<double> bAnimation = b.opacity;
+      final double aValue = aAnimation.value;
+      final double bValue = bAnimation.value;
+      return aValue.compareTo(bValue);
     });
+
+    return new Stack(children: transitions);
   }
 
   @override
   Widget build(BuildContext context) {
-    final Orientation orientation = MediaQuery.of(context).orientation;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return new Scaffold(
-      appBar: new AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: new Text(widget.title),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.settings),
-            tooltip: 'Settings',
-            onPressed: () {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (context) => new SettingsScreen(),
-                )
-              );
-            },
+
+      body: new DecoratedBox(
+        decoration: new BoxDecoration(
+          gradient: new LinearGradient(
+            begin: FractionalOffset.topCenter,
+            end: FractionalOffset.bottomCenter,
+            colors: <Color>[
+              _currentIndex == 0 ? Colors.blue : Colors.green,
+              Colors.grey[100],
+            ],
           ),
-        ],
-      ),
-      body: _homePage
-        ? new ExerciseScreen(
-          counter: _counter,
-          orientation: orientation,
-        )
-        : new DietScreen(
-          orientation: orientation,
         ),
-      floatingActionButton: _homePage ? new FloatingActionButton(
+        child: _buildTransitionsStack(),
+      ),
+
+      floatingActionButton: _currentIndex == 0 ? new FloatingActionButton(
         // onPressed: _incrementCounter,
         onPressed: () {
           Navigator.push(
             context,
             new MaterialPageRoute(
-              builder: (context) => new NewTaskScreen()
+              builder: (context) => new NewActivityScreen()
             )
           );
         },
         tooltip: 'Increment',
         child: new Icon(Icons.add),
       ) : null,
+
       bottomNavigationBar: new BottomNavigationBar(
-        currentIndex: _homePage ? 0 : 1,
+        fixedColor: _currentIndex == 0 ? Colors.blue : Colors.green,
+        currentIndex: _currentIndex,
         items: <BottomNavigationBarItem>[
           new BottomNavigationBarItem(
+            backgroundColor: Colors.blue,
             icon: new Icon(Icons.directions_run),
             title: new Text('Exercise')
           ),
           new BottomNavigationBarItem(
+            backgroundColor: Colors.green,
             icon: new Icon(Icons.fastfood),
             title: new Text('Diet'),
           ),
         ],
-        onTap: _determineHomePage,
+        onTap: (int index) {
+          setState(() {
+            _navigationViews[_currentIndex].controller.reverse();
+            _currentIndex = index;
+            _navigationViews[_currentIndex].controller.forward();
+          });
+        },
       )
     );
   }
