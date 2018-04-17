@@ -25,21 +25,14 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/icons/6-pack.webp
-    - assets/icons/aerobics.webp
-    - assets/icons/crunches.webp
-    - assets/icons/cycling.webp
-    - assets/icons/planking.webp
-    - assets/icons/pushup.webp
-    - assets/icons/running.webp
-    - assets/icons/situp.webp
-    - assets/icons/walking.webp
     - assets/diet-icons/apple.webp
     - assets/diet-icons/broccoli.webp
     - assets/diet-icons/carrot.webp
     - assets/diet-icons/detox.webp
-    - assets/banners/exercise.webp
-
+  fonts:
+    - family: Sports
+      fonts:
+        - asset: assets/fonts/sports.ttf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
