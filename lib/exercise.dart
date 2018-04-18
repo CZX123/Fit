@@ -1,27 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-List<Activity> activityList = [
-  new Activity(
-    image: 'assets/icons/pushup.webp',
-    name: 'Push Ups',
-    completionState: 'Completed',
-    onPressed: () {},
-  ),
-  new Activity(
-    image: 'assets/icons/cycling.webp',
-    name: 'Cycling',
-    completionState: 'Pending',
-    onPressed: () {},
-  ),
-  new Activity(
-    image: 'assets/icons/running.webp',
-    name: 'Running',
-    completionState: 'Incomplete',
-    onPressed: () {},
-  ),
-];
-
+import './customWidgets.dart';
+import './data/activeActivityList.dart';
 
 class ExerciseScreen extends StatelessWidget {
   const ExerciseScreen({
@@ -67,7 +47,7 @@ class ExerciseScreen extends StatelessWidget {
           new Container(
             padding: new EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
             child: new Grid(
-              children: activityList,
+              children: activeActivityList,
               columnCount: orientation == Orientation.portrait ? 2 : 3,
             ),
           ),
@@ -78,60 +58,15 @@ class ExerciseScreen extends StatelessWidget {
 }
 
 
-class Grid extends StatelessWidget {
-
-  const Grid({
-    @required this.children,
-    this.columnCount: 2,
-  });
-
-  final List<Widget> children;
-  final int columnCount;
-
-  List<Widget> _buildGrid() {
-
-    List<Widget> rows = [];
-    List<Widget> columns = [];
-    int _columnCount = columnCount;
-    int _rowCount = (children.length / columnCount).ceil();
-    int _lastRowColumnCount = children.length % columnCount;
-
-    for (int i = 0; i < _rowCount; i++) {
-      columns = [];
-      if (i == _rowCount - 1 && _lastRowColumnCount != 0) _columnCount = _lastRowColumnCount;
-
-      for (int j = 0; j < _columnCount; j++) {
-        int index = i * columnCount + j;
-        columns.add(children[index]);
-      }
-
-      rows.add(
-        new Row(
-          children: columns,
-        ),
-      );
-    }
-
-    return rows;
-  }
-
-  Widget build(BuildContext context) {
-    return new Column(
-      children: _buildGrid(),
-    );
-  }
-}
-
-
 class Activity extends StatelessWidget {
   const Activity({
-    this.icon: const Icon(Icons.help),
+    this.icon: Icons.help,
     this.image,
     @required this.name,
     @required this.completionState,
     @required this.onPressed,
   });
-  final Icon icon;
+  final IconData icon;
   final String image;
   final String name;
   final String completionState;
@@ -165,18 +100,15 @@ class Activity extends StatelessWidget {
                   image,
                   height: 64.0,
                 )
-                : new IconTheme(
-                  data: new IconThemeData(
-                    size: 64.0,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  child: icon,
-                  ),
+                : new Icon(
+                  icon,
+                  size: 64.0,
+                  color: Colors.blue,
+                ),
               new Text(
                 name,
                 textAlign: TextAlign.center,
                 style: new TextStyle(
-                  color: Colors.black87,
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
                 ),

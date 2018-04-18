@@ -1,29 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import './exercise.dart';
-
-List<Diet> dietList = [
-  new Diet(
-    image: 'assets/diet-icons/apple.webp',
-    name: 'Low-Fat',
-    onPressed: () {},
-  ),
-  new Diet(
-    image: 'assets/diet-icons/carrot.webp',
-    name: 'Low-Calorie',
-    onPressed: () {},
-  ),
-  new Diet(
-    image: 'assets/diet-icons/broccoli.webp',
-    name: 'Vegetarian',
-    onPressed: () {},
-  ),
-  new Diet(
-    image: 'assets/diet-icons/detox.webp',
-    name: 'Detox',
-    onPressed: () {},
-  ),
-];
+import './customWidgets.dart';
+import './data/dietList.dart';
 
 class DietScreen extends StatelessWidget {
 
@@ -98,12 +76,12 @@ class DietScreen extends StatelessWidget {
 
 class Diet extends StatelessWidget {
   const Diet({
-    this.icon: const Icon(Icons.help),
+    this.icon: Icons.help,
     this.image,
     @required this.name,
     @required this.onPressed,
   });
-  final Icon icon;
+  final IconData icon;
   final String image;
   final String name;
   final VoidCallback onPressed;
@@ -136,12 +114,10 @@ class Diet extends StatelessWidget {
                   image,
                   height: 64.0,
                 )
-                : new IconTheme(
-                  data: new IconThemeData(
-                    size: 64.0,
-                    color: Colors.green,
-                  ),
-                  child: icon,
+                : new Icon(
+                  icon,
+                  size: 64.0,
+                  color: Colors.green,
                 ),
               new Text(
                 name,
