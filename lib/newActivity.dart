@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import './data/newActivityList.dart';
+import 'data/newActivityList.dart';
 
 class NewActivityScreen extends StatelessWidget {
   @override

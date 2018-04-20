@@ -1,71 +1,131 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import './customWidgets.dart';
-import './data/dietList.dart';
+import 'customWidgets.dart';
+import 'data/dietList.dart';
+import 'settings.dart';
 
 class DietScreen extends StatelessWidget {
 
   Widget build(BuildContext context) {
     final Orientation orientation = MediaQuery.of(context).orientation;
-    double minHeight = MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     double windowTopPadding = MediaQuery.of(context).padding.top;
-    // double width = MediaQuery.of(context).size.width;
-    return new Container(
-      padding: new EdgeInsets.only(top: windowTopPadding),
-      constraints: new BoxConstraints(
-        minHeight: minHeight - 56.0,
-      ),
-      child: new Column(
+    double containerHeight = orientation == Orientation.portrait ? width / 14 * 9 : 230.0;
+    return new SingleChildScrollView(
+      child: new Stack(
         children: <Widget>[
+          new Positioned(
+            top: 0.0,
+            right: 0.0,
+            left: 0.0,
+            height: containerHeight + windowTopPadding,
+            child: new Container(
+              color: Colors.green,
+            ),
+          ),
+          new Positioned(
+            top: containerHeight + windowTopPadding,
+            right: 0.0,
+            left: 0.0,
+            height: (height - containerHeight < 300) ? 300.0 : height - containerHeight,
+            child: new DecoratedBox(
+              decoration: new BoxDecoration(
+                gradient: new LinearGradient(
+                  begin: FractionalOffset.topCenter,
+                  end: FractionalOffset.bottomCenter,
+                  colors: <Color>[
+                    Colors.green,
+                    Colors.grey[100],
+                  ],
+                ),
+              ),
+            ),
+          ),
           new Container(
-            padding: new EdgeInsets.fromLTRB(16.0, 36.0, 16.0, 36.0),
+            constraints: new BoxConstraints(
+              minHeight: height - 48.0,
+            ),
+            padding: new EdgeInsets.only(top: windowTopPadding),
             child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Padding(
-                  padding: new EdgeInsets.only(bottom: 8.0),
-                  child: new IconTheme(
-                    data: new IconThemeData(
-                      size: 48.0,
-                      color: Colors.white,
-                    ),
-                    child: new Icon(Icons.warning),
+                new Container(
+                  height: containerHeight,
+                  width: width,
+                  color: Colors.green,
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Padding(
+                        padding: new EdgeInsets.only(bottom: 8.0),
+                        child: new IconTheme(
+                          data: new IconThemeData(
+                            size: 48.0,
+                            color: Colors.white,
+                          ),
+                          child: new Icon(Icons.warning),
+                        ),
+                      ),
+                      new Text(
+                        'Your BMI is',
+                        style: new TextStyle(
+                          color: Colors.white,
+                          fontSize: 28.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      new Text(
+                        '28',
+                        style: new TextStyle(
+                          color: Colors.white,
+                          fontSize: 48.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      new Padding(
+                        padding: new EdgeInsets.only(top: 8.0),
+                        child: new Text(
+                          'Here are some recommended diets for you:',
+                          style: new TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                new Text(
-                  'Your BMI is',
-                  style: new TextStyle(
-                    color: Colors.white,
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                new Text(
-                  '28',
-                  style: new TextStyle(
-                    color: Colors.white,
-                    fontSize: 48.0,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                new Padding(
-                  padding: new EdgeInsets.only(top: 8.0),
-                  child: new Text(
-                    'Here are some recommended diets for you:',
-                    style: new TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400,
-                    ),
+                new Container(
+                  padding: new EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 32.0),
+                  child: new Grid(
+                    children: dietList,
+                    columnCount: orientation == Orientation.portrait ? 2 : 3,
                   ),
                 ),
               ],
             ),
           ),
-          new Container(
-            padding: new EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 32.0),
-            child: new Grid(
-              children: dietList,
-              columnCount: orientation == Orientation.portrait ? 2 : 3,
+          new Positioned(
+            top: 28.0,
+            right: 4.0,
+            child: new Material(
+              type: MaterialType.circle,
+              color: Colors.transparent,
+              child: new IconButton(
+                color: Colors.white,
+                icon: new Icon(Icons.settings),
+                tooltip: 'Settings',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) => new SettingsScreen(),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
