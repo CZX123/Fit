@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
       bottomNavigationBar: new Material(
         color: Colors.white,
-        elevation: 4.0,
+        elevation: 8.0,
         child: new TabBar(
           indicatorColor: (_currentIndex == 0)
             ? Color.lerp(Colors.blue, Colors.green, _offset.abs())
