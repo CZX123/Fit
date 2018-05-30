@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'data/newActivityList.dart';
+import 'newPackageTask.dart';
+import 'customWidgets.dart';
 
 class NewActivityScreen extends StatelessWidget {
   @override
@@ -78,13 +80,11 @@ class Package extends StatelessWidget {
     this.image,
     this.color: Colors.blue,
     @required this.name,
-    @required this.onPressed,
   });
   final IconData icon;
   final String image;
   final Color color;
   final String name;
-  final VoidCallback onPressed;
   Widget build(BuildContext context) {
     return new RaisedButton(
       color: Colors.white,
@@ -93,22 +93,42 @@ class Package extends StatelessWidget {
           const Radius.circular(8.0),
         ),
       ),
-      onPressed: onPressed,
+      onPressed: () {
+        Navigator.push(
+          context,
+          new FadingPageRoute(
+            builder: (context) => new NewPackageScreen(
+              icon: icon,
+              image: image,
+              color: color,
+              name: name,
+            ),
+          )
+        );
+      },
       child: new Container(
         padding: new EdgeInsets.all(8.0),
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            (image != null)
-              ? new Image.asset(
-                  image,
-                  height: 64.0,
-                )
-              : new Icon(
-                  icon,
-                  size: 64.0,
-                  color: Colors.blue,
-                ),
+            new SizedBox(
+              height: 64.0,
+              width: 64.0,
+              child: new Hero(
+                tag: name,
+                child: (image != null)
+                  ? new Image.asset(
+                      image,
+                      fit: BoxFit.contain,
+                    )
+                  : new FittedBox(
+                      child: new Icon(
+                        icon,
+                        color: color,
+                      ),
+                    ),
+              ),
+            ),
             new Text(
               name,
               textAlign: TextAlign.center,
@@ -131,24 +151,44 @@ class Task extends StatelessWidget {
     this.icon: Icons.help,
     this.image,
     @required this.name,
-    @required this.onPressed,
   });
 
   final IconData icon;
   final String image;
   final String name;
-  final VoidCallback onPressed;
 
   Widget build(BuildContext context) {
     return new ListTile(
-      leading: (image != null)
-        ? new Image.asset(image)
-        : new Icon(
-            icon,
-            size: 32.0,
-            color: Colors.blue,
-          ),
-      onTap: onPressed,
+      leading: new SizedBox(
+        height: 32.0,
+        width: 32.0,
+        child: new Hero(
+          tag: name,
+          child: (image != null)
+            ? new Image.asset(
+                image,
+                fit: BoxFit.contain,
+              )
+            : new FittedBox(
+                child: new Icon(
+                  icon,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+        ),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          new FadingPageRoute(
+            builder: (context) => new NewTaskScreen(
+              icon: icon,
+              image: image,
+              name: name,
+            ),
+          )
+        );
+      },
       title: new Text(name),
     );
   }

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'data/dietList.dart';
-import 'settings.dart';
 
 class DietScreen extends StatelessWidget {
 
@@ -28,7 +27,7 @@ class DietScreen extends StatelessWidget {
             top: containerHeight + windowTopPadding,
             right: 0.0,
             left: 0.0,
-            height: (height - containerHeight < 300) ? 300.0 : height - containerHeight,
+            height: (height - containerHeight < 300 - 48.0) ? 300.0 : height - containerHeight - 48.0,
             child: new DecoratedBox(
               decoration: new BoxDecoration(
                 gradient: new LinearGradient(
@@ -36,7 +35,7 @@ class DietScreen extends StatelessWidget {
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
                     Colors.green,
-                    Colors.grey[100],
+                    Colors.grey[50],
                   ],
                 ),
               ),
@@ -105,27 +104,6 @@ class DietScreen extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-          new Positioned(
-            top: 28.0,
-            right: 4.0,
-            child: new Material(
-              type: MaterialType.circle,
-              color: Colors.transparent,
-              child: new IconButton(
-                color: Colors.white,
-                icon: new Icon(Icons.settings),
-                tooltip: 'Settings',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (context) => new SettingsScreen(),
-                    ),
-                  );
-                },
-              ),
             ),
           ),
         ],

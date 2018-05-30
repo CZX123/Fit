@@ -5,6 +5,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
+        backgroundColor: Colors.blueGrey,
         title: new Text('Settings'),
       ),
       body: new ListView(

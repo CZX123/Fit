@@ -6,18 +6,15 @@ List<Activity> activeActivityList = [
     icon: SportsIcons.push_up,
     name: 'Push Ups',
     completionState: 'Completed',
-    onPressed: () {},
   ),
   new Activity(
     icon: SportsIcons.cycling,
     name: 'Cycling',
     completionState: 'Pending',
-    onPressed: () {},
   ),
   new Activity(
     icon: SportsIcons.running,
-    name: 'Running',
+    name: 'NAPFA',
     completionState: 'Incomplete',
-    onPressed: () {},
   ),
 ];

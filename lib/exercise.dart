@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'data/activeActivityList.dart';
-import 'settings.dart';
+import 'startActivity.dart';
 
 class ExerciseScreen extends StatelessWidget {
   const ExerciseScreen({
@@ -32,7 +32,7 @@ class ExerciseScreen extends StatelessWidget {
             top: containerHeight + windowTopPadding,
             right: 0.0,
             left: 0.0,
-            height: (height - containerHeight < 300) ? 300.0 : height - containerHeight,
+            height: (height - containerHeight < 300 - 48.0) ? 300.0 : height - containerHeight - 48.0,
             child: new DecoratedBox(
               decoration: new BoxDecoration(
                 gradient: new LinearGradient(
@@ -40,7 +40,7 @@ class ExerciseScreen extends StatelessWidget {
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
                     Colors.blue,
-                    Colors.grey[100],
+                    Colors.grey[50],
                   ],
                 ),
               ),
@@ -89,27 +89,6 @@ class ExerciseScreen extends StatelessWidget {
               ],
             ),
           ),
-          new Positioned(
-            top: 28.0,
-            right: 4.0,
-            child: new Material(
-              type: MaterialType.circle,
-              color: Colors.transparent,
-              child: new IconButton(
-                color: Colors.white,
-                icon: new Icon(Icons.settings),
-                tooltip: 'Settings',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (context) => new SettingsScreen(),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -123,13 +102,11 @@ class Activity extends StatelessWidget {
     this.image,
     @required this.name,
     @required this.completionState,
-    @required this.onPressed,
   });
   final IconData icon;
   final String image;
   final String name;
   final String completionState;
-  final VoidCallback onPressed;
   @override
   Widget build(BuildContext context) {
     Orientation orientation = MediaQuery.of(context).orientation;
@@ -145,7 +122,19 @@ class Activity extends StatelessWidget {
             const Radius.circular(8.0),
           ),
         ),
-        onPressed: onPressed,
+        onPressed: () {
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (context) => new StartActivityScreen(
+                icon: icon,
+                image: image,
+                color: Colors.blue,
+                name: name,
+              ),
+            )
+          );
+        },
         child: new Container(
           padding: new EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -154,16 +143,24 @@ class Activity extends StatelessWidget {
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              (image != null)
-                ? new Image.asset(
-                  image,
-                  height: 64.0,
-                )
-                : new Icon(
-                  icon,
-                  size: 64.0,
-                  color: Colors.blue,
+              new SizedBox(
+                height: 64.0,
+                width: 64.0,
+                child: new Hero(
+                  tag: name + 'a',
+                  child: (image != null)
+                    ? new Image.asset(
+                      image,
+                      fit: BoxFit.contain,
+                    )
+                    : new FittedBox(
+                        child: new Icon(
+                        icon,
+                        color: Colors.blue,
+                      ),
+                    ),
                 ),
+              ),
               new Text(
                 name,
                 textAlign: TextAlign.center,

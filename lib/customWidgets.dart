@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 // Grid Widget using columns and rows. Only supports vertical layout, and does not have any values regarding widget size and spacing between grid items
 class Grid extends StatelessWidget {
@@ -43,5 +43,26 @@ class Grid extends StatelessWidget {
     return new Column(
       children: _buildGrid(),
     );
+  }
+}
+
+class FadingPageRoute<T> extends MaterialPageRoute<T> {
+  FadingPageRoute({ WidgetBuilder builder, RouteSettings settings })
+      : super(builder: builder, settings: settings);
+
+  @override
+  // TODO: implement transitionDuration
+  Duration get transitionDuration => const Duration(milliseconds: 300);
+
+  @override
+  Widget buildTransitions(BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
+
+    if (settings.isInitialRoute)
+      return child;
+
+    return new FadeTransition(opacity: animation, child: child);
   }
 }
