@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 class SettingsScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool darkMode = brightness == Brightness.dark;
+    final String brightnessText = brightness == Brightness.light ? 'Light' : 'Dark';
     return new Scaffold(
+      backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
-        backgroundColor: Colors.blueGrey,
-        title: new Text('Settings'),
+        elevation: 0.0,
+        backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
+        title: new Text(
+          'Settings',
+          style: new TextStyle(
+            color: darkMode ? Colors.white : Colors.blueGrey,
+          ),
+        ),
       ),
       body: new ListView(
         children: <Widget>[
@@ -16,9 +28,11 @@ class SettingsScreen extends StatelessWidget {
             onTap: () {},
           ),
           new ListTile(
-            title: new Text('App Theme'),
-            subtitle: new Text('Current Theme: Light'),
-            onTap: () {},
+            title: new Text('Toggle App Theme'),
+            subtitle: new Text('Current Theme: $brightnessText'),
+            onTap: () {
+              DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark ? Brightness.light: Brightness.dark);
+            },
           ),
           new ListTile(
             title: new Text('Notifications'),

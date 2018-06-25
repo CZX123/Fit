@@ -6,6 +6,7 @@ import 'data/dietList.dart';
 class DietScreen extends StatelessWidget {
 
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Orientation orientation = MediaQuery.of(context).orientation;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -20,7 +21,7 @@ class DietScreen extends StatelessWidget {
             left: 0.0,
             height: containerHeight + windowTopPadding,
             child: new Container(
-              color: Colors.green,
+              color: darkMode ? Colors.grey[900] : Colors.green,
             ),
           ),
           new Positioned(
@@ -34,8 +35,8 @@ class DietScreen extends StatelessWidget {
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
-                    Colors.green,
-                    Colors.grey[50],
+                    darkMode ? Colors.grey[900] : Colors.green,
+                    darkMode ? Colors.grey[900] : Colors.grey[50],
                   ],
                 ),
               ),
@@ -52,7 +53,7 @@ class DietScreen extends StatelessWidget {
                 new Container(
                   height: containerHeight,
                   width: width,
-                  color: Colors.green,
+                  color: darkMode ? Colors.grey[900] : Colors.green,
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -125,6 +126,7 @@ class Diet extends StatelessWidget {
   final VoidCallback onPressed;
   @override
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     Orientation orientation = MediaQuery.of(context).orientation;
     double width = MediaQuery.of(context).size.width / ((orientation == Orientation.portrait) ? 2 : 3) - 12.0;
     return new Container(
@@ -132,7 +134,8 @@ class Diet extends StatelessWidget {
       width: width,
       margin: new EdgeInsets.all(4.0),
       child: new RaisedButton(
-        color: Colors.white,
+        elevation: darkMode ? 0.0 : 2.0,
+        color: darkMode ? Colors.grey[850] : Colors.white,
         shape: new RoundedRectangleBorder(
           borderRadius: new BorderRadius.all(
             const Radius.circular(8.0),
@@ -161,7 +164,6 @@ class Diet extends StatelessWidget {
                 name,
                 textAlign: TextAlign.center,
                 style: new TextStyle(
-                  color: Colors.black87,
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
                 ),

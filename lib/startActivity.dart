@@ -25,13 +25,10 @@ class StartActivityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     String activityType = determineActivityType();
     return new Scaffold(
-      backgroundColor: Colors.white,
-      appBar: new AppBar(
-        backgroundColor: color,
-        title: new Text('Start $name $activityType'),
-      ),
+      backgroundColor: darkMode ? Colors.grey[900] : Colors.white,
       body: new ListView(
         children: <Widget>[
           new Container(

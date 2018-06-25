@@ -11,6 +11,7 @@ class ExerciseScreen extends StatelessWidget {
   final int counter;
 
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Orientation orientation = MediaQuery.of(context).orientation;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -25,7 +26,7 @@ class ExerciseScreen extends StatelessWidget {
             left: 0.0,
             height: containerHeight + windowTopPadding,
             child: new Container(
-              color: Colors.blue,
+              color: darkMode ? Colors.grey[900] : Colors.blue,
             ),
           ),
           new Positioned(
@@ -39,8 +40,8 @@ class ExerciseScreen extends StatelessWidget {
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
-                    Colors.blue,
-                    Colors.grey[50],
+                    darkMode ? Colors.grey[900] : Colors.blue,
+                    darkMode ? Colors.grey[900] : Colors.grey[50],
                   ],
                 ),
               ),
@@ -109,6 +110,7 @@ class Activity extends StatelessWidget {
   final String completionState;
   @override
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     Orientation orientation = MediaQuery.of(context).orientation;
     double width = MediaQuery.of(context).size.width / ((orientation == Orientation.portrait) ? 2 : 3) - 12.0;
     return new Container(
@@ -116,7 +118,8 @@ class Activity extends StatelessWidget {
       width: width,
       margin: new EdgeInsets.all(4.0),
       child: new RaisedButton(
-        color: Colors.white,
+        elevation: darkMode ? 0.0 : 2.0,
+        color: darkMode ? Colors.grey[850] : Colors.white,
         shape: new RoundedRectangleBorder(
           borderRadius: new BorderRadius.all(
             const Radius.circular(8.0),

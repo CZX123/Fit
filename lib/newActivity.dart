@@ -7,8 +7,10 @@ import 'customWidgets.dart';
 class NewActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Orientation orientation = MediaQuery.of(context).orientation;
     return new Scaffold(
+      backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
         title: new Text('New Activity'),
         actions: <Widget>[
@@ -27,7 +29,7 @@ class NewActivityScreen extends StatelessWidget {
               child: new Text(
                 'Packages',
                 style: new TextStyle(
-                  color: Colors.black54,
+                  color: darkMode ? Colors.white : Colors.black54,
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -50,7 +52,7 @@ class NewActivityScreen extends StatelessWidget {
               child: new Text(
                 'Tasks',
                 style: new TextStyle(
-                  color: Colors.black54,
+                  color: darkMode ? Colors.white : Colors.black54,
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -86,8 +88,10 @@ class Package extends StatelessWidget {
   final Color color;
   final String name;
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return new RaisedButton(
-      color: Colors.white,
+      elevation: darkMode ? 0.0 : 2.0,
+      color: darkMode ? Colors.grey[850] : Colors.white,
       shape: new RoundedRectangleBorder(
         borderRadius: new BorderRadius.all(
           const Radius.circular(8.0),

@@ -4,7 +4,7 @@ import 'exercise.dart';
 import 'diet.dart';
 import 'newActivity.dart';
 import 'settings.dart';
-import './data/theme.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
@@ -14,10 +14,20 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'Fit',
-      theme: themeList[0],
-      home: new MyHomePage(title: 'Fit'),
+    return new DynamicTheme(
+      defaultBrightness: Brightness.light,
+      data: (brightness) => new ThemeData(
+        primarySwatch: Colors.blue,
+        brightness: brightness,
+        accentColor: Colors.deepOrangeAccent,
+      ),
+      themedWidgetBuilder: (context, theme) {
+        return new MaterialApp(
+          title: 'Fit',
+          theme: theme,
+          home: new MyHomePage(title: 'Fit'),
+        );
+      }
     );
   }
 }
@@ -53,13 +63,22 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.initState();
     controller = new TabController(vsync: this, length: 3);
     controller.animation.addListener(updateScrollValues);
+    controller.addListener(changeScreen);
   }
 
   @override
   void dispose() {
     controller.animation.removeListener(updateScrollValues);
+    controller.removeListener(changeScreen);
     controller.dispose();
     super.dispose();
+  }
+
+  void changeScreen() {
+    int index = controller.index;
+    if (index == 0) changeColor(Colors.blue, Colors.deepOrangeAccent);
+    else if (index == 1) changeColor(Colors.green, Colors.amberAccent);
+    else changeColor(Colors.blueGrey, Colors.blueGrey);
   }
 
   void updateScrollValues() {
@@ -69,6 +88,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _previousIndex = controller.previousIndex;
       _offset = controller.offset;
     });
+  }
+
+  void changeColor(Color primaryColor, Color accentColor) {
+    DynamicTheme.of(context).setThemeData(new ThemeData(
+      brightness: Theme.of(context).brightness,
+      primaryColor: primaryColor,
+      accentColor: accentColor,
+    ));
   }
 
   Widget tabIcon(IconData icon, int index, Color color) {
@@ -102,61 +129,53 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    double _value = _offset + _currentIndex;
-    return new Theme(
-      data: themeList[0],
-      child: new Scaffold(
-
-        body: new Container(
-          color: Colors.grey[50],
-          child: new TabBarView(
-            controller: controller,
-            children: <Widget>[
-              new ExerciseScreen(counter: _counter),
-              new DietScreen(),
-              new SettingsScreen(),
-            ],
-          ),
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    return new Scaffold(
+      body: new Container(
+        color: Colors.grey[50],
+        child: new TabBarView(
+          controller: controller,
+          children: <Widget>[
+            new ExerciseScreen(counter: _counter),
+            new DietScreen(),
+            new SettingsScreen(),
+          ],
         ),
+      ),
 
-        floatingActionButton: (_currentIndex == 0 && _offset == 0.0) ? new FloatingActionButton(
-          // onPressed: _incrementCounter,
-          onPressed: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (context) => new NewActivityScreen(),
-              )
-            );
-          },
-          tooltip: 'New Activity',
-          child: new Icon(Icons.add),
-        ) : null,
-
-        bottomNavigationBar: new Material(
-          color: Colors.white,
-          elevation: 8.0,
-          child: new TabBar(
-            indicatorColor:
-              (0.0 <= _value && _value <= 1.0)
-              ? Color.lerp(Colors.blue, Colors.green, _value)
-              : Color.lerp(Colors.green, Colors.blueGrey, _value - 1.0),
-            controller: controller,
-            tabs: <Widget>[
-              new Tab(
-                icon: tabIcon(Icons.directions_run, 0, Colors.blue),
-                //icon: new Icon(Icons.directions_run),
-              ),
-              new Tab(
-                icon: tabIcon(Icons.fastfood, 1, Colors.green),
-                //icon: new Icon(Icons.fastfood),
-              ),
-              new Tab(
-                icon: tabIcon(Icons.settings, 2, Colors.blueGrey),
-                //icon: new Icon(Icons.settings),
-              ),
-            ],
-          ),
+      floatingActionButton: (_currentIndex == 0 && _offset == 0.0) ? new FloatingActionButton(
+        // onPressed: _incrementCounter,
+        onPressed: () {
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (context) => new NewActivityScreen(),
+            )
+          );
+        },
+        tooltip: 'New Activity',
+        child: new Icon(Icons.add),
+      ) : null,
+      bottomNavigationBar: new Material(
+        color: darkMode ? Colors.grey[850] : Colors.white,
+        elevation: 8.0,
+        child: new TabBar(
+          indicator: new BoxDecoration(),
+          controller: controller,
+          tabs: <Widget>[
+            new Tab(
+              icon: tabIcon(Icons.directions_run, 0, Colors.blue),
+              //icon: new Icon(Icons.directions_run),
+            ),
+            new Tab(
+              icon: tabIcon(Icons.fastfood, 1, Colors.green),
+              //icon: new Icon(Icons.fastfood),
+            ),
+            new Tab(
+              icon: tabIcon(Icons.settings, 2, Colors.blueGrey),
+              //icon: new Icon(Icons.settings),
+            ),
+          ],
         ),
       ),
     );
