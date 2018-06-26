@@ -193,7 +193,7 @@ class CompletionState extends StatelessWidget {
         children: <Widget>[
           new IconTheme(
             data: new IconThemeData(
-              color: Colors.green,
+              color: darkMode ? Colors.lightGreen : Colors.green,
             ),
             child: new Icon(Icons.check_circle),
           ),
@@ -215,7 +215,7 @@ class CompletionState extends StatelessWidget {
         children: <Widget>[
           new IconTheme(
             data: new IconThemeData(
-              color: Colors.purple,
+              color: darkMode ? Colors.purple[400] : Colors.purple,
             ),
             child: new Icon(Icons.timer),
           ),

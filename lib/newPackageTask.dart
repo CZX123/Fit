@@ -91,6 +91,7 @@ class NewTaskScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return new Scaffold(
+      backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
         title: new Text('New $name Task'),
