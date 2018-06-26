@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return new DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => new ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: brightness == Brightness.dark ? Colors.lightBlue : Colors.blue,
         brightness: brightness,
         accentColor: Colors.deepOrangeAccent,
       ),
@@ -76,9 +76,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   void changeScreen() {
     int index = controller.index;
-    if (index == 0) changeColor(Colors.blue, Colors.deepOrangeAccent);
-    else if (index == 1) changeColor(Colors.green, Colors.amberAccent);
-    else changeColor(Colors.blueGrey, Colors.blueGrey);
+    bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    if (index == 0 && !darkMode) changeColor(Colors.blue, Colors.deepOrangeAccent);
+    else if (index == 0) changeColor(Colors.grey[900], Colors.deepOrangeAccent[700]);
+    else if (index == 1 && !darkMode) changeColor(Colors.green, Colors.limeAccent);
+    else if (index == 1) changeColor(Colors.grey[900], Colors.limeAccent[700]);
+    else if (index == 2 && !darkMode) changeColor(Colors.blueGrey, Colors.blueGrey);
+    else changeColor(Colors.grey[900], Colors.blueGrey);
   }
 
   void updateScrollValues() {
@@ -100,26 +104,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Widget tabIcon(IconData icon, int index, Color color) {
     Color iconColor;
+    Color inactiveColor = Theme.of(context).brightness == Brightness.dark ? Colors.grey[600] : Colors.grey[400];
     // if it is a tap, this is always true, as currentIndex immiediately switches to index
     if (_offset.abs() > 1.0) _offset = 1.0;
     if (_currentIndex == index) {
-      iconColor = Color.lerp(color, Colors.grey, _offset.abs());
+      iconColor = Color.lerp(color, inactiveColor, _offset.abs());
     }
     // Detect if user is tapping
     else if (_indexIsChanging) {
       if (_previousIndex == index) {
-        iconColor = Color.lerp(Colors.grey, color, _offset.abs());
+        iconColor = Color.lerp(inactiveColor, color, _offset.abs());
       }
       else {
-        iconColor = Colors.grey;
+        iconColor = inactiveColor;
       }
     }
     // Swiping right or left
     else if (index == _currentIndex + 1 && _offset > 0.0 || index == _currentIndex - 1 && _offset < 0.0) {
-      iconColor = Color.lerp(Colors.grey, color, _offset.abs());
+      iconColor = Color.lerp(inactiveColor, color, _offset.abs());
     }
     else {
-      iconColor = Colors.grey;
+      iconColor = inactiveColor;
     }
     return new Icon(
       icon,
@@ -164,15 +169,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           controller: controller,
           tabs: <Widget>[
             new Tab(
-              icon: tabIcon(Icons.directions_run, 0, Colors.blue),
+              icon: tabIcon(Icons.directions_run, 0, darkMode ? Colors.lightBlue : Colors.blue),
               //icon: new Icon(Icons.directions_run),
             ),
             new Tab(
-              icon: tabIcon(Icons.fastfood, 1, Colors.green),
+              icon: tabIcon(Icons.fastfood, 1, darkMode ? Colors.green : Colors.green),
               //icon: new Icon(Icons.fastfood),
             ),
             new Tab(
-              icon: tabIcon(Icons.settings, 2, Colors.blueGrey),
+              icon: tabIcon(Icons.settings, 2, darkMode ? Colors.deepOrange : Colors.blueGrey),
               //icon: new Icon(Icons.settings),
             ),
           ],

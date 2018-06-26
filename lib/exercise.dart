@@ -132,7 +132,7 @@ class Activity extends StatelessWidget {
               builder: (context) => new StartActivityScreen(
                 icon: icon,
                 image: image,
-                color: Colors.blue,
+                color: darkMode ? Colors.lightBlue : Colors.blue,
                 name: name,
               ),
             )
@@ -159,7 +159,7 @@ class Activity extends StatelessWidget {
                     : new FittedBox(
                         child: new Icon(
                         icon,
-                        color: Colors.blue,
+                        color: darkMode ? Colors.lightBlue : Colors.blue,
                       ),
                     ),
                 ),
@@ -186,6 +186,7 @@ class CompletionState extends StatelessWidget {
   final String completionState;
   @override
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     if (completionState == 'Completed') {
       return new Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -201,7 +202,7 @@ class CompletionState extends StatelessWidget {
             child: new Text(
               'Completed',
               style: new TextStyle(
-                color: Colors.green,
+                color: darkMode ? Colors.lightGreen : Colors.green,
               ),
             ),
           ),
@@ -223,7 +224,7 @@ class CompletionState extends StatelessWidget {
             child: new Text(
               'Pending',
               style: new TextStyle(
-                color: Colors.purple,
+                color: darkMode ? Colors.purple[400] : Colors.purple,
               ),
             ),
           ),

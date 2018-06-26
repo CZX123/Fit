@@ -6,7 +6,7 @@ class NewPackageScreen extends StatelessWidget {
   NewPackageScreen({
     this.icon: Icons.help,
     this.image,
-    this.color: Colors.blue,
+    this.color,
     @required this.name,
     this.description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
   });
@@ -23,7 +23,7 @@ class NewPackageScreen extends StatelessWidget {
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
-        backgroundColor: color,
+        backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
         title: new Text('New $name Package'),
       ),
       body: new ListView(
@@ -89,8 +89,10 @@ class NewTaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return new Scaffold(
       appBar: new AppBar(
+        backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
         title: new Text('New $name Task'),
       ),
       body: new ListView(

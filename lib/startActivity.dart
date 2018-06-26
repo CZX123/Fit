@@ -7,7 +7,7 @@ class StartActivityScreen extends StatelessWidget {
   StartActivityScreen({
     this.icon: Icons.help,
     this.image,
-    this.color: Colors.blue,
+    this.color,
     @required this.name,
   });
 
@@ -26,6 +26,7 @@ class StartActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color actualColor = color ?? (darkMode ? Colors.lightBlue : Colors.blue);
     String activityType = determineActivityType();
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.white,
@@ -49,7 +50,7 @@ class StartActivityScreen extends StatelessWidget {
                       : new FittedBox(
                           child: new Icon(
                             icon,
-                            color: color,
+                            color: actualColor,
                           ),
                         ),
                   ),

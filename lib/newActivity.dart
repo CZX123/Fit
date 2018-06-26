@@ -12,6 +12,7 @@ class NewActivityScreen extends StatelessWidget {
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
+        backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
         title: new Text('New Activity'),
         actions: <Widget>[
           new IconButton(
@@ -77,10 +78,10 @@ class NewActivityScreen extends StatelessWidget {
 
 
 class Package extends StatelessWidget {
-  const Package({
+  Package({
     this.icon: Icons.help,
     this.image,
-    this.color: Colors.blue,
+    this.color,
     @required this.name,
   });
   final IconData icon;
@@ -89,6 +90,7 @@ class Package extends StatelessWidget {
   final String name;
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color actualColor = color ?? (darkMode ? Colors.lightBlue : Colors.blue);
     return new RaisedButton(
       elevation: darkMode ? 0.0 : 2.0,
       color: darkMode ? Colors.grey[850] : Colors.white,
@@ -104,7 +106,7 @@ class Package extends StatelessWidget {
             builder: (context) => new NewPackageScreen(
               icon: icon,
               image: image,
-              color: color,
+              color: actualColor,
               name: name,
             ),
           )
@@ -128,7 +130,7 @@ class Package extends StatelessWidget {
                   : new FittedBox(
                       child: new Icon(
                         icon,
-                        color: color,
+                        color: actualColor,
                       ),
                     ),
               ),
@@ -162,6 +164,7 @@ class Task extends StatelessWidget {
   final String name;
 
   Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return new ListTile(
       leading: new SizedBox(
         height: 32.0,
@@ -176,7 +179,7 @@ class Task extends StatelessWidget {
             : new FittedBox(
                 child: new Icon(
                   icon,
-                  color: Theme.of(context).primaryColor,
+                  color: darkMode ? Colors.lightBlue : Colors.blue,
                 ),
               ),
         ),

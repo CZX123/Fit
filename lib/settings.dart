@@ -10,18 +10,19 @@ class SettingsScreen extends StatelessWidget {
     final String brightnessText = brightness == Brightness.light ? 'Light' : 'Dark';
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
-      appBar: new AppBar(
-        elevation: 0.0,
-        backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
-        title: new Text(
-          'Settings',
-          style: new TextStyle(
-            color: darkMode ? Colors.white : Colors.blueGrey,
-          ),
-        ),
-      ),
       body: new ListView(
         children: <Widget>[
+          new Padding(
+            padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+            child: new Text(
+              'Settings',
+              style: new TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w500,
+                color: darkMode ? Colors.white : Colors.blueGrey,
+              ),
+            ),
+          ),
           new ListTile(
             title: new Text('Profile'),
             subtitle: new Text('Details like your height and weight, age, etc.'),
