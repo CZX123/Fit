@@ -13,7 +13,15 @@ class NewActivityScreen extends StatelessWidget {
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
-        title: new Text('New Activity'),
+        title: new Text(
+          'New Activity',
+          style: new TextStyle(
+            height: 1.2,
+            fontFamily: 'Renner*',
+            fontSize: 20.0,
+            fontWeight: FontWeight.w500
+          ),
+        ),
         actions: <Widget>[
           new IconButton(
             icon: const Icon(Icons.search),
@@ -83,11 +91,13 @@ class Package extends StatelessWidget {
     this.image,
     this.color,
     @required this.name,
+    this.description,
   });
   final IconData icon;
   final String image;
   final Color color;
   final String name;
+  final String description;
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Color actualColor = color ?? (darkMode ? Colors.lightBlue : Colors.blue);
@@ -108,6 +118,7 @@ class Package extends StatelessWidget {
               image: image,
               color: actualColor,
               name: name,
+              description: description ?? "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
             ),
           )
         );
@@ -139,6 +150,8 @@ class Package extends StatelessWidget {
               name,
               textAlign: TextAlign.center,
               style: new TextStyle(
+                height: 1.2,
+                fontFamily: 'Renner*',
                 fontSize: 18.0,
                 fontWeight: FontWeight.w500,
               ),
@@ -157,11 +170,13 @@ class Task extends StatelessWidget {
     this.icon: Icons.help,
     this.image,
     @required this.name,
+    this.description,
   });
 
   final IconData icon;
   final String image;
   final String name;
+  final String description;
 
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -192,6 +207,7 @@ class Task extends StatelessWidget {
               icon: icon,
               image: image,
               name: name,
+              description: description ?? "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
             ),
           )
         );

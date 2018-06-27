@@ -16,6 +16,8 @@ List<Task> taskList = [
   Task(
     icon: SportsIcons.aerobics,
     name: 'Aerobics',
+    description:
+        'Aerobics is a form of physical exercise that improves flexibility, muscular strength and cardio-vascular fitness, which is done by combining rhythmic aerobic exercise with stretching and strength training routines. While usually performed to music in a group, one may decide to do so themselves without musical accompaniment.',
   ),
   Task(
     icon: SportsIcons.arm_extension,
@@ -36,10 +38,6 @@ List<Task> taskList = [
   Task(
     icon: SportsIcons.basketball,
     name: 'Basketball',
-  ),
-  Task(
-    icon: SportsIcons.bench_press,
-    name: 'Bench Press',
   ),
   Task(
     icon: SportsIcons.burpee_test,

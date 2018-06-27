@@ -59,6 +59,8 @@ class StartActivityScreen extends StatelessWidget {
                   name,
                   textAlign: TextAlign.center,
                   style: new TextStyle(
+                    height: 1.2,
+                    fontFamily: 'Renner*',
                     fontSize: 24.0,
                     fontWeight: FontWeight.w500,
                   ),

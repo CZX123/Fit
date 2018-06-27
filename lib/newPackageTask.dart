@@ -8,7 +8,7 @@ class NewPackageScreen extends StatelessWidget {
     this.image,
     this.color,
     @required this.name,
-    this.description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    @required this.description,
   });
 
   final IconData icon;
@@ -24,7 +24,15 @@ class NewPackageScreen extends StatelessWidget {
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
-        title: new Text('New $name Package'),
+        title: new Text(
+          'New $name Package',
+          style: new TextStyle(
+            height: 1.2,
+            fontFamily: 'Renner*',
+            fontSize: 20.0,
+            fontWeight: FontWeight.w500
+          ),
+        ),
       ),
       body: new ListView(
         children: <Widget>[
@@ -55,6 +63,8 @@ class NewPackageScreen extends StatelessWidget {
                   name,
                   textAlign: TextAlign.center,
                   style: new TextStyle(
+                    height: 1.2,
+                    fontFamily: 'Renner*',
                     fontSize: 24.0,
                     fontWeight: FontWeight.w500,
                   ),
@@ -79,7 +89,7 @@ class NewTaskScreen extends StatelessWidget {
     this.icon: Icons.help,
     this.image,
     @required this.name,
-    this.description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    @required this.description,
   });
 
   final IconData icon;
@@ -94,7 +104,15 @@ class NewTaskScreen extends StatelessWidget {
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
-        title: new Text('New $name Task'),
+        title: new Text(
+          'New $name Task',
+          style: new TextStyle(
+            height: 1.2,
+            fontFamily: 'Renner*',
+            fontSize: 20.0,
+            fontWeight: FontWeight.w500
+          ),
+        ),
       ),
       body: new ListView(
         children: <Widget>[
@@ -125,6 +143,8 @@ class NewTaskScreen extends StatelessWidget {
                   name,
                   textAlign: TextAlign.center,
                   style: new TextStyle(
+                    height: 1.2,
+                    fontFamily: 'Renner*',
                     fontSize: 24.0,
                     fontWeight: FontWeight.w500,
                   ),

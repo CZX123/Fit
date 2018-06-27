@@ -35,6 +35,13 @@ flutter:
     - family: Sports
       fonts:
         - asset: assets/fonts/Sports.ttf
+    - family: Renner*
+      fonts:
+        - asset: assets/fonts/renner.otf
+        - asset: assets/fonts/renner-medium.otf
+          weight: 500
+        - asset: assets/fonts/renner-bold.otf
+          weight: 700
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg

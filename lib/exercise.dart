@@ -64,15 +64,19 @@ class ExerciseScreen extends StatelessWidget {
                       new Text(
                         '$counter',
                         style: new TextStyle(
+                          height: 1.1,
                           color: Colors.white,
-                          fontSize: 56.0,
+                          fontFamily: 'Renner*',
+                          fontSize: 64.0,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       new Text(
                         counter == 1 ? 'Step' : 'Steps',
                         style: new TextStyle(
+                          height: 1.2,
                           color: Colors.white,
+                          fontFamily: 'Renner*',
                           fontSize: 36.0,
                           fontWeight: FontWeight.w500,
                         ),
@@ -139,10 +143,7 @@ class Activity extends StatelessWidget {
           );
         },
         child: new Container(
-          padding: new EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 8.0,
-          ),
+          padding: new EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -168,11 +169,16 @@ class Activity extends StatelessWidget {
                 name,
                 textAlign: TextAlign.center,
                 style: new TextStyle(
+                  height: 1.2,
+                  fontFamily: 'Renner*',
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              new CompletionState(completionState),
+              new Transform.translate(
+                offset: const Offset(0.0, -6.0),
+                child: new CompletionState(completionState),
+              ),
             ],
           ),
         ),
@@ -193,7 +199,7 @@ class CompletionState extends StatelessWidget {
         children: <Widget>[
           new IconTheme(
             data: new IconThemeData(
-              color: darkMode ? Colors.lightGreen : Colors.green,
+              color: darkMode ? Colors.green[400] : Colors.green,
             ),
             child: new Icon(Icons.check_circle),
           ),
@@ -202,7 +208,8 @@ class CompletionState extends StatelessWidget {
             child: new Text(
               'Completed',
               style: new TextStyle(
-                color: darkMode ? Colors.lightGreen : Colors.green,
+                color: darkMode ? Colors.green[400] : Colors.green,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -215,7 +222,7 @@ class CompletionState extends StatelessWidget {
         children: <Widget>[
           new IconTheme(
             data: new IconThemeData(
-              color: darkMode ? Colors.purple[400] : Colors.purple,
+              color: darkMode ? Colors.purple[300] : Colors.purple,
             ),
             child: new Icon(Icons.timer),
           ),
@@ -224,7 +231,8 @@ class CompletionState extends StatelessWidget {
             child: new Text(
               'Pending',
               style: new TextStyle(
-                color: darkMode ? Colors.purple[400] : Colors.purple,
+                color: darkMode ? Colors.purple[300] : Colors.purple,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -237,7 +245,7 @@ class CompletionState extends StatelessWidget {
         children: <Widget>[
           new IconTheme(
             data: new IconThemeData(
-              color: Colors.red,
+              color: darkMode ? Colors.redAccent[200] : Colors.red,
             ),
             child: new Icon(Icons.warning),
           ),
@@ -246,7 +254,8 @@ class CompletionState extends StatelessWidget {
             child: new Text(
               'Incomplete',
               style: new TextStyle(
-                color: Colors.red,
+                color: darkMode ? Colors.redAccent[200] : Colors.red,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

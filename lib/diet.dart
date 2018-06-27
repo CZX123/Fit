@@ -70,7 +70,9 @@ class DietScreen extends StatelessWidget {
                       new Text(
                         'Your BMI is',
                         style: new TextStyle(
+                          height: 1.2,
                           color: Colors.white,
+                          fontFamily: 'Renner*',
                           fontSize: 28.0,
                           fontWeight: FontWeight.w500,
                         ),
@@ -78,8 +80,10 @@ class DietScreen extends StatelessWidget {
                       new Text(
                         '28',
                         style: new TextStyle(
+                          height: 1.1,
                           color: Colors.white,
-                          fontSize: 48.0,
+                          fontSize: 56.0,
+                          fontFamily: 'Renner*',
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -164,6 +168,8 @@ class Diet extends StatelessWidget {
                 name,
                 textAlign: TextAlign.center,
                 style: new TextStyle(
+                  height: 1.2,
+                  fontFamily: 'Renner*',
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
                 ),
