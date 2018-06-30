@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'data/activeActivityList.dart';
 import 'startActivity.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ExerciseScreen extends StatelessWidget {
   const ExerciseScreen({
@@ -14,9 +15,8 @@ class ExerciseScreen extends StatelessWidget {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Orientation orientation = MediaQuery.of(context).orientation;
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     double windowTopPadding = MediaQuery.of(context).padding.top;
-    double containerHeight = orientation == Orientation.portrait ? width / 2 : 180.0;
+    double containerHeight = 175.0;
     return new SingleChildScrollView(
       child: new Stack(
         children: <Widget>[
@@ -33,7 +33,9 @@ class ExerciseScreen extends StatelessWidget {
             top: containerHeight + windowTopPadding,
             right: 0.0,
             left: 0.0,
-            height: (height - containerHeight < 300 - 48.0) ? 300.0 : height - containerHeight - 48.0,
+            height: (height - containerHeight < 300 - 48.0)
+                ? 300.0
+                : height - containerHeight - 48.0,
             child: new DecoratedBox(
               decoration: new BoxDecoration(
                 gradient: new LinearGradient(
@@ -48,37 +50,61 @@ class ExerciseScreen extends StatelessWidget {
             ),
           ),
           new Container(
+            color: darkMode ? Colors.grey[900] : null,
             constraints: new BoxConstraints(
               minHeight: height - 48.0,
             ),
             padding: new EdgeInsets.only(top: windowTopPadding),
             child: new Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                new Padding(
+                  padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
+                  child: new Text(
+                    'Exercise',
+                    style: new TextStyle(
+                      height: 1.2,
+                      color: Colors.white,
+                      fontFamily: 'Renner*',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
                 new Container(
-                  height: containerHeight,
-                  width: width,
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  padding: new EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
+                  child: new Row(
                     children: <Widget>[
-                      new Text(
-                        '$counter',
-                        style: new TextStyle(
-                          height: 1.1,
-                          color: Colors.white,
-                          fontFamily: 'Renner*',
-                          fontSize: 64.0,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      new SvgPicture.asset(
+                        'assets/svg/footsteps.svg',
+                        height: 64.0,
+                        width: 64.0,
                       ),
-                      new Text(
-                        counter == 1 ? 'Step' : 'Steps',
-                        style: new TextStyle(
-                          height: 1.2,
-                          color: Colors.white,
-                          fontFamily: 'Renner*',
-                          fontSize: 36.0,
-                          fontWeight: FontWeight.w500,
+                      new Padding(
+                        padding: new EdgeInsets.only(left: 18.0),
+                        child: new Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text(
+                              '$counter',
+                              style: new TextStyle(
+                                fontFamily: 'Renner*',
+                                color: Colors.white,
+                                fontSize: 56.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            new Text(
+                              counter == 1 ? ' STEP' : ' STEPS',
+                              style: new TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -91,6 +117,7 @@ class ExerciseScreen extends StatelessWidget {
                     columnCount: orientation == Orientation.portrait ? 2 : 3,
                   ),
                 ),
+                new Container(),
               ],
             ),
           ),
@@ -99,7 +126,6 @@ class ExerciseScreen extends StatelessWidget {
     );
   }
 }
-
 
 class Activity extends StatelessWidget {
   const Activity({
@@ -116,7 +142,9 @@ class Activity extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     Orientation orientation = MediaQuery.of(context).orientation;
-    double width = MediaQuery.of(context).size.width / ((orientation == Orientation.portrait) ? 2 : 3) - 12.0;
+    double width = MediaQuery.of(context).size.width /
+            ((orientation == Orientation.portrait) ? 2 : 3) -
+        12.0;
     return new Container(
       height: width / ((orientation == Orientation.portrait) ? 1.1 : 1.3),
       width: width,
@@ -131,16 +159,15 @@ class Activity extends StatelessWidget {
         ),
         onPressed: () {
           Navigator.push(
-            context,
-            new MaterialPageRoute(
-              builder: (context) => new StartActivityScreen(
-                icon: icon,
-                image: image,
-                color: darkMode ? Colors.lightBlue : Colors.blue,
-                name: name,
-              ),
-            )
-          );
+              context,
+              new MaterialPageRoute(
+                builder: (context) => new StartActivityScreen(
+                      icon: icon,
+                      image: image,
+                      color: darkMode ? Colors.lightBlue : Colors.blue,
+                      name: name,
+                    ),
+              ));
         },
         child: new Container(
           padding: new EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
@@ -153,16 +180,16 @@ class Activity extends StatelessWidget {
                 child: new Hero(
                   tag: name + 'a',
                   child: (image != null)
-                    ? new Image.asset(
-                      image,
-                      fit: BoxFit.contain,
-                    )
-                    : new FittedBox(
-                        child: new Icon(
-                        icon,
-                        color: darkMode ? Colors.lightBlue : Colors.blue,
-                      ),
-                    ),
+                      ? new Image.asset(
+                          image,
+                          fit: BoxFit.contain,
+                        )
+                      : new FittedBox(
+                          child: new Icon(
+                            icon,
+                            color: darkMode ? Colors.lightBlue : Colors.blue,
+                          ),
+                        ),
                 ),
               ),
               new Text(
@@ -215,8 +242,7 @@ class CompletionState extends StatelessWidget {
           ),
         ],
       );
-    }
-    else if (completionState == 'Pending') {
+    } else if (completionState == 'Pending') {
       return new Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -238,8 +264,7 @@ class CompletionState extends StatelessWidget {
           ),
         ],
       );
-    }
-    else {
+    } else {
       return new Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

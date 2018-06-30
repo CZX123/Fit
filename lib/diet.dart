@@ -4,14 +4,12 @@ import 'customWidgets.dart';
 import 'data/dietList.dart';
 
 class DietScreen extends StatelessWidget {
-
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Orientation orientation = MediaQuery.of(context).orientation;
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     double windowTopPadding = MediaQuery.of(context).padding.top;
-    double containerHeight = orientation == Orientation.portrait ? width / 14 * 9 : 230.0;
+    double containerHeight = 172.0;
     return new SingleChildScrollView(
       child: new Stack(
         children: <Widget>[
@@ -28,7 +26,9 @@ class DietScreen extends StatelessWidget {
             top: containerHeight + windowTopPadding,
             right: 0.0,
             left: 0.0,
-            height: (height - containerHeight < 300 - 48.0) ? 300.0 : height - containerHeight - 48.0,
+            height: (height - containerHeight < 300 - 48.0)
+                ? 300.0
+                : height - containerHeight - 48.0,
             child: new DecoratedBox(
               decoration: new BoxDecoration(
                 gradient: new LinearGradient(
@@ -43,63 +43,55 @@ class DietScreen extends StatelessWidget {
             ),
           ),
           new Container(
+            color: darkMode ? Colors.grey[900] : null,
             constraints: new BoxConstraints(
               minHeight: height - 48.0,
             ),
             padding: new EdgeInsets.only(top: windowTopPadding),
             child: new Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                new Container(
-                  height: containerHeight,
-                  width: width,
-                  color: darkMode ? Colors.grey[900] : Colors.green,
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Padding(
-                        padding: new EdgeInsets.only(bottom: 8.0),
-                        child: new IconTheme(
-                          data: new IconThemeData(
-                            size: 48.0,
-                            color: Colors.white,
-                          ),
-                          child: new Icon(Icons.warning),
-                        ),
-                      ),
-                      new Text(
-                        'Your BMI is',
+                new Padding(
+                  padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
+                  child: new Text(
+                    'Diet',
+                    style: new TextStyle(
+                      height: 1.2,
+                      color: Colors.white,
+                      fontFamily: 'Renner*',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Padding(
+                      padding: new EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                      child: new Text(
+                        'Hello',
                         style: new TextStyle(
                           height: 1.2,
                           color: Colors.white,
                           fontFamily: 'Renner*',
-                          fontSize: 28.0,
+                          fontSize: 48.0,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      new Text(
-                        '28',
+                    ),
+                    new Padding(
+                      padding: new EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 20.0),
+                      child: new Text(
+                        'Here are some recommended diets for you:',
                         style: new TextStyle(
-                          height: 1.1,
                           color: Colors.white,
-                          fontSize: 56.0,
-                          fontFamily: 'Renner*',
-                          fontWeight: FontWeight.w700,
+                          fontSize: 16.0,
                         ),
                       ),
-                      new Padding(
-                        padding: new EdgeInsets.only(top: 8.0),
-                        child: new Text(
-                          'Here are some recommended diets for you:',
-                          style: new TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 new Container(
                   padding: new EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 32.0),
@@ -108,6 +100,7 @@ class DietScreen extends StatelessWidget {
                     columnCount: orientation == Orientation.portrait ? 2 : 3,
                   ),
                 ),
+                new Container(),
               ],
             ),
           ),
@@ -132,7 +125,9 @@ class Diet extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     Orientation orientation = MediaQuery.of(context).orientation;
-    double width = MediaQuery.of(context).size.width / ((orientation == Orientation.portrait) ? 2 : 3) - 12.0;
+    double width = MediaQuery.of(context).size.width /
+            ((orientation == Orientation.portrait) ? 2 : 3) -
+        12.0;
     return new Container(
       height: width / ((orientation == Orientation.portrait) ? 1.3 : 1.6),
       width: width,
@@ -155,15 +150,15 @@ class Diet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               (image != null)
-                ? new Image.asset(
-                  image,
-                  height: 64.0,
-                )
-                : new Icon(
-                  icon,
-                  size: 64.0,
-                  color: Colors.green,
-                ),
+                  ? new Image.asset(
+                      image,
+                      height: 64.0,
+                    )
+                  : new Icon(
+                      icon,
+                      size: 64.0,
+                      color: Colors.green,
+                    ),
               new Text(
                 name,
                 textAlign: TextAlign.center,

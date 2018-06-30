@@ -52,10 +52,6 @@ List<Task> taskList = [
     name: 'Crunches',
   ),
   Task(
-    icon: SportsIcons.cycling,
-    name: 'Cycling',
-  ),
-  Task(
     icon: SportsIcons.deadlift,
     name: 'Deadlifts',
   ),
@@ -74,10 +70,6 @@ List<Task> taskList = [
   Task(
     icon: SportsIcons.front_raise,
     name: 'Front Raises',
-  ),
-  Task(
-    icon: SportsIcons.handball,
-    name: 'Handball',
   ),
   Task(
     icon: SportsIcons.hiking,
@@ -136,10 +128,6 @@ List<Task> taskList = [
     name: 'Rowing Machine',
   ),
   Task(
-    icon: SportsIcons.running,
-    name: 'Running',
-  ),
-  Task(
     icon: SportsIcons.shoulder,
     name: 'Shoulder Presses',
   ),
@@ -150,10 +138,6 @@ List<Task> taskList = [
   Task(
     icon: SportsIcons.skipping_rope,
     name: 'Skipping Rope',
-  ),
-  Task(
-    icon: SportsIcons.soccer_football,
-    name: 'Soccer',
   ),
   Task(
     icon: SportsIcons.squat,
@@ -168,6 +152,37 @@ List<Task> taskList = [
     name: 'Stretching',
   ),
   Task(
+    icon: SportsIcons.treadmill,
+    name: 'Treadmill',
+  ),
+  Task(
+    icon: SportsIcons.weight_machine,
+    name: 'Weight Machine',
+  ),
+];
+
+List<Task> sportsList = [
+  Task(
+    icon: SportsIcons.badminton,
+    name: 'Badminton',
+  ),
+  Task(
+    icon: SportsIcons.cycling,
+    name: 'Cycling',
+  ),
+  Task(
+    icon: SportsIcons.handball,
+    name: 'Handball',
+  ),
+  Task(
+    icon: SportsIcons.running,
+    name: 'Running',
+  ),
+  Task(
+    icon: SportsIcons.soccer_football,
+    name: 'Soccer',
+  ),
+  Task(
     icon: SportsIcons.swimming,
     name: 'Swimming',
   ),
@@ -176,15 +191,7 @@ List<Task> taskList = [
     name: 'Table Tennis',
   ),
   Task(
-    icon: SportsIcons.treadmill,
-    name: 'Treadmill',
-  ),
-  Task(
     icon: SportsIcons.walking,
     name: 'Walking',
-  ),
-  Task(
-    icon: SportsIcons.weight_machine,
-    name: 'Weight Machine',
   ),
 ];

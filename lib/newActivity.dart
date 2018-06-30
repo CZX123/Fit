@@ -3,8 +3,47 @@ import 'package:flutter/material.dart';
 import 'data/newActivityList.dart';
 import 'newPackageTask.dart';
 import 'customWidgets.dart';
+import 'sportsIcons.dart';
+import 'customExpansionPanel.dart';
 
-class NewActivityScreen extends StatelessWidget {
+class ExpansionPanelItem {
+  ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon});
+  bool isExpanded;
+  final String header;
+  final Widget body;
+  final IconData icon;
+}
+
+class NewActivityScreen extends StatefulWidget {
+  @override
+  _NewActivityScreenState createState() => new _NewActivityScreenState();
+}
+
+class _NewActivityScreenState extends State<NewActivityScreen> {
+  List<ExpansionPanelItem> items = [
+    new ExpansionPanelItem(
+      isExpanded: false,
+      header: 'Sports',
+      icon: SportsIcons.tennis,
+      body: new Padding(
+        padding: new EdgeInsets.only(bottom: 8.0),
+        child: new Column(
+          children: sportsList,
+        ),
+      ),
+    ),
+    new ExpansionPanelItem(
+      isExpanded: false,
+      header: 'Others',
+      icon: SportsIcons.stretching,
+      body: new Padding(
+        padding: new EdgeInsets.only(bottom: 8.0),
+        child: new Column(
+          children: taskList,
+        ),
+      ),
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -16,11 +55,10 @@ class NewActivityScreen extends StatelessWidget {
         title: new Text(
           'New Activity',
           style: new TextStyle(
-            height: 1.2,
-            fontFamily: 'Renner*',
-            fontSize: 20.0,
-            fontWeight: FontWeight.w500
-          ),
+              height: 1.2,
+              fontFamily: 'Renner*',
+              fontSize: 20.0,
+              fontWeight: FontWeight.w500),
         ),
         actions: <Widget>[
           new IconButton(
@@ -49,14 +87,15 @@ class NewActivityScreen extends StatelessWidget {
             padding: new EdgeInsets.all(8.0),
             sliver: new SliverGrid.count(
               crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-              childAspectRatio: (orientation == Orientation.portrait) ? 1.3 : 1.6,
+              childAspectRatio:
+                  (orientation == Orientation.portrait) ? 1.3 : 1.6,
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 8.0,
               children: packageList,
             ),
           ),
           new SliverPadding(
-            padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+            padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 24.0),
             sliver: new SliverToBoxAdapter(
               child: new Text(
                 'Tasks',
@@ -70,20 +109,77 @@ class NewActivityScreen extends StatelessWidget {
           ),
           new SliverPadding(
             padding: new EdgeInsets.only(bottom: 32.0),
-            sliver: new SliverList(
-              delegate: new SliverChildBuilderDelegate(
-                (context, i) {
-                  if (i < taskList.length) return taskList[i];
-                }
+            sliver: new SliverToBoxAdapter(
+              child: new CustomExpansionPanelList(
+                expansionCallback: (index, isExpanded) {
+                  setState(() {
+                    items[index].isExpanded = !items[index].isExpanded;
+                  });
+                },
+                children: items.map((ExpansionPanelItem item) {
+                  return new ExpansionPanel(
+                    headerBuilder: (context, isExpanded) {
+                      return new FlatButton(
+                        child: new Container(
+                          constraints: new BoxConstraints(
+                            minHeight: 72.0,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: new Row(
+                            children: <Widget>[
+                              new CircleAvatar(
+                                backgroundColor: darkMode ? Colors.blueGrey[700] : Colors.blue,
+                                child: new Icon(
+                                  item.icon,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              new Expanded(
+                                child: new Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child: new Text(
+                                    item.header,
+                                    textAlign: TextAlign.left,
+                                    style: new TextStyle(
+                                      height: 1.2,
+                                      fontFamily: 'Renner*',
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              new CustomExpandIcon(isExpanded),
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            item.isExpanded = !item.isExpanded;
+                          });
+                        },
+                      );
+                    },
+                    body: item.body,
+                    isExpanded: item.isExpanded,
+                  );
+                }).toList(),
               ),
             ),
           ),
+          /*new SliverPadding(
+            padding: new EdgeInsets.only(bottom: 32.0),
+            sliver: new SliverList(
+              delegate: new SliverChildBuilderDelegate((context, i) {
+                if (i < taskList.length) return taskList[i];
+              }),
+            ),
+          ),*/
         ],
       ),
     );
   }
 }
-
 
 class Package extends StatelessWidget {
   Package({
@@ -100,7 +196,8 @@ class Package extends StatelessWidget {
   final String description;
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    final Color actualColor = color ?? (darkMode ? Colors.lightBlue : Colors.blue);
+    final Color actualColor =
+        color ?? (darkMode ? Colors.lightBlue : Colors.blue);
     return new RaisedButton(
       elevation: darkMode ? 0.0 : 2.0,
       color: darkMode ? Colors.grey[850] : Colors.white,
@@ -111,17 +208,17 @@ class Package extends StatelessWidget {
       ),
       onPressed: () {
         Navigator.push(
-          context,
-          new FadingPageRoute(
-            builder: (context) => new NewPackageScreen(
-              icon: icon,
-              image: image,
-              color: actualColor,
-              name: name,
-              description: description ?? "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-            ),
-          )
-        );
+            context,
+            new FadingPageRoute(
+              builder: (context) => new NewPackageScreen(
+                    icon: icon,
+                    image: image,
+                    color: actualColor,
+                    name: name,
+                    description: description ??
+                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                  ),
+            ));
       },
       child: new Container(
         padding: new EdgeInsets.all(8.0),
@@ -134,16 +231,16 @@ class Package extends StatelessWidget {
               child: new Hero(
                 tag: name,
                 child: (image != null)
-                  ? new Image.asset(
-                      image,
-                      fit: BoxFit.contain,
-                    )
-                  : new FittedBox(
-                      child: new Icon(
-                        icon,
-                        color: actualColor,
+                    ? new Image.asset(
+                        image,
+                        fit: BoxFit.contain,
+                      )
+                    : new FittedBox(
+                        child: new Icon(
+                          icon,
+                          color: actualColor,
+                        ),
                       ),
-                    ),
               ),
             ),
             new Text(
@@ -163,9 +260,7 @@ class Package extends StatelessWidget {
   }
 }
 
-
 class Task extends StatelessWidget {
-
   const Task({
     this.icon: Icons.help,
     this.image,
@@ -180,39 +275,50 @@ class Task extends StatelessWidget {
 
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return new ListTile(
-      leading: new SizedBox(
-        height: 32.0,
-        width: 32.0,
-        child: new Hero(
-          tag: name,
-          child: (image != null)
-            ? new Image.asset(
-                image,
-                fit: BoxFit.contain,
-              )
-            : new FittedBox(
-                child: new Icon(
-                  icon,
-                  color: darkMode ? Colors.lightBlue : Colors.blue,
-                ),
+    return new FlatButton(
+      child: new Container(
+        padding: const EdgeInsets.only(left: 2.0),
+        height: 56.0,
+        child: new Row(
+          children: <Widget>[
+            new SizedBox(
+              height: 32.0,
+              width: 32.0,
+              child: new Hero(
+                tag: name,
+                child: (image != null)
+                    ? new Image.asset(
+                        image,
+                        fit: BoxFit.contain,
+                      )
+                    : new FittedBox(
+                        child: new Icon(
+                          icon,
+                          color: darkMode ? Colors.lightBlue : Colors.blue,
+                        ),
+                      ),
               ),
+            ),
+            new Padding(
+              padding: const EdgeInsets.only(left: 22.0),
+              child: new Text(name),
+            ),
+          ],
         ),
       ),
-      onTap: () {
+      onPressed: () {
         Navigator.push(
-          context,
-          new FadingPageRoute(
-            builder: (context) => new NewTaskScreen(
-              icon: icon,
-              image: image,
-              name: name,
-              description: description ?? "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-            ),
-          )
-        );
+            context,
+            new FadingPageRoute(
+              builder: (context) => new NewTaskScreen(
+                    icon: icon,
+                    image: image,
+                    name: name,
+                    description: description ??
+                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                  ),
+            ));
       },
-      title: new Text(name),
     );
   }
 }

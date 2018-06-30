@@ -170,15 +170,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           tabs: <Widget>[
             new Tab(
               icon: tabIcon(Icons.directions_run, 0, darkMode ? Colors.lightBlue : Colors.blue),
-              //icon: new Icon(Icons.directions_run),
             ),
             new Tab(
-              icon: tabIcon(Icons.fastfood, 1, darkMode ? Colors.green : Colors.green),
-              //icon: new Icon(Icons.fastfood),
+              icon: tabIcon(Icons.restaurant_menu, 1, darkMode ? Colors.green : Colors.green),
             ),
             new Tab(
               icon: tabIcon(Icons.settings, 2, darkMode ? Colors.deepOrange : Colors.blueGrey),
-              //icon: new Icon(Icons.settings),
             ),
           ],
         ),

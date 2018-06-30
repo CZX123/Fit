@@ -7,7 +7,6 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Brightness brightness = Theme.of(context).brightness;
     final bool darkMode = brightness == Brightness.dark;
-    final String brightnessText = brightness == Brightness.light ? 'Light' : 'Dark';
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       body: new ListView(
@@ -18,7 +17,7 @@ class SettingsScreen extends StatelessWidget {
               'Settings',
               style: new TextStyle(
                 height: 1.2,
-                fontSize: 24.0,
+                fontSize: 22.0,
                 fontFamily: 'Renner*',
                 fontWeight: FontWeight.w500,
                 color: darkMode ? Colors.white : Colors.blueGrey,
@@ -31,21 +30,23 @@ class SettingsScreen extends StatelessWidget {
             onTap: () {},
           ),
           new ListTile(
-            title: new Text('Toggle App Theme'),
-            subtitle: new Text('Current Theme: $brightnessText'),
-            onTap: () {
-              DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark ? Brightness.light: Brightness.dark);
-            },
-          ),
-          new ListTile(
             title: new Text('Notifications'),
             subtitle: new Text('Choose when to notify you before each activity'),
             onTap: () {},
           ),
-          new ListTile(
-            title: new Text('More Stuff'),
-            subtitle: new Text('To be available in future updates'),
-            onTap: () {},
+          new SwitchListTile(
+            value: true,
+            activeColor: darkMode ? Colors.lightBlue : Colors.blue,
+            title: new Text('Step Count'),
+            onChanged: (bool) {},
+          ),
+          new SwitchListTile(
+            value: darkMode,
+            activeColor: Colors.lightBlue,
+            title: new Text('Dark Mode'),
+            onChanged: (bool) {
+              DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark ? Brightness.light: Brightness.dark);
+            },
           ),
         ],
       ),

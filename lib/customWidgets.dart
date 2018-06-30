@@ -50,7 +50,6 @@ class FadingPageRoute<T> extends MaterialPageRoute<T> {
       : super(builder: builder, settings: settings);
 
   @override
-  // TODO: implement transitionDuration
   Duration get transitionDuration => const Duration(milliseconds: 300);
 
   @override
