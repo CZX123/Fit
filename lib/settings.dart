@@ -12,7 +12,7 @@ class SettingsScreen extends StatelessWidget {
       body: new ListView(
         children: <Widget>[
           new Padding(
-            padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
             child: new Text(
               'Settings',
               style: new TextStyle(

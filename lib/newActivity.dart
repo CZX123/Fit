@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'data/newActivityList.dart';
-import 'newPackageTask.dart';
+import 'addActivity.dart';
 import 'customWidgets.dart';
 import 'sportsIcons.dart';
 import 'customExpansionPanel.dart';
@@ -26,7 +26,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
       header: 'Sports',
       icon: SportsIcons.tennis,
       body: new Padding(
-        padding: new EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: new Column(
           children: sportsList,
         ),
@@ -37,7 +37,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
       header: 'Others',
       icon: SportsIcons.stretching,
       body: new Padding(
-        padding: new EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: new Column(
           children: taskList,
         ),
@@ -71,7 +71,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
       body: new CustomScrollView(
         slivers: <Widget>[
           new SliverPadding(
-            padding: new EdgeInsets.fromLTRB(16.0, 28.0, 16.0, 16.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 28.0, 16.0, 16.0),
             sliver: new SliverToBoxAdapter(
               child: new Text(
                 'Packages',
@@ -84,7 +84,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
             ),
           ),
           new SliverPadding(
-            padding: new EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             sliver: new SliverGrid.count(
               crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
               childAspectRatio:
@@ -95,7 +95,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
             ),
           ),
           new SliverPadding(
-            padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 24.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 24.0),
             sliver: new SliverToBoxAdapter(
               child: new Text(
                 'Tasks',
@@ -108,7 +108,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
             ),
           ),
           new SliverPadding(
-            padding: new EdgeInsets.only(bottom: 32.0),
+            padding: const EdgeInsets.only(bottom: 32.0),
             sliver: new SliverToBoxAdapter(
               child: new CustomExpansionPanelList(
                 expansionCallback: (index, isExpanded) {
@@ -167,14 +167,6 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
               ),
             ),
           ),
-          /*new SliverPadding(
-            padding: new EdgeInsets.only(bottom: 32.0),
-            sliver: new SliverList(
-              delegate: new SliverChildBuilderDelegate((context, i) {
-                if (i < taskList.length) return taskList[i];
-              }),
-            ),
-          ),*/
         ],
       ),
     );
@@ -185,19 +177,17 @@ class Package extends StatelessWidget {
   Package({
     this.icon: Icons.help,
     this.image,
-    this.color,
     @required this.name,
     this.description,
+    this.packageTasks,
   });
   final IconData icon;
   final String image;
-  final Color color;
   final String name;
   final String description;
+  final List<Task> packageTasks;
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    final Color actualColor =
-        color ?? (darkMode ? Colors.lightBlue : Colors.blue);
     return new RaisedButton(
       elevation: darkMode ? 0.0 : 2.0,
       color: darkMode ? Colors.grey[850] : Colors.white,
@@ -210,18 +200,19 @@ class Package extends StatelessWidget {
         Navigator.push(
             context,
             new FadingPageRoute(
-              builder: (context) => new NewPackageScreen(
+              builder: (context) => new AddActivityScreen(
                     icon: icon,
                     image: image,
-                    color: actualColor,
                     name: name,
                     description: description ??
                         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                    packageTasks: packageTasks ?? [],
                   ),
-            ));
+            ),
+          );
       },
       child: new Container(
-        padding: new EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -238,7 +229,7 @@ class Package extends StatelessWidget {
                     : new FittedBox(
                         child: new Icon(
                           icon,
-                          color: actualColor,
+                          color: darkMode ? Colors.lightBlue : Colors.blue,
                         ),
                       ),
               ),
@@ -277,7 +268,6 @@ class Task extends StatelessWidget {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return new FlatButton(
       child: new Container(
-        padding: const EdgeInsets.only(left: 2.0),
         height: 56.0,
         child: new Row(
           children: <Widget>[
@@ -300,7 +290,7 @@ class Task extends StatelessWidget {
               ),
             ),
             new Padding(
-              padding: const EdgeInsets.only(left: 22.0),
+              padding: const EdgeInsets.only(left: 24.0),
               child: new Text(name),
             ),
           ],
@@ -310,7 +300,7 @@ class Task extends StatelessWidget {
         Navigator.push(
             context,
             new FadingPageRoute(
-              builder: (context) => new NewTaskScreen(
+              builder: (context) => new AddActivityScreen(
                     icon: icon,
                     image: image,
                     name: name,

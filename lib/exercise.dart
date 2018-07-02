@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'data/activeActivityList.dart';
 import 'startActivity.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'sportsIcons.dart';
 
 class ExerciseScreen extends StatelessWidget {
   const ExerciseScreen({
@@ -60,7 +60,7 @@ class ExerciseScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new Padding(
-                  padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
                   child: new Text(
                     'Exercise',
                     style: new TextStyle(
@@ -73,16 +73,17 @@ class ExerciseScreen extends StatelessWidget {
                   ),
                 ),
                 new Container(
-                  padding: new EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
                   child: new Row(
                     children: <Widget>[
-                      new SvgPicture.asset(
-                        'assets/svg/footsteps.svg',
-                        height: 64.0,
-                        width: 64.0,
+                      new Icon(
+                        SportsIcons.footsteps,
+                        size: 64.0,
+                        color: Colors.white,
+                        semanticLabel: 'Footstep',
                       ),
                       new Padding(
-                        padding: new EdgeInsets.only(left: 18.0),
+                        padding: const EdgeInsets.only(left: 18.0),
                         child: new Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +112,7 @@ class ExerciseScreen extends StatelessWidget {
                   ),
                 ),
                 new Container(
-                  padding: new EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
+                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
                   child: new Grid(
                     children: activeActivityList,
                     columnCount: orientation == Orientation.portrait ? 2 : 3,
@@ -148,7 +149,7 @@ class Activity extends StatelessWidget {
     return new Container(
       height: width / ((orientation == Orientation.portrait) ? 1.1 : 1.3),
       width: width,
-      margin: new EdgeInsets.all(4.0),
+      margin: const EdgeInsets.all(4.0),
       child: new RaisedButton(
         elevation: darkMode ? 0.0 : 2.0,
         color: darkMode ? Colors.grey[850] : Colors.white,
@@ -170,7 +171,7 @@ class Activity extends StatelessWidget {
               ));
         },
         child: new Container(
-          padding: new EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
+          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -231,7 +232,7 @@ class CompletionState extends StatelessWidget {
             child: new Icon(Icons.check_circle),
           ),
           new Padding(
-            padding: new EdgeInsets.only(left: 4.0),
+            padding: const EdgeInsets.only(left: 4.0),
             child: new Text(
               'Completed',
               style: new TextStyle(
@@ -253,7 +254,7 @@ class CompletionState extends StatelessWidget {
             child: new Icon(Icons.timer),
           ),
           new Padding(
-            padding: new EdgeInsets.only(left: 4.0),
+            padding: const EdgeInsets.only(left: 4.0),
             child: new Text(
               'Pending',
               style: new TextStyle(
@@ -275,7 +276,7 @@ class CompletionState extends StatelessWidget {
             child: new Icon(Icons.warning),
           ),
           new Padding(
-            padding: new EdgeInsets.only(left: 4.0),
+            padding: const EdgeInsets.only(left: 4.0),
             child: new Text(
               'Incomplete',
               style: new TextStyle(

@@ -53,7 +53,7 @@ class DietScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 new Padding(
-                  padding: new EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
                   child: new Text(
                     'Diet',
                     style: new TextStyle(
@@ -69,7 +69,7 @@ class DietScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     new Padding(
-                      padding: new EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
                       child: new Text(
                         'Hello',
                         style: new TextStyle(
@@ -82,7 +82,7 @@ class DietScreen extends StatelessWidget {
                       ),
                     ),
                     new Padding(
-                      padding: new EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 20.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 20.0),
                       child: new Text(
                         'Here are some recommended diets for you:',
                         style: new TextStyle(
@@ -94,7 +94,7 @@ class DietScreen extends StatelessWidget {
                   ],
                 ),
                 new Container(
-                  padding: new EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 32.0),
+                  padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 32.0),
                   child: new Grid(
                     children: dietList,
                     columnCount: orientation == Orientation.portrait ? 2 : 3,
@@ -131,7 +131,7 @@ class Diet extends StatelessWidget {
     return new Container(
       height: width / ((orientation == Orientation.portrait) ? 1.3 : 1.6),
       width: width,
-      margin: new EdgeInsets.all(4.0),
+      margin: const EdgeInsets.all(4.0),
       child: new RaisedButton(
         elevation: darkMode ? 0.0 : 2.0,
         color: darkMode ? Colors.grey[850] : Colors.white,
@@ -142,7 +142,7 @@ class Diet extends StatelessWidget {
         ),
         onPressed: onPressed,
         child: new Container(
-          padding: new EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
             vertical: 8.0,
           ),

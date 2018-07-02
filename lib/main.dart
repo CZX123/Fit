@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
       ),
       themedWidgetBuilder: (context, theme) {
         return new MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Fit',
           theme: theme,
           home: new MyHomePage(title: 'Fit'),
@@ -78,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     int index = controller.index;
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
     if (index == 0 && !darkMode) changeColor(Colors.blue, Colors.deepOrangeAccent);
-    else if (index == 0) changeColor(Colors.grey[900], Colors.deepOrangeAccent[700]);
+    else if (index == 0) changeColor(Colors.grey[900], Colors.deepOrangeAccent);
     else if (index == 1 && !darkMode) changeColor(Colors.green, Colors.limeAccent);
     else if (index == 1) changeColor(Colors.grey[900], Colors.limeAccent[700]);
     else if (index == 2 && !darkMode) changeColor(Colors.blueGrey, Colors.blueGrey);

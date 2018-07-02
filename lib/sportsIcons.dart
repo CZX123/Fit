@@ -99,4 +99,5 @@ class SportsIcons {
   static const IconData windsurfing = const IconData(0xe95d, fontFamily: font);
   static const IconData yachting = const IconData(0xe95e, fontFamily: font);
   static const IconData yoga = const IconData(0xe95f, fontFamily: font);
+  static const IconData footsteps = const IconData(0xe960, fontFamily: font);
 }
