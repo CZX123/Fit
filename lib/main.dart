@@ -1,10 +1,13 @@
+import 'dart:async' show Future;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'exercise.dart';
 import 'diet.dart';
 import 'newActivity.dart';
 import 'settings.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
+import 'startActivity.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
@@ -52,31 +55,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   int _counter = 500;
-  int _currentIndex = 0;
-  int _previousIndex = 0;
-  double _offset = 0.0;
-  bool _indexIsChanging = false;
+  int index = 0;
   TabController controller;
 
   @override
   void initState() {
     super.initState();
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('icon');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        selectNotification: onSelectNotification);
     controller = new TabController(vsync: this, length: 3);
-    controller.animation.addListener(updateScrollValues);
     controller.addListener(changeScreen);
   }
 
   @override
   void dispose() {
-    controller.animation.removeListener(updateScrollValues);
     controller.removeListener(changeScreen);
     controller.dispose();
     super.dispose();
   }
 
   void changeScreen() {
-    int index = controller.index;
+    index = controller.index;
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
     if (index == 0 && !darkMode) changeColor(Colors.blue, Colors.deepOrangeAccent);
     else if (index == 0) changeColor(Colors.grey[900], Colors.deepOrangeAccent);
@@ -86,21 +93,121 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     else changeColor(Colors.grey[900], Colors.blueGrey);
   }
 
-  void updateScrollValues() {
-    setState(() {
-      _indexIsChanging = controller.indexIsChanging;
-      _currentIndex = controller.index;
-      _previousIndex = controller.previousIndex;
-      _offset = controller.offset;
-    });
-  }
-
   void changeColor(Color primaryColor, Color accentColor) {
     DynamicTheme.of(context).setThemeData(new ThemeData(
       brightness: Theme.of(context).brightness,
       primaryColor: primaryColor,
       accentColor: accentColor,
     ));
+  }
+
+  Future onSelectNotification(String payload) async {
+    Activity selectedActivity;
+    activeActivityList.forEach((activity) {
+      if (activity.name == payload) selectedActivity = activity;
+    });
+    await Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new StartActivityScreen(
+        name: selectedActivity.name,
+        icon: selectedActivity.icon,
+        color: Theme.of(context).brightness == Brightness.dark ? Colors.lightBlue : Colors.blue,
+      )),
+    );
+  }
+
+  Future _showNotification() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      'id',
+      'name',
+      'description',
+      color: Colors.blue,
+      importance: Importance.Max,
+      priority: Priority.High,
+    );
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Heads Up!', 'Your NAPFA exercise is starting in 20 mins!', platformChannelSpecifics,
+        payload: 'NAPFA');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    return new Scaffold(
+      body: new Container(
+        color: Colors.grey[50],
+        child: new TabBarView(
+          controller: controller,
+          children: <Widget>[
+            new ExerciseScreen(counter: _counter),
+            new DietScreen(),
+            new SettingsScreen(),
+          ],
+        ),
+      ),
+
+      floatingActionButton: index == 0 ? new FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (context) => new NewActivityScreen(),
+            )
+          );
+        },
+        tooltip: 'New Activity',
+        child: new Icon(Icons.add),
+      ) : new FloatingActionButton(
+        onPressed: () {
+          _showNotification();
+        },
+        child: new Icon(Icons.notifications_active),
+      ),
+      bottomNavigationBar: new Material(
+        color: darkMode ? Colors.grey[850] : Colors.white,
+        elevation: 8.0,
+        child: new TabIcons(
+          controller: controller,
+        ),
+      ),
+    );
+  }
+}
+
+class TabIcons extends StatefulWidget {
+  TabIcons({Key key, this.controller}) : super(key: key);
+  final TabController controller;
+  _TabIconsState createState() => new _TabIconsState();
+}
+
+class _TabIconsState extends State<TabIcons> {
+  int _currentIndex = 0;
+  int _previousIndex = 0;
+  double _offset = 0.0;
+  bool _indexIsChanging = false;
+
+  void updateScrollValues() {
+    setState(() {
+      _indexIsChanging = widget.controller.indexIsChanging;
+      _currentIndex = widget.controller.index;
+      _previousIndex = widget.controller.previousIndex;
+      _offset = widget.controller.offset;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.animation.addListener(updateScrollValues);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.animation.removeListener(updateScrollValues);
+    super.dispose();
   }
 
   Widget tabIcon(IconData icon, int index, Color color) {
@@ -136,51 +243,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return new Scaffold(
-      body: new Container(
-        color: Colors.grey[50],
-        child: new TabBarView(
-          controller: controller,
-          children: <Widget>[
-            new ExerciseScreen(counter: _counter),
-            new DietScreen(),
-            new SettingsScreen(),
-          ],
+    return new TabBar(
+      indicator: new BoxDecoration(),
+      controller: widget.controller,
+      tabs: <Widget>[
+        new Tab(
+          icon: tabIcon(Icons.directions_run, 0, darkMode ? Colors.lightBlue : Colors.blue),
         ),
-      ),
-
-      floatingActionButton: (_currentIndex == 0 && _offset == 0.0) ? new FloatingActionButton(
-        // onPressed: _incrementCounter,
-        onPressed: () {
-          Navigator.push(
-            context,
-            new MaterialPageRoute(
-              builder: (context) => new NewActivityScreen(),
-            )
-          );
-        },
-        tooltip: 'New Activity',
-        child: new Icon(Icons.add),
-      ) : null,
-      bottomNavigationBar: new Material(
-        color: darkMode ? Colors.grey[850] : Colors.white,
-        elevation: 8.0,
-        child: new TabBar(
-          indicator: new BoxDecoration(),
-          controller: controller,
-          tabs: <Widget>[
-            new Tab(
-              icon: tabIcon(Icons.directions_run, 0, darkMode ? Colors.lightBlue : Colors.blue),
-            ),
-            new Tab(
-              icon: tabIcon(Icons.restaurant_menu, 1, darkMode ? Colors.green : Colors.green),
-            ),
-            new Tab(
-              icon: tabIcon(Icons.settings, 2, darkMode ? Colors.deepOrange : Colors.blueGrey),
-            ),
-          ],
+        new Tab(
+          icon: tabIcon(Icons.restaurant_menu, 1, darkMode ? Colors.green : Colors.green),
         ),
-      ),
+        new Tab(
+          icon: tabIcon(Icons.settings, 2, darkMode ? Colors.deepOrange : Colors.blueGrey),
+        ),
+      ],
     );
   }
 }

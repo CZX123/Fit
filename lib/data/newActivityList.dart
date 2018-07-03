@@ -203,3 +203,5 @@ List<Task> sportsList = [
     name: 'Walking',
   ),
 ];
+
+List<Task> allTasks = sportsList + taskList;

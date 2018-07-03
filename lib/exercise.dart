@@ -1,9 +1,26 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'customWidgets.dart';
-import 'data/activeActivityList.dart';
 import 'startActivity.dart';
 import 'sportsIcons.dart';
+
+List<Activity> activeActivityList = [
+  new Activity(
+    icon: SportsIcons.push_up,
+    name: 'Push Ups',
+    completionState: 'Completed',
+  ),
+  new Activity(
+    icon: SportsIcons.cycling,
+    name: 'Cycling',
+    completionState: 'Pending',
+  ),
+  new Activity(
+    icon: SportsIcons.running,
+    name: 'NAPFA',
+    completionState: 'Incomplete',
+  ),
+];
 
 class ExerciseScreen extends StatelessWidget {
   const ExerciseScreen({

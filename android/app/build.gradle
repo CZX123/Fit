@@ -14,9 +14,9 @@ if (flutterRoot == null) {
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-//def keystorePropertiesFile = rootProject.file("key.properties")
-//def keystoreProperties = new Properties()
-//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 27
@@ -34,7 +34,6 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    /*
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -43,18 +42,14 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
-    */
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
-            /*
             signingConfig signingConfigs.release
 
             minifyEnabled true
             useProguard true
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            */
         }
     }
 }
