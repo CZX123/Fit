@@ -116,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  Future _showNotification() async {
+  Future showNotification(String name, bool late) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'id',
       'name',
@@ -129,8 +129,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, 'Heads Up!', 'Your NAPFA exercise is starting in 20 mins!', platformChannelSpecifics,
-        payload: 'NAPFA');
+        0, late ? 'Oh No!' : 'Heads Up!', late ? 'You missed your $name exercise. But better late than never!' : 'Your $name exercise will begin in 20 mins!', platformChannelSpecifics,
+        payload: name);
   }
 
   @override
@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: new Icon(Icons.add),
       ) : new FloatingActionButton(
         onPressed: () {
-          _showNotification();
+          showNotification('Cycling', false);
         },
         child: new Icon(Icons.notifications_active),
       ),

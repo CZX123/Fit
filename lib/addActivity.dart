@@ -273,6 +273,10 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                   highlightElevation: 0.0,
                   highlightedBorderColor:
                       darkMode ? Colors.lightBlue : Colors.blue,
+                  borderSide: new BorderSide(
+                    color: darkMode ? Colors.grey[600] : Colors.grey[350],
+                    width: 2.0,
+                  ),
                   padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 4.0),
                   child: new Row(
                     mainAxisSize: MainAxisSize.min,
@@ -353,7 +357,7 @@ class _TimePicker extends StatelessWidget {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Color red = darkMode ? Colors.redAccent[200] : Colors.red;
     final Color textColor = darkMode ? Colors.white : Colors.black87;
-    final Color outlineColor = darkMode ? Colors.grey[600] : Colors.grey[200];
+    final Color outlineColor = darkMode ? Colors.grey[600] : Colors.grey[350];
     final Color highlightedBorderColor =
         darkMode ? Colors.lightBlue : Colors.blue;
     return new OutlineButton(
