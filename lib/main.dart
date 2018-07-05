@@ -1,13 +1,14 @@
-import 'dart:async' show Future;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart' show Key;
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'exercise.dart';
 import 'diet.dart';
 import 'newActivity.dart';
 import 'settings.dart';
 import 'startActivity.dart';
+import './data/newActivityList.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
@@ -55,15 +56,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  int _counter = 500;
   int index = 0;
   TabController controller;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
     super.initState();
-    var initializationSettingsAndroid =
+    controller = new TabController(vsync: this, length: 3);
+    controller.addListener(changeScreen);var initializationSettingsAndroid =
         new AndroidInitializationSettings('icon');
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
@@ -71,8 +72,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         selectNotification: onSelectNotification);
-    controller = new TabController(vsync: this, length: 3);
-    controller.addListener(changeScreen);
   }
 
   @override
@@ -82,35 +81,24 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void changeScreen() {
-    index = controller.index;
-    bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    if (index == 0 && !darkMode) changeColor(Colors.blue, Colors.deepOrangeAccent);
-    else if (index == 0) changeColor(Colors.grey[900], Colors.deepOrangeAccent);
-    else if (index == 1 && !darkMode) changeColor(Colors.green, Colors.limeAccent);
-    else if (index == 1) changeColor(Colors.grey[900], Colors.limeAccent[700]);
-    else if (index == 2 && !darkMode) changeColor(Colors.blueGrey, Colors.blueGrey);
-    else changeColor(Colors.grey[900], Colors.blueGrey);
-  }
-
-  void changeColor(Color primaryColor, Color accentColor) {
-    DynamicTheme.of(context).setThemeData(new ThemeData(
-      brightness: Theme.of(context).brightness,
-      primaryColor: primaryColor,
-      accentColor: accentColor,
-    ));
+  IconData getIconFromName(String name) {
+    IconData iconData;
+    allTasks.forEach((task) {
+      if (task.name == name) iconData = task.icon;
+    });
+    if (iconData != null) return iconData;
+    packageList.forEach((package) {
+      if (package.name == name) iconData = package.icon;
+    });
+    return iconData;
   }
 
   Future onSelectNotification(String payload) async {
-    Activity selectedActivity;
-    activeActivityList.forEach((activity) {
-      if (activity.name == payload) selectedActivity = activity;
-    });
     await Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new StartActivityScreen(
-        name: selectedActivity.name,
-        icon: selectedActivity.icon,
+        name: payload,
+        icon: getIconFromName(payload),
         color: Theme.of(context).brightness == Brightness.dark ? Colors.lightBlue : Colors.blue,
       )),
     );
@@ -133,6 +121,25 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         payload: name);
   }
 
+  void changeScreen() {
+    index = controller.index;
+    bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    if (index == 0 && !darkMode) changeColor(Colors.blue, Colors.deepOrangeAccent);
+    else if (index == 0) changeColor(Colors.grey[900], Colors.deepOrangeAccent);
+    else if (index == 1 && !darkMode) changeColor(Colors.green, Colors.limeAccent);
+    else if (index == 1) changeColor(Colors.grey[900], Colors.limeAccent[700]);
+    else if (index == 2 && !darkMode) changeColor(Colors.blueGrey, Colors.blueGrey);
+    else changeColor(Colors.grey[900], Colors.blueGrey);
+  }
+
+  void changeColor(Color primaryColor, Color accentColor) {
+    DynamicTheme.of(context).setThemeData(new ThemeData(
+      brightness: Theme.of(context).brightness,
+      primaryColor: primaryColor,
+      accentColor: accentColor,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -142,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: new TabBarView(
           controller: controller,
           children: <Widget>[
-            new ExerciseScreen(counter: _counter),
+            new ExerciseScreen(),
             new DietScreen(),
             new SettingsScreen(),
           ],
@@ -150,22 +157,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
 
       floatingActionButton: index == 0 ? new FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          String value = await Navigator.push(
             context,
             new MaterialPageRoute(
+              maintainState: true,
               builder: (context) => new NewActivityScreen(),
             )
           );
+          if (value != null && value != '') {
+            showNotification(value, false);
+          }
         },
         tooltip: 'New Activity',
         child: new Icon(Icons.add),
-      ) : new FloatingActionButton(
-        onPressed: () {
-          showNotification('Cycling', false);
-        },
-        child: new Icon(Icons.notifications_active),
-      ),
+      ) : null,
       bottomNavigationBar: new Material(
         color: darkMode ? Colors.grey[850] : Colors.white,
         elevation: 8.0,
@@ -251,7 +257,7 @@ class _TabIconsState extends State<TabIcons> {
           icon: tabIcon(Icons.directions_run, 0, darkMode ? Colors.lightBlue : Colors.blue),
         ),
         new Tab(
-          icon: tabIcon(Icons.restaurant_menu, 1, darkMode ? Colors.green : Colors.green),
+          icon: tabIcon(Icons.restaurant, 1, darkMode ? Colors.green : Colors.green),
         ),
         new Tab(
           icon: tabIcon(Icons.settings, 2, darkMode ? Colors.deepOrange : Colors.blueGrey),

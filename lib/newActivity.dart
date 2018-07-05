@@ -51,6 +51,13 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
+        /*
+        leading: new IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () { Navigator.pop(context, ''); },
+          tooltip: 'Back',
+        ),
+        */
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
         title: new Text(
           'New Activity',
@@ -128,7 +135,9 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                           child: new Row(
                             children: <Widget>[
                               new CircleAvatar(
-                                backgroundColor: darkMode ? Colors.blueGrey[700] : Colors.blue,
+                                backgroundColor: darkMode
+                                    ? Colors.blueGrey[700]
+                                    : Colors.blue,
                                 child: new Icon(
                                   item.icon,
                                   color: Colors.white,
@@ -176,13 +185,11 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
 class Package extends StatelessWidget {
   Package({
     this.icon: Icons.help,
-    this.image,
     @required this.name,
     this.description,
     this.packageTasks,
   });
   final IconData icon;
-  final String image;
   final String name;
   final String description;
   final List<Task> packageTasks;
@@ -198,18 +205,17 @@ class Package extends StatelessWidget {
       ),
       onPressed: () {
         Navigator.push(
-            context,
-            new FadingPageRoute(
-              builder: (context) => new AddActivityScreen(
-                    icon: icon,
-                    image: image,
-                    name: name,
-                    description: description ??
-                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                    packageTasks: packageTasks ?? [],
-                  ),
-            ),
-          );
+          context,
+          new FadingPageRoute(
+            builder: (context) => new AddActivityScreen(
+                  icon: icon,
+                  name: name,
+                  description: description ??
+                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                  packageTasks: packageTasks ?? [],
+                ),
+          ),
+        );
       },
       child: new Container(
         padding: const EdgeInsets.all(8.0),
@@ -221,17 +227,12 @@ class Package extends StatelessWidget {
               width: 64.0,
               child: new Hero(
                 tag: name,
-                child: (image != null)
-                    ? new Image.asset(
-                        image,
-                        fit: BoxFit.contain,
-                      )
-                    : new FittedBox(
-                        child: new Icon(
-                          icon,
-                          color: darkMode ? Colors.lightBlue : Colors.blue,
-                        ),
-                      ),
+                child: new FittedBox(
+                  child: new Icon(
+                    icon,
+                    color: darkMode ? Colors.lightBlue : Colors.blue,
+                  ),
+                ),
               ),
             ),
             new Text(
@@ -254,13 +255,11 @@ class Package extends StatelessWidget {
 class Task extends StatelessWidget {
   const Task({
     this.icon: Icons.help,
-    this.image,
     @required this.name,
     this.description,
   });
 
   final IconData icon;
-  final String image;
   final String name;
   final String description;
 
@@ -276,17 +275,12 @@ class Task extends StatelessWidget {
               width: 32.0,
               child: new Hero(
                 tag: name,
-                child: (image != null)
-                    ? new Image.asset(
-                        image,
-                        fit: BoxFit.contain,
-                      )
-                    : new FittedBox(
-                        child: new Icon(
-                          icon,
-                          color: darkMode ? Colors.lightBlue : Colors.blue,
-                        ),
-                      ),
+                child: new FittedBox(
+                  child: new Icon(
+                    icon,
+                    color: darkMode ? Colors.lightBlue : Colors.blue,
+                  ),
+                ),
               ),
             ),
             new Padding(
@@ -302,7 +296,6 @@ class Task extends StatelessWidget {
             new FadingPageRoute(
               builder: (context) => new AddActivityScreen(
                     icon: icon,
-                    image: image,
                     name: name,
                     description: description ??
                         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",

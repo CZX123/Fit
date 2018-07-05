@@ -38,13 +38,13 @@ class SettingsScreen extends StatelessWidget {
             value: true,
             activeColor: darkMode ? Colors.lightBlue : Colors.blue,
             title: new Text('Step Count'),
-            onChanged: (bool) {},
+            onChanged: (value) {},
           ),
           new SwitchListTile(
             value: darkMode,
             activeColor: Colors.lightBlue,
             title: new Text('Dark Mode'),
-            onChanged: (bool) {
+            onChanged: (value) {
               DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark ? Brightness.light: Brightness.dark);
             },
           ),

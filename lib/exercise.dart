@@ -1,34 +1,123 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'startActivity.dart';
 import 'sportsIcons.dart';
+import 'fileManager.dart';
+import './data/newActivityList.dart';
 
-List<Activity> activeActivityList = [
-  new Activity(
-    icon: SportsIcons.push_up,
-    name: 'Push Ups',
-    completionState: 'Completed',
-  ),
-  new Activity(
-    icon: SportsIcons.cycling,
-    name: 'Cycling',
-    completionState: 'Pending',
-  ),
-  new Activity(
-    icon: SportsIcons.running,
-    name: 'NAPFA',
-    completionState: 'Incomplete',
-  ),
-];
+class ExerciseScreen extends StatefulWidget {
+  ExerciseScreen({Key key}) : super(key: key);
+  @override
+  _ExerciseScreenState createState() => _ExerciseScreenState();
+}
 
-class ExerciseScreen extends StatelessWidget {
-  const ExerciseScreen({
-    @required this.counter,
-  });
-  final int counter;
+class _ExerciseScreenState extends State<ExerciseScreen> {
+  final String fileName = 'exercise.json';
+
+  Future<Map<String, dynamic>> getContents() async {
+    return FileManager.readFile(fileName);
+  }
+
+  void rebuild() {
+    setState(() {});
+  }
+
+  List<Activity> getActivities(Map<String, dynamic> contents) {
+    List<Activity> activities = [];
+    contents.forEach((key, value) {
+      IconData icon = getIconFromName(key);
+      if (icon != null) {
+        activities.add(
+          new Activity(
+            name: key,
+            icon: icon,
+            completionState: getCompletionState(value),
+          ),
+        );
+      }
+    });
+    return activities;
+  }
+
+  String getCompletionState(dynamic value) {
+    TimeOfDay now = TimeOfDay.now();
+    List<dynamic> startTimes = value[0].map((list) {
+      return new TimeOfDay(
+        hour: list[0],
+        minute: list[1],
+      );
+    }).toList();
+    List<dynamic> endTimes = value[1].map((list) {
+      return new TimeOfDay(
+        hour: list[0],
+        minute: list[1],
+      );
+    }).toList();
+    if (compareTime(endTimes[endTimes.length - 1], now)) {
+      return 'Completed';
+    } else {
+      for (int i = 0; i < startTimes.length; i++) {
+        if (compareTime(startTimes[i], now) && compareTime(now, endTimes[i]))
+          return 'In Progress';
+        else if (i < startTimes.length - 1 &&
+            compareTime(endTimes[i], now) &&
+            compareTime(now, startTimes[i + 1])) return 'Pending';
+      }
+    }
+    return 'Pending';
+  }
+
+  bool compareTime(TimeOfDay time1, TimeOfDay time2) {
+    return time1.hour < time2.hour ||
+        time1.hour == time2.hour && time1.minute <= time2.minute;
+  }
+
+  IconData getIconFromName(String name) {
+    IconData iconData;
+    allTasks.forEach((task) {
+      if (task.name == name) iconData = task.icon;
+    });
+    if (iconData != null) return iconData;
+    packageList.forEach((package) {
+      if (package.name == name) iconData = package.icon;
+    });
+    return iconData;
+  }
+
+  Widget activities(Orientation orientation) {
+    return new FutureBuilder<Map<String, dynamic>>(
+      future: getContents(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data.length != 0) {
+          return new Grid(
+            children: getActivities(snapshot.data),
+            columnCount: orientation == Orientation.portrait ? 2 : 3,
+          );
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          return new Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            alignment: Alignment.center,
+            child: new Text(
+              'Add some new activities, your homescreen is looking kinda bland...',
+              style: const TextStyle(
+                color: Colors.black38,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        }
+        return new Center(
+          child: new CircularProgressIndicator(),
+        );
+      },
+    );
+  }
 
   Widget build(BuildContext context) {
+    final int counter = 500;
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Orientation orientation = MediaQuery.of(context).orientation;
     double height = MediaQuery.of(context).size.height;
@@ -129,11 +218,11 @@ class ExerciseScreen extends StatelessWidget {
                   ),
                 ),
                 new Container(
-                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
-                  child: new Grid(
-                    children: activeActivityList,
-                    columnCount: orientation == Orientation.portrait ? 2 : 3,
+                  constraints: new BoxConstraints(
+                    minHeight: height / 2,
                   ),
+                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
+                  child: activities(orientation),
                 ),
                 new Container(),
               ],
@@ -148,12 +237,10 @@ class ExerciseScreen extends StatelessWidget {
 class Activity extends StatelessWidget {
   const Activity({
     this.icon: Icons.help,
-    this.image,
     @required this.name,
     @required this.completionState,
   });
   final IconData icon;
-  final String image;
   final String name;
   final String completionState;
   @override
@@ -181,7 +268,6 @@ class Activity extends StatelessWidget {
               new MaterialPageRoute(
                 builder: (context) => new StartActivityScreen(
                       icon: icon,
-                      image: image,
                       color: darkMode ? Colors.lightBlue : Colors.blue,
                       name: name,
                     ),
@@ -197,17 +283,12 @@ class Activity extends StatelessWidget {
                 width: 64.0,
                 child: new Hero(
                   tag: name + 'a',
-                  child: (image != null)
-                      ? new Image.asset(
-                          image,
-                          fit: BoxFit.contain,
-                        )
-                      : new FittedBox(
-                          child: new Icon(
-                            icon,
-                            color: darkMode ? Colors.lightBlue : Colors.blue,
-                          ),
-                        ),
+                  child: new FittedBox(
+                    child: new Icon(
+                      icon,
+                      color: darkMode ? Colors.lightBlue : Colors.blue,
+                    ),
+                  ),
                 ),
               ),
               new Text(
@@ -238,72 +319,41 @@ class CompletionState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    Color color;
+    IconData iconData;
     if (completionState == 'Completed') {
-      return new Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          new IconTheme(
-            data: new IconThemeData(
-              color: darkMode ? Colors.green[400] : Colors.green,
-            ),
-            child: new Icon(Icons.check_circle),
-          ),
-          new Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: new Text(
-              'Completed',
-              style: new TextStyle(
-                color: darkMode ? Colors.green[400] : Colors.green,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      );
+      color = darkMode ? Colors.green[400] : Colors.green;
+      iconData = Icons.check_circle;
     } else if (completionState == 'Pending') {
-      return new Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          new IconTheme(
-            data: new IconThemeData(
-              color: darkMode ? Colors.purple[300] : Colors.purple,
-            ),
-            child: new Icon(Icons.timer),
-          ),
-          new Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: new Text(
-              'Pending',
-              style: new TextStyle(
-                color: darkMode ? Colors.purple[300] : Colors.purple,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      );
+      color = darkMode ? Colors.purple[300] : Colors.purple;
+      iconData = Icons.timer;
+    } else if (completionState == 'In Progress') {
+      color = darkMode ? Colors.lightBlue : Colors.blue;
+      iconData = Icons.access_time;
     } else {
-      return new Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          new IconTheme(
-            data: new IconThemeData(
-              color: darkMode ? Colors.redAccent[200] : Colors.red,
-            ),
-            child: new Icon(Icons.warning),
-          ),
-          new Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: new Text(
-              'Incomplete',
-              style: new TextStyle(
-                color: darkMode ? Colors.redAccent[200] : Colors.red,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      );
+      color = darkMode ? Colors.redAccent[200] : Colors.red;
+      iconData = Icons.warning;
     }
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        new IconTheme(
+          data: new IconThemeData(
+            color: color,
+          ),
+          child: new Icon(iconData),
+        ),
+        new Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: new Text(
+            completionState,
+            style: new TextStyle(
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

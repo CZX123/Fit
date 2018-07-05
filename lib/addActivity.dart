@@ -2,22 +2,24 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'newActivity.dart';
+import 'fileManager.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({
     Key key,
     this.icon: Icons.help,
-    this.image,
     @required this.name,
     @required this.description,
     this.packageTasks,
+    this.updateActivity,
   }) : super(key: key);
 
   final IconData icon;
-  final String image;
   final String name;
   final String description;
   final List<Task> packageTasks;
+  final bool updateActivity;
 
   @override
   _AddActivityScreenState createState() => new _AddActivityScreenState();
@@ -39,6 +41,28 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     'Weekly'
   ];
   String _selectedFrequency = 'Daily';
+  String fileName = 'exercise.json';
+  Map<String, dynamic> fileContent;
+
+  @override
+  void initState() {
+    super.initState();
+    getFileContents();
+  }
+
+  Future getFileContents() async {
+    fileContent = await FileManager.readFile(fileName);
+  }
+
+  Future writeToFile(String key, dynamic value) async {
+    FileManager.writeToFile(fileName, key, value);
+    fileContent = await FileManager.readFile(fileName);
+  }
+
+  Future removeFromFile(String key) async {
+    FileManager.removeFromFile(fileName, key);
+    fileContent = await FileManager.readFile(fileName);
+  }
 
   void setFrequency(String newValue) {
     setState(() {
@@ -179,7 +203,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     }
 
     final IconData icon = widget.icon;
-    final String image = widget.image;
     final String name = widget.name;
     final String description = widget.description;
     final List<Task> packageTasks = widget.packageTasks;
@@ -218,17 +241,12 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                 width: 96.0,
                 child: new Hero(
                   tag: name,
-                  child: (image != null)
-                      ? new Image.asset(
-                          image,
-                          fit: BoxFit.contain,
-                        )
-                      : new FittedBox(
-                          child: new Icon(
-                            icon,
-                            color: darkMode ? Colors.lightBlue : Colors.blue,
-                          ),
-                        ),
+                  child: new FittedBox(
+                    child: new Icon(
+                      icon,
+                      color: darkMode ? Colors.lightBlue : Colors.blue,
+                    ),
+                  ),
                 ),
               ),
               new Padding(
@@ -326,9 +344,18 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
               tooltip: 'Add Activity',
               child: new Icon(Icons.check),
               onPressed: () {
-                print(_fromTime);
-                print(_toTime);
-                print(_selectedFrequency);
+                writeToFile(name, [
+                  _fromTime.map((TimeOfDay time) {
+                    return [time.hour, time.minute];
+                  }).toList(),
+                  _toTime.map((TimeOfDay time) {
+                    return [time.hour, time.minute];
+                  }).toList(),
+                ]).then((contents) {
+                  Navigator.pop(context);
+                  Navigator.pop(context, name);
+                  DynamicTheme.of(context).setBrightness(Theme.of(context).brightness);
+                });
               },
             )
           : null,
