@@ -23,12 +23,10 @@ class DietScreen extends StatelessWidget {
             ),
           ),
           new Positioned(
-            top: containerHeight + windowTopPadding,
+            top: containerHeight - 1 + windowTopPadding,
             right: 0.0,
             left: 0.0,
-            height: (height - containerHeight < 300 - 48.0)
-                ? 300.0
-                : height - containerHeight - 48.0,
+            bottom: -64.0,
             child: new DecoratedBox(
               decoration: new BoxDecoration(
                 gradient: new LinearGradient(
@@ -36,7 +34,7 @@ class DietScreen extends StatelessWidget {
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
                     darkMode ? Colors.grey[900] : Colors.green,
-                    darkMode ? Colors.grey[900] : Colors.grey[50],
+                    darkMode ? Colors.grey[900] : Colors.green[50],
                   ],
                 ),
               ),

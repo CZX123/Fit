@@ -2,17 +2,24 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'fileManager.dart';
+import 'addActivity.dart';
+import 'customWidgets.dart';
+import 'newActivity.dart';
 
 class StartActivityScreen extends StatelessWidget {
   StartActivityScreen({
     this.icon: Icons.help,
     this.color,
     @required this.name,
+    this.description,
+    this.packageTasks,
   });
 
   final IconData icon;
   final Color color;
   final String name;
+  final String description;
+  final List<Package> packageTasks;
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +38,12 @@ class StartActivityScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new IconButton(
-                  tooltip: 'Back',
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                new Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: new BackButton(),
                 ),
                 new Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 16.0),
                   child: new SizedBox(
                     height: 96.0,
                     width: 96.0,
@@ -54,33 +58,64 @@ class StartActivityScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                new PopupMenuButton<String>(
-                  padding: EdgeInsets.zero,
-                  onSelected: (value) {
-                    if (value == 'Edit') {
-                    } else if (value == 'Remove') {
-                      FileManager
-                          .removeFromFile('exercise.json', name)
-                          .then((file) {
-                        DynamicTheme
-                            .of(context)
-                            .setBrightness(Theme.of(context).brightness);
-                        Navigator.pop(context, false);
-                      });
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return <PopupMenuItem<String>>[
-                      new PopupMenuItem<String>(
-                        value: 'Edit',
-                        child: const Text('Edit'),
-                      ),
-                      new PopupMenuItem<String>(
-                        value: 'Remove',
-                        child: const Text('Remove'),
-                      ),
-                    ];
-                  },
+                new Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: new PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'Edit') {
+                        Navigator.push(
+                          context,
+                          new FadingPageRoute(
+                            builder: (context) => new AddActivityScreen(
+                                  icon: icon,
+                                  name: name,
+                                  description: description ??
+                                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                                  packageTasks: packageTasks ?? [],
+                                  updateActivity: true,
+                                ),
+                          ),
+                        );
+                      } else if (value == 'Remove') {
+                        FileManager
+                            .removeFromFile('exercise.json', name)
+                            .then((file) {
+                          DynamicTheme
+                              .of(context)
+                              .setBrightness(Theme.of(context).brightness);
+                          Navigator.pop(context);
+                        });
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return <PopupMenuItem<String>>[
+                        new PopupMenuItem<String>(
+                          value: 'Edit',
+                          child: new Row(
+                            children: <Widget>[
+                              new Icon(Icons.edit),
+                              new SizedBox(
+                                width: 16.0,
+                              ),
+                              const Text('Edit'),
+                            ],
+                          ),
+                        ),
+                        new PopupMenuItem<String>(
+                          value: 'Remove',
+                          child: new Row(
+                            children: <Widget>[
+                              new Icon(Icons.delete),
+                              new SizedBox(
+                                width: 16.0,
+                              ),
+                              const Text('Remove'),
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
+                  ),
                 ),
               ],
             ),

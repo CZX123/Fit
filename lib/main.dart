@@ -52,10 +52,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  MyHomePageState createState() => new MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int index = 0;
   TabController controller;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -64,7 +64,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     controller = new TabController(vsync: this, length: 3);
-    controller.addListener(changeScreen);var initializationSettingsAndroid =
+    controller.addListener(changeScreen);
+    var initializationSettingsAndroid =
         new AndroidInitializationSettings('icon');
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
@@ -83,14 +84,26 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   IconData getIconFromName(String name) {
     IconData iconData;
-    allTasks.forEach((task) {
-      if (task.name == name) iconData = task.icon;
-    });
-    if (iconData != null) return iconData;
     packageList.forEach((package) {
       if (package.name == name) iconData = package.icon;
     });
+    if (iconData != null) return iconData;
+    allTasks.forEach((task) {
+      if (task.name == name) iconData = task.icon;
+    });
     return iconData;
+  }
+
+  int getId(String name) {
+    int id;
+    for (int i = 0; i < packageList.length; i++) {
+      if (packageList[i].name == name) id = i;
+    }
+    if (id != null) return id;
+    for (int j = 0; j < allTasks.length; j++) {
+      if (allTasks[j].name == name) id = packageList.length + j;
+    }
+    return id;
   }
 
   Future onSelectNotification(String payload) async {
@@ -106,9 +119,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Future showNotification(String name, bool late) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'id',
-      'name',
-      'description',
+      name,
+      name,
+      'Notification for $name exercise',
       color: Colors.blue,
       importance: Importance.Max,
       priority: Priority.High,
@@ -117,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, late ? 'Oh No!' : 'Heads Up!', late ? 'You missed your $name exercise. But better late than never!' : 'Your $name exercise will begin in 20 mins!', platformChannelSpecifics,
+        getId(name), late ? 'Oh No!' : 'Heads Up!', late ? 'You missed your $name exercise. But better late than never!' : 'Your $name exercise will begin in 20 mins!', platformChannelSpecifics,
         payload: name);
   }
 
@@ -165,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               builder: (context) => new NewActivityScreen(),
             )
           );
-          if (value != null && value != '') {
+          if (value != null) {
             showNotification(value, false);
           }
         },

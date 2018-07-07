@@ -14,22 +14,18 @@ List<Package> packageList = [
     icon: SportsIcons.jumping_jacks,
     name: 'Weight Loss',
   ),
+  Package(
+    icon: SportsIcons.circuit_training,
+    name: 'Circuit Training',
+  ),
 ];
 
-List<Task> taskList = [
+List<Task> commonList = [
   Task(
     icon: SportsIcons.aerobics,
     name: 'Aerobics',
     description:
         'Aerobics is a form of physical exercise that improves flexibility, muscular strength and cardio-vascular fitness, which is done by combining rhythmic aerobic exercise with stretching and strength training routines.',
-  ),
-  Task(
-    icon: SportsIcons.arm_extension,
-    name: 'Arm Extensions',
-  ),
-  Task(
-    icon: SportsIcons.armcurl,
-    name: 'Arm Curls',
   ),
   Task(
     icon: SportsIcons.back_extension,
@@ -40,60 +36,13 @@ List<Task> taskList = [
     name: 'Burpee Test',
   ),
   Task(
-    icon: SportsIcons.circuit_training,
-    name: 'Circuit Training',
-  ),
-  Task(
     icon: SportsIcons.crunch,
     name: 'Crunches',
   ),
   Task(
-    icon: SportsIcons.deadlift,
-    name: 'Deadlifts',
-  ),
-  Task(
-    icon: SportsIcons.elliptical_trainer,
-    name: 'Elliptical Trainer',
-  ),
-  Task(
-    icon: SportsIcons.exercise_bike,
-    name: 'Exercise Bike',
-  ),
-  Task(
-    icon: SportsIcons.frisbee,
-    name: 'Frisbee',
-  ),
-  Task(
-    icon: SportsIcons.front_raise,
-    name: 'Front Raises',
-  ),
-  Task(
-    icon: SportsIcons.hiking,
-    name: 'Hiking',
-  ),
-  Task(
     icon: SportsIcons.jumping_jacks,
     name: 'Jumping Jacks',
-  ),
-  Task(
-    icon: SportsIcons.lat_pull_down,
-    name: 'Lat Pull-Downs',
-  ),
-  Task(
-    icon: SportsIcons.lateral_raise,
-    name: 'Lateral Raises',
-  ),
-  Task(
-    icon: SportsIcons.leg_curl,
-    name: 'Leg Curls',
-  ),
-  Task(
-    icon: SportsIcons.leg_extension,
-    name: 'Leg Extensions',
-  ),
-  Task(
-    icon: SportsIcons.leg_press,
-    name: 'Leg Presses',
+    description: 'The rigorous calisthenic moves in this exercise helps improve your stamina, are great for the cardiovascular system, and they help to relieve stress as well!',
   ),
   Task(
     icon: SportsIcons.leg_raise,
@@ -120,14 +69,6 @@ List<Task> taskList = [
     name: 'Push-Ups',
   ),
   Task(
-    icon: SportsIcons.rowing_machine,
-    name: 'Rowing Machine',
-  ),
-  Task(
-    icon: SportsIcons.shoulder,
-    name: 'Shoulder Presses',
-  ),
-  Task(
     icon: SportsIcons.sit_up,
     name: 'Sit-Ups',
   ),
@@ -140,20 +81,8 @@ List<Task> taskList = [
     name: 'Squats',
   ),
   Task(
-    icon: SportsIcons.step_machine,
-    name: 'Step Machine',
-  ),
-  Task(
     icon: SportsIcons.stretching,
     name: 'Stretching',
-  ),
-  Task(
-    icon: SportsIcons.treadmill,
-    name: 'Treadmill',
-  ),
-  Task(
-    icon: SportsIcons.weight_machine,
-    name: 'Weight Machine',
   ),
 ];
 
@@ -171,8 +100,16 @@ List<Task> sportsList = [
     name: 'Cycling',
   ),
   Task(
+    icon: SportsIcons.frisbee,
+    name: 'Frisbee',
+  ),
+  Task(
     icon: SportsIcons.handball,
     name: 'Handball',
+  ),
+  Task(
+    icon: SportsIcons.hiking,
+    name: 'Hiking',
   ),
   Task(
     icon: SportsIcons.running,
@@ -204,4 +141,71 @@ List<Task> sportsList = [
   ),
 ];
 
-List<Task> allTasks = sportsList + taskList;
+List<Task> gymList = [
+  Task(
+    icon: SportsIcons.armcurl,
+    name: 'Arm Curls',
+  ),
+  Task(
+    icon: SportsIcons.arm_extension,
+    name: 'Arm Extensions',
+  ),
+  Task(
+    icon: SportsIcons.deadlift,
+    name: 'Deadlifts',
+  ),
+  Task(
+    icon: SportsIcons.elliptical_trainer,
+    name: 'Elliptical Trainer',
+  ),
+  Task(
+    icon: SportsIcons.exercise_bike,
+    name: 'Exercise Bike',
+  ),
+  Task(
+    icon: SportsIcons.front_raise,
+    name: 'Front Raises',
+  ),
+  Task(
+    icon: SportsIcons.lat_pull_down,
+    name: 'Lat Pull-Downs',
+  ),
+  Task(
+    icon: SportsIcons.lateral_raise,
+    name: 'Lateral Raises',
+  ),
+  Task(
+    icon: SportsIcons.leg_curl,
+    name: 'Leg Curls',
+  ),
+  Task(
+    icon: SportsIcons.leg_extension,
+    name: 'Leg Extensions',
+  ),
+  Task(
+    icon: SportsIcons.leg_press,
+    name: 'Leg Presses',
+  ),
+  Task(
+    icon: SportsIcons.rowing_machine,
+    name: 'Rowing Machine',
+  ),
+  Task(
+    icon: SportsIcons.shoulder,
+    name: 'Shoulder Presses',
+  ),
+  Task(
+    icon: SportsIcons.step_machine,
+    name: 'Step Machine',
+  ),
+  Task(
+    icon: SportsIcons.treadmill,
+    name: 'Treadmill',
+  ),
+  Task(
+    icon: SportsIcons.weight_machine,
+    name: 'Weight Machine',
+  ),
+];
+
+List<Task> allTasks = commonList + sportsList + gymList;

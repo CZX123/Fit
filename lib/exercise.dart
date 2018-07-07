@@ -6,6 +6,8 @@ import 'startActivity.dart';
 import 'sportsIcons.dart';
 import 'fileManager.dart';
 import './data/newActivityList.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'main.dart';
 
 class ExerciseScreen extends StatefulWidget {
   ExerciseScreen({Key key}) : super(key: key);
@@ -14,14 +16,20 @@ class ExerciseScreen extends StatefulWidget {
 }
 
 class _ExerciseScreenState extends State<ExerciseScreen> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final String fileName = 'exercise.json';
 
-  Future<Map<String, dynamic>> getContents() async {
-    return FileManager.readFile(fileName);
-  }
-
-  void rebuild() {
-    setState(() {});
+  @override
+  void initState() {
+    super.initState();
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('icon');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        selectNotification: onSelectNotification);
   }
 
   List<Activity> getActivities(Map<String, dynamic> contents) {
@@ -34,6 +42,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             name: key,
             icon: icon,
             completionState: getCompletionState(value),
+            showNotification: showNotification,
           ),
         );
       }
@@ -76,41 +85,90 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   IconData getIconFromName(String name) {
     IconData iconData;
-    allTasks.forEach((task) {
-      if (task.name == name) iconData = task.icon;
-    });
-    if (iconData != null) return iconData;
     packageList.forEach((package) {
       if (package.name == name) iconData = package.icon;
+    });
+    if (iconData != null) return iconData;
+    allTasks.forEach((task) {
+      if (task.name == name) iconData = task.icon;
     });
     return iconData;
   }
 
+  int getId(String name) {
+    int id;
+    for (int i = 0; i < packageList.length; i++) {
+      if (packageList[i].name == name) id = i;
+    }
+    if (id != null) return id;
+    for (int j = 0; j < allTasks.length; j++) {
+      if (allTasks[j].name == name) id = packageList.length + j;
+    }
+    return id;
+  }
+
+  Future onSelectNotification(String payload) async {
+    await Navigator.push(
+      context.ancestorStateOfType(TypeMatcher<MyHomePageState>()).context,
+      new MaterialPageRoute(builder: (context) => new StartActivityScreen(
+        name: payload,
+        icon: getIconFromName(payload),
+        color: Theme.of(context).brightness == Brightness.dark ? Colors.lightBlue : Colors.blue,
+      )),
+    );
+  }
+
+  Future showNotification(String name, bool late) async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      name,
+      name,
+      'Notification for $name exercise',
+      color: Colors.blue,
+      importance: Importance.Max,
+      priority: Priority.High,
+    );
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        getId(name), late ? 'Oh No!' : 'Heads Up!', late ? 'You missed your $name exercise. But better late than never!' : 'Your $name exercise will begin in 20 mins!', platformChannelSpecifics,
+        payload: name);
+  }
+
   Widget activities(Orientation orientation) {
     return new FutureBuilder<Map<String, dynamic>>(
-      future: getContents(),
+      future: FileManager.readFile(fileName),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data.length != 0) {
           return new Grid(
             children: getActivities(snapshot.data),
             columnCount: orientation == Orientation.portrait ? 2 : 3,
           );
-        } else if (snapshot.connectionState == ConnectionState.done) {
-          return new Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            alignment: Alignment.center,
-            child: new Text(
-              'Add some new activities, your homescreen is looking kinda bland...',
-              style: const TextStyle(
-                color: Colors.black38,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          );
         }
-        return new Center(
-          child: new CircularProgressIndicator(),
+        return new Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          alignment: Alignment.center,
+          child: new Column(
+            children: <Widget>[
+              new Icon(
+                Icons.directions_run,
+                color: Colors.white,
+                size: 64.0,
+              ),
+              new SizedBox(
+                height: 16.0,
+              ),
+              new Text(
+                'Add some new activities',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -136,20 +194,18 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             ),
           ),
           new Positioned(
-            top: containerHeight + windowTopPadding,
+            top: orientation == Orientation.landscape ? windowTopPadding + 128.0 : containerHeight - 1 + windowTopPadding,
             right: 0.0,
             left: 0.0,
-            height: (height - containerHeight < 300 - 48.0)
-                ? 300.0
-                : height - containerHeight - 48.0,
-            child: new DecoratedBox(
+            bottom: -64.0,
+            child: new Container(
               decoration: new BoxDecoration(
                 gradient: new LinearGradient(
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
                     darkMode ? Colors.grey[900] : Colors.blue,
-                    darkMode ? Colors.grey[900] : Colors.grey[50],
+                    darkMode ? Colors.grey[900] : Colors.blue[50],
                   ],
                 ),
               ),
@@ -219,11 +275,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 ),
                 new Container(
                   constraints: new BoxConstraints(
-                    minHeight: height / 2,
+                    minHeight: orientation == Orientation.landscape ? height / 4 : height / 2,
                   ),
                   padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
                   child: activities(orientation),
                 ),
+                new Container(),
                 new Container(),
               ],
             ),
@@ -239,10 +296,12 @@ class Activity extends StatelessWidget {
     this.icon: Icons.help,
     @required this.name,
     @required this.completionState,
+    this.showNotification,
   });
   final IconData icon;
   final String name;
   final String completionState;
+  final Function showNotification;
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -262,16 +321,18 @@ class Activity extends StatelessWidget {
             const Radius.circular(8.0),
           ),
         ),
-        onPressed: () {
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (context) => new StartActivityScreen(
-                      icon: icon,
-                      color: darkMode ? Colors.lightBlue : Colors.blue,
-                      name: name,
-                    ),
-              ));
+        onPressed: () async {
+          String value = await Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (context) => new StartActivityScreen(
+                    icon: icon,
+                    color: darkMode ? Colors.lightBlue : Colors.blue,
+                    name: name,
+                  ),
+            ),
+          );
+          if (value != null) showNotification(value, false);
         },
         child: new Container(
           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),

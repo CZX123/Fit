@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'data/newActivityList.dart';
@@ -5,6 +6,7 @@ import 'addActivity.dart';
 import 'customWidgets.dart';
 import 'sportsIcons.dart';
 import 'customExpansionPanel.dart';
+import 'fileManager.dart';
 
 class ExpansionPanelItem {
   ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon});
@@ -20,7 +22,29 @@ class NewActivityScreen extends StatefulWidget {
 }
 
 class _NewActivityScreenState extends State<NewActivityScreen> {
+
+  Future<bool> isActive(String name) async {
+    Map<String, dynamic> contents = await FileManager.readFile('exercise.json');
+    List<String> keys = contents.keys;
+    bool matches = false;
+    keys.forEach((key) {
+      if (key == name) matches = true;
+    });
+    return matches;
+  }
+
   List<ExpansionPanelItem> items = [
+    new ExpansionPanelItem(
+      isExpanded: false,
+      header: 'Common Exercises',
+      icon: SportsIcons.jumping_jacks,
+      body: new Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: new Column(
+          children: commonList,
+        ),
+      ),
+    ),
     new ExpansionPanelItem(
       isExpanded: false,
       header: 'Sports',
@@ -34,16 +58,17 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
     ),
     new ExpansionPanelItem(
       isExpanded: false,
-      header: 'Others',
-      icon: SportsIcons.stretching,
+      header: 'Gym Exercises',
+      icon: SportsIcons.exercise_bike,
       body: new Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: new Column(
-          children: taskList,
+          children: gymList,
         ),
       ),
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -51,13 +76,6 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: new AppBar(
-        /*
-        leading: new IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () { Navigator.pop(context, ''); },
-          tooltip: 'Back',
-        ),
-        */
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
         title: new Text(
           'New Activity',
