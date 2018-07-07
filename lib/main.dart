@@ -348,7 +348,7 @@ class _TabIconsState extends State<TabIcons> {
         ),
         new Tab(
           icon: tabIcon(
-              Icons.restaurant, 1, darkMode ? Colors.lightGreen : Colors.green),
+              Icons.restaurant, 1, darkMode ? Colors.green[400] : Colors.green),
         ),
         new Tab(
           icon: tabIcon(Icons.settings, 2,
