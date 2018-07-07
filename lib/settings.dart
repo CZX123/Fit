@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
+import 'main.dart';
 
 class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Brightness brightness = Theme.of(context).brightness;
-    final bool darkMode = brightness == Brightness.dark;
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return new Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       body: new ListView(
@@ -45,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
             activeColor: Colors.lightBlue,
             title: new Text('Dark Mode'),
             onChanged: (value) {
-              DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark ? Brightness.light: Brightness.dark);
+              App.of(context).changeBrightness(darkMode ? Brightness.light: Brightness.dark);
             },
           ),
         ],

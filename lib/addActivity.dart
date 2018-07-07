@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'newActivity.dart';
 import 'fileManager.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({
@@ -419,12 +417,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       return [time.hour, time.minute];
                     }).toList(),
                     _selectedFrequency,
-                  ]).then((contents) {
+                  ]).then((_) {
                     Navigator.pop(context);
                     Navigator.pop(context, name);
-                    DynamicTheme
-                        .of(context)
-                        .setBrightness(Theme.of(context).brightness);
                   });
                 }
               },

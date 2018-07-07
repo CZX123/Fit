@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'startActivity.dart';
@@ -315,6 +314,7 @@ class Activity extends StatelessWidget {
       margin: const EdgeInsets.all(4.0),
       child: new RaisedButton(
         elevation: darkMode ? 0.0 : 2.0,
+        highlightElevation: darkMode ? 0.0 : 8.0,
         color: darkMode ? Colors.grey[850] : Colors.white,
         shape: new RoundedRectangleBorder(
           borderRadius: new BorderRadius.all(
@@ -335,7 +335,7 @@ class Activity extends StatelessWidget {
           if (value != null) showNotification(value, false);
         },
         child: new Container(
-          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
+          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 4.0),
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -358,7 +358,7 @@ class Activity extends StatelessWidget {
                 style: new TextStyle(
                   height: 1.2,
                   fontFamily: 'Renner*',
-                  fontSize: 18.0,
+                  fontSize: 17.0,
                   fontWeight: FontWeight.w500,
                 ),
               ),

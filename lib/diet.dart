@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'data/dietList.dart';
@@ -132,6 +131,7 @@ class Diet extends StatelessWidget {
       margin: const EdgeInsets.all(4.0),
       child: new RaisedButton(
         elevation: darkMode ? 0.0 : 2.0,
+        highlightElevation: darkMode ? 0.0 : 8.0,
         color: darkMode ? Colors.grey[850] : Colors.white,
         shape: new RoundedRectangleBorder(
           borderRadius: new BorderRadius.all(

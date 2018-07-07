@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Grid Widget using columns and rows. Only supports vertical layout, and does not have any values regarding widget size and spacing between grid items

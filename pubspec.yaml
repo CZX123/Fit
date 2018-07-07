@@ -4,11 +4,9 @@ description: An all-in-one fitness app
 dependencies:
   flutter:
     sdk: flutter
-  dynamic_theme:
-    git:
-      url: git://github.com/Norbert515/dynamic_theme.git
   flutter_local_notifications: ^0.3.3
   path_provider: ^0.4.1
+  shared_preferences: ^0.4.2
 
 dev_dependencies:
   flutter_test:

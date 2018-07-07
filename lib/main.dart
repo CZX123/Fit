@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart' show Key;
 import 'package:flutter/material.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'exercise.dart';
 import 'diet.dart';
 import 'newActivity.dart';
@@ -12,44 +11,109 @@ import './data/newActivityList.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
-  runApp(new MyApp());
+  runApp(
+    new App(
+      brightness: Brightness.light,
+      primaryColor: Colors.blue,
+      accentColor: Colors.deepOrangeAccent,
+      child: new MyHomePage(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class _InheritedApp extends InheritedWidget {
+  final AppState data;
+  _InheritedApp({
+    Key key,
+    @required this.data,
+    @required Widget child,
+  }) : super(key: key, child: child);
+  @override
+  bool updateShouldNotify(_InheritedApp old) => true;
+}
+
+class App extends StatefulWidget {
+  final Widget child;
+  final Brightness brightness;
+  final Color primaryColor;
+  final Color accentColor;
+
+  App({
+    @required this.child,
+    @required this.brightness,
+    @required this.primaryColor,
+    @required this.accentColor,
+  });
+
+  static AppState of(BuildContext context) {
+    return (context.inheritFromWidgetOfExactType(_InheritedApp)
+            as _InheritedApp)
+        .data;
+  }
+
+  @override
+  AppState createState() => new AppState();
+}
+
+class AppState extends State<App> {
+  final String _key = 'darkMode';
+  Brightness brightness;
+  Color primaryColor;
+  Color accentColor;
+
+  @override
+  void initState() {
+    super.initState();
+    brightness = widget.brightness;
+    primaryColor = widget.primaryColor;
+    accentColor = widget.accentColor;
+    _loadBrightness().then((darkMode) {
+      setState(() {
+        brightness = darkMode ? Brightness.dark : Brightness.light;
+      });
+    });
+  }
+
+  void changeColors(Color newPrimaryColor, Color newAccentColor) {
+    setState(() {
+      primaryColor = newPrimaryColor;
+      accentColor = newAccentColor;
+    });
+  }
+
+  void changeBrightness(Brightness newBrightness) async {
+    setState(() {
+      brightness = newBrightness;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_key, brightness == Brightness.dark);
+  }
+
+  Future<bool> _loadBrightness() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return (prefs.getBool(_key) ?? false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new DynamicTheme(
-      defaultBrightness: Brightness.light,
-      data: (brightness) => new ThemeData(
-        primarySwatch: brightness == Brightness.dark ? Colors.lightBlue : Colors.blue,
-        brightness: brightness,
-        accentColor: Colors.deepOrangeAccent,
+    return new _InheritedApp(
+      data: this,
+      child: new MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Fit',
+        theme: new ThemeData(
+          brightness: brightness,
+          primaryColor: primaryColor,
+          accentColor: accentColor,
+        ),
+        home: widget.child,
       ),
-      themedWidgetBuilder: (context, theme) {
-        return new MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Fit',
-          theme: theme,
-          home: new MyHomePage(title: 'Fit'),
-        );
-      }
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   MyHomePageState createState() => new MyHomePageState();
@@ -109,11 +173,15 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Future onSelectNotification(String payload) async {
     await Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new StartActivityScreen(
-        name: payload,
-        icon: getIconFromName(payload),
-        color: Theme.of(context).brightness == Brightness.dark ? Colors.lightBlue : Colors.blue,
-      )),
+      new MaterialPageRoute(
+        builder: (context) => new StartActivityScreen(
+              name: payload,
+              icon: getIconFromName(payload),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.lightBlue
+                  : Colors.blue,
+            ),
+      ),
     );
   }
 
@@ -130,27 +198,34 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        getId(name), late ? 'Oh No!' : 'Heads Up!', late ? 'You missed your $name exercise. But better late than never!' : 'Your $name exercise will begin in 20 mins!', platformChannelSpecifics,
+        getId(name),
+        late ? 'Oh No!' : 'Heads Up!',
+        late
+            ? 'You missed your $name exercise. But better late than never!'
+            : 'Your $name exercise will begin in 20 mins!',
+        platformChannelSpecifics,
         payload: name);
   }
 
   void changeScreen() {
     index = controller.index;
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    if (index == 0 && !darkMode) changeColor(Colors.blue, Colors.deepOrangeAccent);
-    else if (index == 0) changeColor(Colors.grey[900], Colors.deepOrangeAccent);
-    else if (index == 1 && !darkMode) changeColor(Colors.green, Colors.limeAccent);
-    else if (index == 1) changeColor(Colors.grey[900], Colors.limeAccent[700]);
-    else if (index == 2 && !darkMode) changeColor(Colors.blueGrey, Colors.blueGrey);
-    else changeColor(Colors.grey[900], Colors.blueGrey);
+    if (index == 0 && !darkMode)
+      changeColor(Colors.blue, Colors.deepOrangeAccent);
+    else if (index == 0)
+      changeColor(Colors.grey[900], Colors.deepOrangeAccent);
+    else if (index == 1 && !darkMode)
+      changeColor(Colors.green, Colors.limeAccent);
+    else if (index == 1)
+      changeColor(Colors.grey[900], Colors.limeAccent[700]);
+    else if (index == 2 && !darkMode)
+      changeColor(Colors.blueGrey, Colors.blueGrey);
+    else
+      changeColor(Colors.grey[900], Colors.blueGrey);
   }
 
-  void changeColor(Color primaryColor, Color accentColor) {
-    DynamicTheme.of(context).setThemeData(new ThemeData(
-      brightness: Theme.of(context).brightness,
-      primaryColor: primaryColor,
-      accentColor: accentColor,
-    ));
+  void changeColor(Color newPrimaryColor, Color newAccentColor) {
+    App.of(context).changeColors(newPrimaryColor, newAccentColor);
   }
 
   @override
@@ -168,23 +243,23 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ],
         ),
       ),
-
-      floatingActionButton: index == 0 ? new FloatingActionButton(
-        onPressed: () async {
-          String value = await Navigator.push(
-            context,
-            new MaterialPageRoute(
-              maintainState: true,
-              builder: (context) => new NewActivityScreen(),
+      floatingActionButton: index == 0
+          ? new FloatingActionButton(
+              onPressed: () async {
+                String value = await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      maintainState: true,
+                      builder: (context) => new NewActivityScreen(),
+                    ));
+                if (value != null) {
+                  showNotification(value, false);
+                }
+              },
+              tooltip: 'New Activity',
+              child: new Icon(Icons.add),
             )
-          );
-          if (value != null) {
-            showNotification(value, false);
-          }
-        },
-        tooltip: 'New Activity',
-        child: new Icon(Icons.add),
-      ) : null,
+          : null,
       bottomNavigationBar: new Material(
         color: darkMode ? Colors.grey[850] : Colors.white,
         elevation: 8.0,
@@ -231,7 +306,9 @@ class _TabIconsState extends State<TabIcons> {
 
   Widget tabIcon(IconData icon, int index, Color color) {
     Color iconColor;
-    Color inactiveColor = Theme.of(context).brightness == Brightness.dark ? Colors.grey[600] : Colors.grey[400];
+    Color inactiveColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[600]
+        : Colors.grey[400];
     // if it is a tap, this is always true, as currentIndex immiediately switches to index
     if (_offset.abs() > 1.0) _offset = 1.0;
     if (_currentIndex == index) {
@@ -241,16 +318,15 @@ class _TabIconsState extends State<TabIcons> {
     else if (_indexIsChanging) {
       if (_previousIndex == index) {
         iconColor = Color.lerp(inactiveColor, color, _offset.abs());
-      }
-      else {
+      } else {
         iconColor = inactiveColor;
       }
     }
     // Swiping right or left
-    else if (index == _currentIndex + 1 && _offset > 0.0 || index == _currentIndex - 1 && _offset < 0.0) {
+    else if (index == _currentIndex + 1 && _offset > 0.0 ||
+        index == _currentIndex - 1 && _offset < 0.0) {
       iconColor = Color.lerp(inactiveColor, color, _offset.abs());
-    }
-    else {
+    } else {
       iconColor = inactiveColor;
     }
     return new Icon(
@@ -267,13 +343,16 @@ class _TabIconsState extends State<TabIcons> {
       controller: widget.controller,
       tabs: <Widget>[
         new Tab(
-          icon: tabIcon(Icons.directions_run, 0, darkMode ? Colors.lightBlue : Colors.blue),
+          icon: tabIcon(Icons.directions_run, 0,
+              darkMode ? Colors.lightBlue : Colors.blue),
         ),
         new Tab(
-          icon: tabIcon(Icons.restaurant, 1, darkMode ? Colors.green : Colors.green),
+          icon: tabIcon(
+              Icons.restaurant, 1, darkMode ? Colors.lightGreen : Colors.green),
         ),
         new Tab(
-          icon: tabIcon(Icons.settings, 2, darkMode ? Colors.deepOrange : Colors.blueGrey),
+          icon: tabIcon(Icons.settings, 2,
+              darkMode ? Colors.deepOrange : Colors.blueGrey),
         ),
       ],
     );

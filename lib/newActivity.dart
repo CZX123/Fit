@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'data/newActivityList.dart';
 import 'addActivity.dart';
@@ -170,7 +169,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                                     style: new TextStyle(
                                       height: 1.2,
                                       fontFamily: 'Renner*',
-                                      fontSize: 18.0,
+                                      fontSize: 16.0,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -215,6 +214,7 @@ class Package extends StatelessWidget {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return new RaisedButton(
       elevation: darkMode ? 0.0 : 2.0,
+      highlightElevation: darkMode ? 0.0 : 8.0,
       color: darkMode ? Colors.grey[850] : Colors.white,
       shape: new RoundedRectangleBorder(
         borderRadius: new BorderRadius.all(
@@ -259,7 +259,7 @@ class Package extends StatelessWidget {
               style: new TextStyle(
                 height: 1.2,
                 fontFamily: 'Renner*',
-                fontSize: 18.0,
+                fontSize: 17.0,
                 fontWeight: FontWeight.w500,
               ),
             ),

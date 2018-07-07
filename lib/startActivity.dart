@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'fileManager.dart';
 import 'addActivity.dart';
 import 'customWidgets.dart';
@@ -79,10 +77,7 @@ class StartActivityScreen extends StatelessWidget {
                       } else if (value == 'Remove') {
                         FileManager
                             .removeFromFile('exercise.json', name)
-                            .then((file) {
-                          DynamicTheme
-                              .of(context)
-                              .setBrightness(Theme.of(context).brightness);
+                            .then((_) {
                           Navigator.pop(context);
                         });
                       }
@@ -93,7 +88,10 @@ class StartActivityScreen extends StatelessWidget {
                           value: 'Edit',
                           child: new Row(
                             children: <Widget>[
-                              new Icon(Icons.edit),
+                              new Icon(
+                                Icons.edit,
+                                color: darkMode ? Colors.white : Colors.black87,
+                              ),
                               new SizedBox(
                                 width: 16.0,
                               ),
@@ -105,7 +103,10 @@ class StartActivityScreen extends StatelessWidget {
                           value: 'Remove',
                           child: new Row(
                             children: <Widget>[
-                              new Icon(Icons.delete),
+                              new Icon(
+                                Icons.delete,
+                                color: darkMode ? Colors.white : Colors.black87,
+                              ),
                               new SizedBox(
                                 width: 16.0,
                               ),
