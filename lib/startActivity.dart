@@ -258,7 +258,6 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                           timerText(timerSecondsString(1)),
                           timerText('.'),
                           timerText(timerMillisecondsString(0)),
-                          timerText(timerMillisecondsString(1)),
                         ],
                       );
                     },
