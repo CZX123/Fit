@@ -12,11 +12,11 @@ import './data/newActivityList.dart';
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
   runApp(
-    new App(
+    App(
       brightness: Brightness.light,
       primaryColor: Colors.blue,
       accentColor: Colors.deepOrangeAccent,
-      child: new MyHomePage(),
+      child: MyHomePage(),
     ),
   );
 }
@@ -52,7 +52,7 @@ class App extends StatefulWidget {
   }
 
   @override
-  AppState createState() => new AppState();
+  AppState createState() => AppState();
 }
 
 class AppState extends State<App> {
@@ -96,12 +96,12 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return new _InheritedApp(
+    return _InheritedApp(
       data: this,
-      child: new MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Fit',
-        theme: new ThemeData(
+        theme: ThemeData(
           brightness: brightness,
           primaryColor: primaryColor,
           accentColor: accentColor,
@@ -116,7 +116,7 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
   @override
-  MyHomePageState createState() => new MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
 class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
@@ -127,14 +127,14 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    controller = new TabController(vsync: this, length: 3);
+    controller = TabController(vsync: this, length: 3);
     controller.addListener(changeScreen);
     var initializationSettingsAndroid =
-        new AndroidInitializationSettings('icon');
-    var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
+        AndroidInitializationSettings('icon');
+    var initializationSettingsIOS = IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         selectNotification: onSelectNotification);
   }
@@ -173,8 +173,8 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Future onSelectNotification(String payload) async {
     await Navigator.push(
       context,
-      new MaterialPageRoute(
-        builder: (context) => new StartActivityScreen(
+      MaterialPageRoute(
+        builder: (context) => StartActivityScreen(
               name: payload,
               icon: getIconFromName(payload),
               color: Theme.of(context).brightness == Brightness.dark
@@ -186,7 +186,7 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Future showNotification(String name, bool late) async {
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       name,
       name,
       'Notification for $name exercise',
@@ -194,8 +194,8 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       importance: Importance.Max,
       priority: Priority.High,
     );
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    var platformChannelSpecifics = new NotificationDetails(
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         getId(name),
@@ -231,39 +231,39 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return new Scaffold(
-      body: new Container(
+    return Scaffold(
+      body: Container(
         color: Colors.grey[50],
-        child: new TabBarView(
+        child: TabBarView(
           controller: controller,
           children: <Widget>[
-            new ExerciseScreen(),
-            new DietScreen(),
-            new SettingsScreen(),
+            ExerciseScreen(),
+            DietScreen(),
+            SettingsScreen(),
           ],
         ),
       ),
       floatingActionButton: index == 0
-          ? new FloatingActionButton(
+          ? FloatingActionButton(
               onPressed: () async {
                 String value = await Navigator.push(
                     context,
-                    new MaterialPageRoute(
+                    MaterialPageRoute(
                       maintainState: true,
-                      builder: (context) => new NewActivityScreen(),
+                      builder: (context) => NewActivityScreen(),
                     ));
                 if (value != null) {
                   showNotification(value, false);
                 }
               },
               tooltip: 'New Activity',
-              child: new Icon(Icons.add),
+              child: const Icon(Icons.add),
             )
           : null,
-      bottomNavigationBar: new Material(
+      bottomNavigationBar: Material(
         color: darkMode ? Colors.grey[850] : Colors.white,
         elevation: 8.0,
-        child: new TabIcons(
+        child: TabIcons(
           controller: controller,
         ),
       ),
@@ -274,7 +274,7 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 class TabIcons extends StatefulWidget {
   TabIcons({Key key, this.controller}) : super(key: key);
   final TabController controller;
-  _TabIconsState createState() => new _TabIconsState();
+  _TabIconsState createState() => _TabIconsState();
 }
 
 class _TabIconsState extends State<TabIcons> {
@@ -329,7 +329,7 @@ class _TabIconsState extends State<TabIcons> {
     } else {
       iconColor = inactiveColor;
     }
-    return new Icon(
+    return Icon(
       icon,
       color: iconColor,
     );
@@ -338,19 +338,19 @@ class _TabIconsState extends State<TabIcons> {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return new TabBar(
-      indicator: new BoxDecoration(),
+    return TabBar(
+      indicator: const BoxDecoration(),
       controller: widget.controller,
       tabs: <Widget>[
-        new Tab(
+        Tab(
           icon: tabIcon(Icons.directions_run, 0,
               darkMode ? Colors.lightBlue : Colors.blue),
         ),
-        new Tab(
+        Tab(
           icon: tabIcon(
               Icons.restaurant, 1, darkMode ? Colors.green[400] : Colors.green),
         ),
-        new Tab(
+        Tab(
           icon: tabIcon(Icons.settings, 2,
               darkMode ? Colors.deepOrange : Colors.blueGrey),
         ),

@@ -25,31 +25,31 @@ class StartActivityScreen extends StatelessWidget {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final Color actualColor =
         color ?? (darkMode ? Colors.lightBlue : Colors.blue);
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.white,
-      body: new SingleChildScrollView(
-        padding: new EdgeInsets.fromLTRB(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
             0.0, MediaQuery.of(context).padding.top + 4.0, 0.0, 16.0),
-        child: new Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Padding(
+                Padding(
                   padding: const EdgeInsets.only(left: 4.0),
-                  child: new BackButton(),
+                  child: BackButton(),
                 ),
-                new Padding(
+                Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 16.0),
-                  child: new SizedBox(
+                  child: SizedBox(
                     height: 96.0,
                     width: 96.0,
-                    child: new Hero(
+                    child: Hero(
                       tag: name + 'a',
-                      child: new FittedBox(
-                        child: new Icon(
+                      child: FittedBox(
+                        child: Icon(
                           icon,
                           color: actualColor,
                         ),
@@ -57,15 +57,15 @@ class StartActivityScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                new Padding(
+                Padding(
                   padding: const EdgeInsets.only(right: 4.0),
-                  child: new PopupMenuButton<String>(
+                  child: PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'Edit') {
                         Navigator.push(
                           context,
-                          new FadingPageRoute(
-                            builder: (context) => new AddActivityScreen(
+                          FadingPageRoute(
+                            builder: (context) => AddActivityScreen(
                                   icon: icon,
                                   name: name,
                                   description: description ??
@@ -85,30 +85,30 @@ class StartActivityScreen extends StatelessWidget {
                     },
                     itemBuilder: (BuildContext context) {
                       return <PopupMenuItem<String>>[
-                        new PopupMenuItem<String>(
+                        PopupMenuItem<String>(
                           value: 'Edit',
-                          child: new Row(
+                          child: Row(
                             children: <Widget>[
-                              new Icon(
+                              Icon(
                                 Icons.edit,
                                 color: darkMode ? Colors.white : Colors.black87,
                               ),
-                              new SizedBox(
+                              const SizedBox(
                                 width: 16.0,
                               ),
                               const Text('Edit'),
                             ],
                           ),
                         ),
-                        new PopupMenuItem<String>(
+                        PopupMenuItem<String>(
                           value: 'Remove',
-                          child: new Row(
+                          child: Row(
                             children: <Widget>[
-                              new Icon(
+                              Icon(
                                 Icons.delete,
                                 color: darkMode ? Colors.white : Colors.black87,
                               ),
-                              new SizedBox(
+                              const SizedBox(
                                 width: 16.0,
                               ),
                               const Text('Remove'),
@@ -121,17 +121,17 @@ class StartActivityScreen extends StatelessWidget {
                 ),
               ],
             ),
-            new Text(
+            Text(
               name,
               textAlign: TextAlign.center,
-              style: new TextStyle(
+              style: const TextStyle(
                 height: 1.2,
                 fontFamily: 'Renner*',
                 fontSize: 24.0,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            new Timer(Duration(seconds: 20)),
+            Timer(Duration(seconds: 20)),
           ],
         ),
       ),
@@ -148,6 +148,7 @@ class Timer extends StatefulWidget {
 
 class _TimerState extends State<Timer> with TickerProviderStateMixin {
   AnimationController controller;
+  bool animationStarted = false;
 
   @override
   void initState() {
@@ -167,7 +168,10 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
   }
 
   void animationEnd(AnimationStatus status) {
-    if (status == AnimationStatus.dismissed) controller.value = 1.0;
+    if (status == AnimationStatus.dismissed) {
+      animationStarted = false;
+      controller.value = 1.0;
+    }
   }
 
   void changeDuration(Duration newDuration) {
@@ -205,7 +209,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                         painter: TimerPainter(
                           animation: controller,
                           backgroundColor:
-                              darkMode ? Colors.white30 : Colors.black38,
+                              darkMode ? Colors.white12 : Colors.black12,
                           color: darkMode ? Colors.lightBlue : Colors.blue,
                         ),
                       );
@@ -227,12 +231,12 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                           Container(
                             width: 96.0,
                             alignment: Alignment.centerRight,
-                            child: new Text(
+                            child: Text(
                               timerMinutesString,
                               style: textStyle,
                             ),
                           ),
-                          new Padding(
+                          Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Text(
@@ -243,7 +247,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                           Container(
                             width: 96.0,
                             alignment: Alignment.centerLeft,
-                            child: new Text(
+                            child: Text(
                               timerSecondsString,
                               style: textStyle,
                             ),
@@ -262,15 +266,15 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
           RaisedButton(
             color: darkMode ? Colors.lightBlue : Colors.blue,
             colorBrightness: Brightness.dark,
-            shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.all(
+            shape: const RoundedRectangleBorder(
+              borderRadius: const BorderRadius.all(
                 const Radius.circular(4.0),
               ),
             ),
-            child: new AnimatedBuilder(
+            child: AnimatedBuilder(
               animation: controller,
               builder: (context, _) =>
-                  Text(controller.isAnimating ? 'STOP' : 'START'),
+                  Text(controller.isAnimating ? 'STOP' : animationStarted ? 'RESUME' : 'START'),
             ),
             onPressed: () {
               if (controller.isAnimating) {
@@ -278,6 +282,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                   controller.stop();
                 });
               } else {
+                animationStarted = true;
                 controller.reverse(
                   from: controller.value == 0.0 ? 1.0 : controller.value,
                 );
@@ -310,7 +315,7 @@ class TimerPainter extends CustomPainter {
     canvas.drawCircle(size.center(Offset.zero), size.width / 2, paint);
     paint.color = color;
     double progress = (1.0 - animation.value) * 2 * pi;
-    canvas.drawArc(Offset.zero & size, pi * 1.5, -progress, false, paint);
+    canvas.drawArc(Offset.zero & size, pi * 1.5, progress, false, paint);
   }
 
   @override

@@ -9,26 +9,26 @@ class DietScreen extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     double windowTopPadding = MediaQuery.of(context).padding.top;
     double containerHeight = 172.0;
-    return new SingleChildScrollView(
-      child: new Stack(
+    return SingleChildScrollView(
+      child: Stack(
         children: <Widget>[
-          new Positioned(
+          Positioned(
             top: 0.0,
             right: 0.0,
             left: 0.0,
             height: containerHeight + windowTopPadding,
-            child: new Container(
+            child: Container(
               color: darkMode ? Colors.grey[900] : Colors.green,
             ),
           ),
-          new Positioned(
+          Positioned(
             top: containerHeight - 1 + windowTopPadding,
             right: 0.0,
             left: 0.0,
             bottom: -64.0,
-            child: new DecoratedBox(
-              decoration: new BoxDecoration(
-                gradient: new LinearGradient(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
@@ -39,21 +39,21 @@ class DietScreen extends StatelessWidget {
               ),
             ),
           ),
-          new Container(
+          Container(
             color: darkMode ? Colors.grey[900] : null,
-            constraints: new BoxConstraints(
+            constraints: BoxConstraints(
               minHeight: height - 48.0,
             ),
-            padding: new EdgeInsets.only(top: windowTopPadding),
-            child: new Column(
+            padding: EdgeInsets.only(top: windowTopPadding),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                new Padding(
+                Padding(
                   padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
-                  child: new Text(
+                  child: const Text(
                     'Diet',
-                    style: new TextStyle(
+                    style: const TextStyle(
                       height: 1.2,
                       color: Colors.white,
                       fontFamily: 'Renner*',
@@ -62,14 +62,14 @@ class DietScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                new Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    new Padding(
+                    const Padding(
                       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-                      child: new Text(
+                      child: const Text(
                         'Hello',
-                        style: new TextStyle(
+                        style: const TextStyle(
                           height: 1.2,
                           color: Colors.white,
                           fontFamily: 'Renner*',
@@ -78,11 +78,11 @@ class DietScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    new Padding(
+                    const Padding(
                       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 20.0),
-                      child: new Text(
+                      child: const Text(
                         'Here are some recommended diets for you:',
-                        style: new TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
                         ),
@@ -90,14 +90,14 @@ class DietScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                new Container(
+                Container(
                   padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 32.0),
-                  child: new Grid(
+                  child: Grid(
                     children: dietList,
                     columnCount: orientation == Orientation.portrait ? 2 : 3,
                   ),
                 ),
-                new Container(),
+                const SizedBox(),
               ],
             ),
           ),
@@ -125,42 +125,42 @@ class Diet extends StatelessWidget {
     double width = MediaQuery.of(context).size.width /
             ((orientation == Orientation.portrait) ? 2 : 3) -
         12.0;
-    return new Container(
+    return Container(
       height: width / ((orientation == Orientation.portrait) ? 1.3 : 1.6),
       width: width,
       margin: const EdgeInsets.all(4.0),
-      child: new RaisedButton(
+      child: RaisedButton(
         elevation: darkMode ? 0.0 : 2.0,
         highlightElevation: darkMode ? 0.0 : 8.0,
         color: darkMode ? Colors.grey[850] : Colors.white,
-        shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.all(
+        shape: const RoundedRectangleBorder(
+          borderRadius: const BorderRadius.all(
             const Radius.circular(8.0),
           ),
         ),
         onPressed: onPressed,
-        child: new Container(
+        child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
             vertical: 8.0,
           ),
-          child: new Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               (image != null)
-                  ? new Image.asset(
+                  ? Image.asset(
                       image,
                       height: 64.0,
                     )
-                  : new Icon(
+                  : Icon(
                       icon,
                       size: 64.0,
                       color: Colors.green,
                     ),
-              new Text(
+              Text(
                 name,
                 textAlign: TextAlign.center,
-                style: new TextStyle(
+                style: const TextStyle(
                   height: 1.2,
                   fontFamily: 'Renner*',
                   fontSize: 18.0,

@@ -22,11 +22,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   void initState() {
     super.initState();
     var initializationSettingsAndroid =
-        new AndroidInitializationSettings('icon');
-    var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
+        AndroidInitializationSettings('icon');
+    var initializationSettingsIOS = IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         selectNotification: onSelectNotification);
   }
@@ -37,7 +37,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       IconData icon = getIconFromName(key);
       if (icon != null) {
         activities.add(
-          new Activity(
+          Activity(
             name: key,
             icon: icon,
             completionState: getCompletionState(value),
@@ -52,13 +52,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   String getCompletionState(dynamic value) {
     TimeOfDay now = TimeOfDay.now();
     List<dynamic> startTimes = value[0].map((list) {
-      return new TimeOfDay(
+      return TimeOfDay(
         hour: list[0],
         minute: list[1],
       );
     }).toList();
     List<dynamic> endTimes = value[1].map((list) {
-      return new TimeOfDay(
+      return TimeOfDay(
         hour: list[0],
         minute: list[1],
       );
@@ -109,16 +109,19 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   Future onSelectNotification(String payload) async {
     await Navigator.push(
       context.ancestorStateOfType(TypeMatcher<MyHomePageState>()).context,
-      new MaterialPageRoute(builder: (context) => new StartActivityScreen(
-        name: payload,
-        icon: getIconFromName(payload),
-        color: Theme.of(context).brightness == Brightness.dark ? Colors.lightBlue : Colors.blue,
-      )),
+      MaterialPageRoute(
+          builder: (context) => StartActivityScreen(
+                name: payload,
+                icon: getIconFromName(payload),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.lightBlue
+                    : Colors.blue,
+              )),
     );
   }
 
   Future showNotification(String name, bool late) async {
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       name,
       name,
       'Notification for $name exercise',
@@ -126,38 +129,43 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       importance: Importance.Max,
       priority: Priority.High,
     );
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    var platformChannelSpecifics = new NotificationDetails(
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        getId(name), late ? 'Oh No!' : 'Heads Up!', late ? 'You missed your $name exercise. But better late than never!' : 'Your $name exercise will begin in 20 mins!', platformChannelSpecifics,
+        getId(name),
+        late ? 'Oh No!' : 'Heads Up!',
+        late
+            ? 'You missed your $name exercise. But better late than never!'
+            : 'Your $name exercise will begin in 20 mins!',
+        platformChannelSpecifics,
         payload: name);
   }
 
   Widget activities(Orientation orientation) {
-    return new FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<Map<String, dynamic>>(
       future: FileManager.readFile(fileName),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data.length != 0) {
-          return new Grid(
+          return Grid(
             children: getActivities(snapshot.data),
             columnCount: orientation == Orientation.portrait ? 2 : 3,
           );
         }
-        return new Container(
+        return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           alignment: Alignment.center,
-          child: new Column(
+          child: Column(
             children: <Widget>[
-              new Icon(
+              const Icon(
                 Icons.directions_run,
                 color: Colors.white,
                 size: 64.0,
               ),
-              new SizedBox(
+              const SizedBox(
                 height: 16.0,
               ),
-              new Text(
+              const Text(
                 'Add some new activities',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
@@ -180,26 +188,28 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     double height = MediaQuery.of(context).size.height;
     double windowTopPadding = MediaQuery.of(context).padding.top;
     double containerHeight = 175.0;
-    return new SingleChildScrollView(
-      child: new Stack(
+    return SingleChildScrollView(
+      child: Stack(
         children: <Widget>[
-          new Positioned(
+          Positioned(
             top: 0.0,
             right: 0.0,
             left: 0.0,
             height: containerHeight + windowTopPadding,
-            child: new Container(
+            child: Container(
               color: darkMode ? Colors.grey[900] : Colors.blue,
             ),
           ),
-          new Positioned(
-            top: orientation == Orientation.landscape ? windowTopPadding + 128.0 : containerHeight - 1 + windowTopPadding,
+          Positioned(
+            top: orientation == Orientation.landscape
+                ? windowTopPadding + 128.0
+                : containerHeight - 1 + windowTopPadding,
             right: 0.0,
             left: 0.0,
             bottom: -64.0,
-            child: new Container(
-              decoration: new BoxDecoration(
-                gradient: new LinearGradient(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
@@ -210,21 +220,21 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               ),
             ),
           ),
-          new Container(
+          Container(
             color: darkMode ? Colors.grey[900] : null,
-            constraints: new BoxConstraints(
+            constraints: BoxConstraints(
               minHeight: height - 48.0,
             ),
-            padding: new EdgeInsets.only(top: windowTopPadding),
-            child: new Column(
+            padding: EdgeInsets.only(top: windowTopPadding),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Padding(
+                const Padding(
                   padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
-                  child: new Text(
+                  child: const Text(
                     'Exercise',
-                    style: new TextStyle(
+                    style: const TextStyle(
                       height: 1.2,
                       color: Colors.white,
                       fontFamily: 'Renner*',
@@ -233,34 +243,34 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     ),
                   ),
                 ),
-                new Container(
+                Container(
                   padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
-                  child: new Row(
+                  child: Row(
                     children: <Widget>[
-                      new Icon(
+                      const Icon(
                         SportsIcons.footsteps,
                         size: 64.0,
                         color: Colors.white,
                         semanticLabel: 'Footstep',
                       ),
-                      new Padding(
+                      Padding(
                         padding: const EdgeInsets.only(left: 18.0),
-                        child: new Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            new Text(
+                            Text(
                               '$counter',
-                              style: new TextStyle(
+                              style: const TextStyle(
                                 fontFamily: 'Renner*',
                                 color: Colors.white,
                                 fontSize: 56.0,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            new Text(
+                            Text(
                               counter == 1 ? ' STEP' : ' STEPS',
-                              style: new TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
@@ -272,15 +282,17 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     ],
                   ),
                 ),
-                new Container(
-                  constraints: new BoxConstraints(
-                    minHeight: orientation == Orientation.landscape ? height / 4 : height / 2,
+                Container(
+                  constraints: BoxConstraints(
+                    minHeight: orientation == Orientation.landscape
+                        ? height / 4
+                        : height / 2,
                   ),
                   padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
                   child: activities(orientation),
                 ),
-                new Container(),
-                new Container(),
+                const SizedBox(),
+                const SizedBox(),
               ],
             ),
           ),
@@ -308,24 +320,24 @@ class Activity extends StatelessWidget {
     double width = MediaQuery.of(context).size.width /
             ((orientation == Orientation.portrait) ? 2 : 3) -
         12.0;
-    return new Container(
+    return Container(
       height: width / ((orientation == Orientation.portrait) ? 1.1 : 1.3),
       width: width,
       margin: const EdgeInsets.all(4.0),
-      child: new RaisedButton(
+      child: RaisedButton(
         elevation: darkMode ? 0.0 : 2.0,
         highlightElevation: darkMode ? 0.0 : 8.0,
         color: darkMode ? Colors.grey[850] : Colors.white,
-        shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.all(
+        shape: const RoundedRectangleBorder(
+          borderRadius: const BorderRadius.all(
             const Radius.circular(8.0),
           ),
         ),
         onPressed: () async {
           String value = await Navigator.push(
             context,
-            new MaterialPageRoute(
-              builder: (context) => new StartActivityScreen(
+            MaterialPageRoute(
+              builder: (context) => StartActivityScreen(
                     icon: icon,
                     color: darkMode ? Colors.lightBlue : Colors.blue,
                     name: name,
@@ -334,37 +346,37 @@ class Activity extends StatelessWidget {
           );
           if (value != null) showNotification(value, false);
         },
-        child: new Container(
+        child: Container(
           padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 4.0),
-          child: new Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              new SizedBox(
+              SizedBox(
                 height: 64.0,
                 width: 64.0,
-                child: new Hero(
+                child: Hero(
                   tag: name + 'a',
-                  child: new FittedBox(
-                    child: new Icon(
+                  child: FittedBox(
+                    child: Icon(
                       icon,
                       color: darkMode ? Colors.lightBlue : Colors.blue,
                     ),
                   ),
                 ),
               ),
-              new Text(
+              Text(
                 name,
                 textAlign: TextAlign.center,
-                style: new TextStyle(
+                style: const TextStyle(
                   height: 1.2,
                   fontFamily: 'Renner*',
                   fontSize: 17.0,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              new Transform.translate(
+              Transform.translate(
                 offset: const Offset(0.0, -6.0),
-                child: new CompletionState(completionState),
+                child: CompletionState(completionState),
               ),
             ],
           ),
@@ -395,20 +407,18 @@ class CompletionState extends StatelessWidget {
       color = darkMode ? Colors.redAccent[200] : Colors.red;
       iconData = Icons.warning;
     }
-    return new Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        new IconTheme(
-          data: new IconThemeData(
-            color: color,
-          ),
-          child: new Icon(iconData),
+        Icon(
+          iconData,
+          color: color,
         ),
-        new Padding(
+        Padding(
           padding: const EdgeInsets.only(left: 4.0),
-          child: new Text(
+          child: Text(
             completionState,
-            style: new TextStyle(
+            style: TextStyle(
               color: color,
               fontWeight: FontWeight.w500,
             ),
