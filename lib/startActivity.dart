@@ -127,7 +127,12 @@ class StartActivityScreen extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Timer(Duration(seconds: 20)),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.height,
+              ),
+              child: Timer(Duration(seconds: 20)),
+            )
           ],
         ),
       ),
@@ -176,14 +181,41 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
     });
   }
 
-  String get timerMinutesString {
+  String timerMinutesString(int index) {
     Duration duration = controller.duration * controller.value;
-    return duration.inMinutes.toString().padLeft(2, '0');
+    String minutes = duration.inMinutes.toString().padLeft(2, '0');
+    if (index == 0) return minutes[0];
+    return minutes[1];
   }
 
-  String get timerSecondsString {
+  String timerSecondsString(int index) {
     Duration duration = controller.duration * controller.value;
-    return (duration.inSeconds % 60).toString().padLeft(2, '0');
+    String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    if (index == 0) return seconds[0];
+    return seconds[1];
+  }
+
+  String timerMillisecondsString(int index) {
+    Duration duration = controller.duration * controller.value;
+    String milliseconds =
+        (duration.inMilliseconds % 1000).toString().padLeft(3, '0');
+    if (index == 0) return milliseconds[0];
+    return milliseconds[1];
+  }
+
+  Container timerText(String text) {
+    return Container(
+      width: text == ':' || text == '.' ? 18.0 : 29.0,
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: const TextStyle(
+          height: 1.2,
+          fontFamily: 'Renner*',
+          fontSize: 48.0,
+        ),
+      ),
+    );
   }
 
   @override
@@ -216,38 +248,17 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                   child: AnimatedBuilder(
                     animation: controller,
                     builder: (context, _) {
-                      final TextStyle textStyle = const TextStyle(
-                        height: 1.2,
-                        fontFamily: 'Renner*',
-                        fontSize: 64.0,
-                      );
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Container(
-                            width: 96.0,
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              timerMinutesString,
-                              style: textStyle,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 4.0),
-                            child: Text(
-                              ':',
-                              style: textStyle,
-                            ),
-                          ),
-                          Container(
-                            width: 96.0,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              timerSecondsString,
-                              style: textStyle,
-                            ),
-                          ),
+                          timerText(timerMinutesString(0)),
+                          timerText(timerMinutesString(1)),
+                          timerText(':'),
+                          timerText(timerSecondsString(0)),
+                          timerText(timerSecondsString(1)),
+                          timerText('.'),
+                          timerText(timerMillisecondsString(0)),
+                          timerText(timerMillisecondsString(1)),
                         ],
                       );
                     },
@@ -269,8 +280,9 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
             ),
             child: AnimatedBuilder(
               animation: controller,
-              builder: (context, _) =>
-                  Text(controller.isAnimating ? 'STOP' : animationStarted ? 'RESUME' : 'START'),
+              builder: (context, _) => Text(controller.isAnimating
+                  ? 'STOP'
+                  : animationStarted ? 'RESUME' : 'START'),
             ),
             onPressed: () {
               if (controller.isAnimating) {
