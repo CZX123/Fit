@@ -5,10 +5,11 @@ import 'data/dietList.dart';
 class DietScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    final Orientation orientation = MediaQuery.of(context).orientation;
-    double height = MediaQuery.of(context).size.height;
-    double windowTopPadding = MediaQuery.of(context).padding.top;
-    double containerHeight = 172.0;
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final double height = MediaQuery.of(context).size.height;
+    final double windowTopPadding = MediaQuery.of(context).padding.top;
+    final double containerHeight = 172.0;
     return SingleChildScrollView(
       child: Stack(
         children: <Widget>[
@@ -50,7 +51,7 @@ class DietScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
+                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 24.0, portrait ? 16.0 : 72.0, 12.0),
                   child: const Text(
                     'Diet',
                     style: const TextStyle(
@@ -65,8 +66,8 @@ class DietScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 8.0, portrait ? 16.0 : 72.0, 0.0),
                       child: const Text(
                         'Hello',
                         style: const TextStyle(
@@ -78,11 +79,11 @@ class DietScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 20.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 8.0, portrait ? 16.0 : 72.0, 20.0),
                       child: const Text(
                         'Here are some recommended diets for you:',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
                         ),
@@ -91,10 +92,11 @@ class DietScreen extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 32.0),
+                  padding: EdgeInsets.fromLTRB(
+                      portrait ? 4.0 : 68.0, 0.0, portrait ? 4.0 : 68.0, 32.0),
                   child: Grid(
                     children: dietList,
-                    columnCount: orientation == Orientation.portrait ? 2 : 3,
+                    columnCount: portrait ? 2 : 3,
                   ),
                 ),
                 const SizedBox(),
@@ -121,12 +123,13 @@ class Diet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    Orientation orientation = MediaQuery.of(context).orientation;
-    double width = MediaQuery.of(context).size.width /
-            ((orientation == Orientation.portrait) ? 2 : 3) -
-        12.0;
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double width =
+        portrait ? (screenWidth - 24.0) / 2 : (screenWidth - 160.0) / 3;
     return Container(
-      height: width / ((orientation == Orientation.portrait) ? 1.3 : 1.6),
+      height: width / (portrait ? 1.3 : 1.2),
       width: width,
       margin: const EdgeInsets.all(4.0),
       child: RaisedButton(

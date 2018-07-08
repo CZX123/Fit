@@ -4,7 +4,7 @@ description: An all-in-one fitness app
 dependencies:
   flutter:
     sdk: flutter
-  flutter_local_notifications: ^0.3.3
+  flutter_local_notifications: ^0.3.4
   path_provider: ^0.4.1
   shared_preferences: ^0.4.2
   numberpicker: ^0.1.4

@@ -14,9 +14,6 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(new App(
       child: new MyHomePage(),
-      brightness: Brightness.light,
-      primaryColor: Colors.blue,
-      accentColor: Colors.deepOrangeAccent,
     ));
 
     // Verify that our counter starts at 0.

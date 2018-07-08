@@ -8,14 +8,12 @@ import 'newActivity.dart' show Package;
 class StartActivityScreen extends StatelessWidget {
   StartActivityScreen({
     this.icon: Icons.help,
-    this.color,
     @required this.name,
     this.description,
     this.packageTasks,
   });
 
   final IconData icon;
-  final Color color;
   final String name;
   final String description;
   final List<Package> packageTasks;
@@ -23,8 +21,6 @@ class StartActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    final Color actualColor =
-        color ?? (darkMode ? Colors.lightBlue : Colors.blue);
     return Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.white,
       body: SingleChildScrollView(
@@ -51,7 +47,7 @@ class StartActivityScreen extends StatelessWidget {
                       child: FittedBox(
                         child: Icon(
                           icon,
-                          color: actualColor,
+                          color: darkMode ? Colors.lightBlue : Colors.blue,
                         ),
                       ),
                     ),

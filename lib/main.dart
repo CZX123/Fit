@@ -13,9 +13,6 @@ void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
   runApp(
     App(
-      brightness: Brightness.light,
-      primaryColor: Colors.blue,
-      accentColor: Colors.deepOrangeAccent,
       child: MyHomePage(),
     ),
   );
@@ -34,16 +31,8 @@ class _InheritedApp extends InheritedWidget {
 
 class App extends StatefulWidget {
   final Widget child;
-  final Brightness brightness;
-  final Color primaryColor;
-  final Color accentColor;
 
-  App({
-    @required this.child,
-    @required this.brightness,
-    @required this.primaryColor,
-    @required this.accentColor,
-  });
+  App({@required this.child});
 
   static AppState of(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(_InheritedApp)
@@ -57,20 +46,20 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   final String _key = 'darkMode';
-  Brightness brightness;
-  Color primaryColor;
-  Color accentColor;
+  Brightness brightness = Brightness.light;
+  Color primaryColor = Colors.blue;
+  Color accentColor = Colors.deepOrangeAccent;
 
   @override
   void initState() {
     super.initState();
-    brightness = widget.brightness;
-    primaryColor = widget.primaryColor;
-    accentColor = widget.accentColor;
     _loadBrightness().then((darkMode) {
-      setState(() {
-        brightness = darkMode ? Brightness.dark : Brightness.light;
-      });
+      if (darkMode) {
+        setState(() {
+          brightness = Brightness.dark;
+          primaryColor = Colors.grey[900];
+        });
+      }
     });
   }
 
@@ -129,8 +118,7 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.initState();
     controller = TabController(vsync: this, length: 3);
     controller.addListener(changeScreen);
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('icon');
+    var initializationSettingsAndroid = AndroidInitializationSettings('icon');
     var initializationSettingsIOS = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
@@ -175,12 +163,9 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       context,
       MaterialPageRoute(
         builder: (context) => StartActivityScreen(
-              name: payload,
-              icon: getIconFromName(payload),
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.lightBlue
-                  : Colors.blue,
-            ),
+          name: payload,
+          icon: getIconFromName(payload),
+        ),
       ),
     );
   }
@@ -263,8 +248,11 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       bottomNavigationBar: Material(
         color: darkMode ? Colors.grey[850] : Colors.white,
         elevation: 8.0,
-        child: TabIcons(
-          controller: controller,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).orientation == Orientation.portrait ? 0.0 : 72.0),
+          child: TabIcons(
+            controller: controller,
+          ),
         ),
       ),
     );

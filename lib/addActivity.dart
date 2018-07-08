@@ -20,7 +20,7 @@ class AddActivityScreen extends StatefulWidget {
   final bool updateActivity;
 
   @override
-  _AddActivityScreenState createState() => new _AddActivityScreenState();
+  _AddActivityScreenState createState() => _AddActivityScreenState();
 }
 
 enum Answer { THRICE, TWICE, DAILY, TWODAYS, THREEDAYS, FIVEDAYS, WEEKLY }
@@ -57,13 +57,13 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
         _updateActivity = true;
         _selectedFrequency = fileContent[widget.name][2];
         _fromTime = fileContent[widget.name][0].map((value) {
-          return new TimeOfDay(
+          return TimeOfDay(
             hour: value[0],
             minute: value[1],
           );
         }).toList();
         _toTime = fileContent[widget.name][1].map((value) {
-          return new TimeOfDay(
+          return TimeOfDay(
             hour: value[0],
             minute: value[1],
           );
@@ -74,7 +74,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
 
   void showSnackbar(BuildContext context) {
     final snackBar = SnackBar(
-      duration: new Duration(seconds: 5),
+      duration: const Duration(seconds: 5),
       content: Text(
           'This ${widget.name} exercise has already been added. New edits you make will overwrite the old values.'),
       action: SnackBarAction(
@@ -108,23 +108,23 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     switch (await showDialog(
       context: context,
       builder: (context) {
-        return new SimpleDialog(
-          title: new Text(
+        return SimpleDialog(
+          title: const Text(
             'Change Frequency',
-            style: new TextStyle(
+            style: const TextStyle(
               height: 1.2,
               fontFamily: 'Renner*',
             ),
           ),
           children: _frequency.map((String value) {
-            return new SimpleDialogOption(
+            return SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(
                     context, Answer.values[_frequency.indexOf(value)]);
               },
-              child: new Padding(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: new Text(
+                child: Text(
                   value,
                   textAlign: TextAlign.left,
                 ),
@@ -225,12 +225,12 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       }
       if (!validate || !validate2 || !validate3) _validate = false;
       listTimings.add(
-        new Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: <Widget>[
-            new _TimePicker(
+            _TimePicker(
               initialTime: _fromTime[i],
               selectTime: (TimeOfDay time) {
                 setState(() {
@@ -239,11 +239,11 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
               },
               validate: validate && validate2,
             ),
-            new Padding(
+            const Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: new Text('to'),
+              child: const Text('to'),
             ),
-            new _TimePicker(
+            _TimePicker(
               initialTime: _toTime[i],
               selectTime: (TimeOfDay time) {
                 setState(() {
@@ -264,13 +264,13 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     final double height = MediaQuery.of(context).size.height;
     final double windowTopPadding = MediaQuery.of(context).padding.top;
 
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
-      appBar: new AppBar(
+      appBar: AppBar(
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
-        title: new Text(
+        title: Text(
           (_updateActivity ? 'Edit' : 'New') + ' $name Exercise',
-          style: new TextStyle(
+          style: const TextStyle(
             height: 1.2,
             fontFamily: 'Renner*',
             fontSize: 20.0,
@@ -278,47 +278,47 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
           ),
         ),
       ),
-      body: new Builder(
+      body: Builder(
         builder: (context) {
           if (_updateActivity &&
               !_snackbarShown &&
               (widget.updateActivity == null || !widget.updateActivity))
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showSnackbar(context));
-          return new SingleChildScrollView(
+          return SingleChildScrollView(
             padding:
                 const EdgeInsets.symmetric(horizontal: 72.0, vertical: 32.0),
-            child: new ConstrainedBox(
-              constraints: new BoxConstraints(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
                 minHeight: height - 120.0 - windowTopPadding,
               ),
-              child: new Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  new Container(),
-                  new SizedBox(
+                  const SizedBox(),
+                  SizedBox(
                     height: 96.0,
                     width: 96.0,
-                    child: new Hero(
+                    child: Hero(
                       tag: (widget.updateActivity != null &&
                               widget.updateActivity != false)
                           ? name + 'a'
                           : name,
-                      child: new FittedBox(
-                        child: new Icon(
+                      child: FittedBox(
+                        child: Icon(
                           icon,
                           color: darkMode ? Colors.lightBlue : Colors.blue,
                         ),
                       ),
                     ),
                   ),
-                  new Padding(
+                  Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 8.0),
-                    child: new Text(
+                    child: Text(
                       name,
                       textAlign: TextAlign.center,
-                      style: new TextStyle(
+                      style: const TextStyle(
                         height: 1.2,
                         fontFamily: 'Renner*',
                         fontSize: 24.0,
@@ -326,15 +326,15 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       ),
                     ),
                   ),
-                  new Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: new Text(description),
+                    child: Text(description),
                   ),
-                  new Padding(
+                  const Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 4.0),
-                    child: new Text(
+                    child: const Text(
                       'Frequency',
-                      style: new TextStyle(
+                      style: const TextStyle(
                         height: 1.2,
                         fontFamily: 'Renner*',
                         fontSize: 16.0,
@@ -342,30 +342,30 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       ),
                     ),
                   ),
-                  new Container(
+                  Container(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     alignment: Alignment.centerLeft,
-                    child: new OutlineButton(
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.all(
+                    child: OutlineButton(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: const BorderRadius.all(
                           const Radius.circular(4.0),
                         ),
                       ),
                       highlightElevation: 0.0,
                       highlightedBorderColor:
                           darkMode ? Colors.lightBlue : Colors.blue,
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                         color: darkMode ? Colors.grey[600] : Colors.grey[350],
                         width: 2.0,
                       ),
                       padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 4.0),
-                      child: new Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          new Text(_selectedFrequency),
-                          new Padding(
+                          Text(_selectedFrequency),
+                          Padding(
                             padding: const EdgeInsets.only(left: 2.0),
-                            child: new Icon(
+                            child: Icon(
                               Icons.arrow_drop_down,
                               color: darkMode ? Colors.white : Colors.black54,
                             ),
@@ -377,11 +377,11 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       },
                     ),
                   ),
-                  new Padding(
+                  Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 4.0),
-                    child: new Text(
+                    child: Text(
                       _fromTime.length == 1 ? 'Time' : 'Timings',
-                      style: new TextStyle(
+                      style: const TextStyle(
                         height: 1.2,
                         fontFamily: 'Renner*',
                         fontSize: 16.0,
@@ -389,14 +389,14 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       ),
                     ),
                   ),
-                  new Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: new Column(
+                    child: Column(
                       children: listTimings,
                     ),
                   ),
-                  new Container(),
-                  new Container(),
+                  const SizedBox(),
+                  const SizedBox(),
                 ],
               ),
             ),
@@ -404,9 +404,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
         },
       ),
       floatingActionButton: _validate
-          ? new FloatingActionButton(
+          ? FloatingActionButton(
               tooltip: _updateActivity ? 'Save Edits' : 'Add Activity',
-              child: new Icon(_updateActivity ? Icons.save : Icons.check),
+              child: Icon(_updateActivity ? Icons.save : Icons.check),
               onPressed: () {
                 if (_validate) {
                   writeToFile(name, [
@@ -453,33 +453,31 @@ class _TimePicker extends StatelessWidget {
     final Color outlineColor = darkMode ? Colors.grey[600] : Colors.grey[350];
     final Color highlightedBorderColor =
         darkMode ? Colors.lightBlue : Colors.blue;
-    return new OutlineButton(
-      shape: new RoundedRectangleBorder(
-        borderRadius: new BorderRadius.all(
+    return OutlineButton(
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.all(
           const Radius.circular(4.0),
         ),
       ),
       highlightElevation: 0.0,
       highlightedBorderColor: validate ? highlightedBorderColor : red,
-      borderSide: new BorderSide(
+      borderSide: BorderSide(
         color: validate ? outlineColor : red,
         width: 2.0,
       ),
       padding: const EdgeInsets.all(0.0),
-      child: new Container(
+      child: Container(
         height: 36.0,
         alignment: Alignment.center,
-        child: new Text(
+        child: Text(
           initialTime.format(context),
-          style: new TextStyle(
+          style: TextStyle(
             color: validate ? textColor : red,
             fontWeight: FontWeight.w500,
           ),
         ),
       ),
-      onPressed: () {
-        _selectTime(context);
-      },
+      onPressed: () => _selectTime(context),
     );
   }
 }

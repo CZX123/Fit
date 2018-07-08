@@ -21,8 +21,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   @override
   void initState() {
     super.initState();
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('icon');
+    var initializationSettingsAndroid = AndroidInitializationSettings('icon');
     var initializationSettingsIOS = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
@@ -110,13 +109,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     await Navigator.push(
       context.ancestorStateOfType(TypeMatcher<MyHomePageState>()).context,
       MaterialPageRoute(
-          builder: (context) => StartActivityScreen(
-                name: payload,
-                icon: getIconFromName(payload),
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.lightBlue
-                    : Colors.blue,
-              )),
+        builder: (context) => StartActivityScreen(
+              name: payload,
+              icon: getIconFromName(payload),
+            ),
+      ),
     );
   }
 
@@ -142,14 +139,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         payload: name);
   }
 
-  Widget activities(Orientation orientation) {
+  Widget activities(bool portrait) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return FutureBuilder<Map<String, dynamic>>(
       future: FileManager.readFile(fileName),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data.length != 0) {
           return Grid(
             children: getActivities(snapshot.data),
-            columnCount: orientation == Orientation.portrait ? 2 : 3,
+            columnCount: portrait ? 2 : 3,
           );
         }
         return Container(
@@ -157,19 +155,19 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           alignment: Alignment.center,
           child: Column(
             children: <Widget>[
-              const Icon(
+              Icon(
                 Icons.directions_run,
-                color: Colors.white,
+                color: darkMode ? Colors.white70 : Colors.white,
                 size: 64.0,
               ),
               const SizedBox(
                 height: 16.0,
               ),
-              const Text(
+              Text(
                 'Add some new activities',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: darkMode ? Colors.white70 : Colors.white,
                   fontSize: 16.0,
                   fontWeight: FontWeight.w500,
                 ),
@@ -184,7 +182,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   Widget build(BuildContext context) {
     final int counter = 500;
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    final Orientation orientation = MediaQuery.of(context).orientation;
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     double height = MediaQuery.of(context).size.height;
     double windowTopPadding = MediaQuery.of(context).padding.top;
     double containerHeight = 175.0;
@@ -201,9 +200,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             ),
           ),
           Positioned(
-            top: orientation == Orientation.landscape
-                ? windowTopPadding + 128.0
-                : containerHeight - 1 + windowTopPadding,
+            top: portrait
+                ? containerHeight - 1 + windowTopPadding
+                : windowTopPadding + 128.0,
             right: 0.0,
             left: 0.0,
             bottom: -64.0,
@@ -230,11 +229,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 24.0, portrait ? 16.0 : 72.0, 12.0),
                   child: const Text(
                     'Exercise',
-                    style: const TextStyle(
+                    style: TextStyle(
                       height: 1.2,
                       color: Colors.white,
                       fontFamily: 'Renner*',
@@ -244,7 +243,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
+                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 16.0, portrait ? 16.0 : 72.0, 24.0),
                   child: Row(
                     children: <Widget>[
                       const Icon(
@@ -284,12 +283,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 ),
                 Container(
                   constraints: BoxConstraints(
-                    minHeight: orientation == Orientation.landscape
-                        ? height / 4
-                        : height / 2,
+                    minHeight: portrait
+                        ? height / 2
+                        : height / 4,
                   ),
-                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 32.0),
-                  child: activities(orientation),
+                  padding: EdgeInsets.fromLTRB(portrait ? 4.0 : 68.0, 4.0, portrait ? 4.0 : 68.0, 32.0),
+                  child: activities(portrait),
                 ),
                 const SizedBox(),
                 const SizedBox(),
@@ -316,12 +315,13 @@ class Activity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    Orientation orientation = MediaQuery.of(context).orientation;
-    double width = MediaQuery.of(context).size.width /
-            ((orientation == Orientation.portrait) ? 2 : 3) -
-        12.0;
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double width =
+        portrait ? (screenWidth - 24.0) / 2 : (screenWidth - 160.0) / 3;
     return Container(
-      height: width / ((orientation == Orientation.portrait) ? 1.1 : 1.3),
+      height: width / (portrait ? 1.1 : 1.05),
       width: width,
       margin: const EdgeInsets.all(4.0),
       child: RaisedButton(
@@ -339,7 +339,6 @@ class Activity extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => StartActivityScreen(
                     icon: icon,
-                    color: darkMode ? Colors.lightBlue : Colors.blue,
                     name: name,
                   ),
             ),
