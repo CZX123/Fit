@@ -1,5 +1,7 @@
 import 'dart:math';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'fileManager.dart' show FileManager;
 import 'addActivity.dart' show AddActivityScreen;
 import 'customWidgets.dart' show FadingPageRoute;
@@ -131,8 +133,11 @@ class StartActivityScreen extends StatelessWidget {
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.height,
               ),
-              child: Timer(Duration(seconds: 20)),
-            )
+              child: Timer(
+                name: name,
+                key: Key('timer'),
+              ),
+            ),
           ],
         ),
       ),
@@ -141,8 +146,8 @@ class StartActivityScreen extends StatelessWidget {
 }
 
 class Timer extends StatefulWidget {
-  Timer(this.duration, {Key key}) : super(key: key);
-  final Duration duration;
+  Timer({this.name, Key key}) : super(key: key);
+  final String name;
   @override
   _TimerState createState() => _TimerState();
 }
@@ -150,13 +155,14 @@ class Timer extends StatefulWidget {
 class _TimerState extends State<Timer> with TickerProviderStateMixin {
   AnimationController controller;
   bool animationStarted = false;
+  bool loaded = false;
 
   @override
   void initState() {
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: widget.duration,
+      duration: Duration(),
     );
     controller.value = 1.0;
     controller.addStatusListener(animationEnd);
@@ -164,13 +170,29 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
     controller.removeStatusListener(animationEnd);
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<int> get getDuration async {
+    if (!loaded) {
+      Map<String, dynamic> contents =
+          await FileManager.readFile('exercise.json');
+      loaded = true;
+      if (contents[widget.name].length == 4) {
+        controller.duration = Duration(seconds: contents[widget.name][3]);
+        return contents[widget.name][3];
+      }
+    }
+    return 0;
   }
 
   void animationEnd(AnimationStatus status) {
     if (status == AnimationStatus.dismissed) {
-      animationStarted = false;
+      setState(() {
+        animationStarted = false;
+      });
       controller.value = 1.0;
     }
   }
@@ -218,6 +240,53 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
     );
   }
 
+  Widget text(int index) {
+    return Center(
+      child: Text(
+        index.toString().padLeft(2, '0'),
+        style: const TextStyle(
+          height: 1.2,
+          fontSize: 36.0,
+          fontFamily: 'Renner*',
+        ),
+      ),
+    );
+  }
+
+  List<Widget> get numList {
+    List<Widget> list = [];
+    for (int i = 0; i < 60; i++) {
+      list.add(text(i));
+    }
+    return list;
+  }
+
+  Widget selectTime(int number, int duration) {
+    int minutes = (duration / 60).floor();
+    int seconds = duration % 60;
+    return Container(
+      height: 200.0,
+      width: 72.0,
+      child: CupertinoPicker(
+        scrollController: FixedExtentScrollController(
+          initialItem: number == 0 ? minutes : seconds,
+        ),
+        backgroundColor: Colors.transparent,
+        itemExtent: 56.0,
+        children: numList,
+        onSelectedItemChanged: (index) {
+          if (number == 0) {
+            changeDuration(Duration(
+                minutes: index, seconds: controller.duration.inSeconds % 60));
+          } else {
+            changeDuration(Duration(
+                minutes: controller.duration.inMinutes, seconds: index));
+          }
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -245,28 +314,56 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                   ),
                 ),
                 Center(
-                  child: AnimatedBuilder(
-                    animation: controller,
-                    builder: (context, _) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          timerText(timerMinutesString(0)),
-                          timerText(timerMinutesString(1)),
-                          timerText(':'),
-                          timerText(timerSecondsString(0)),
-                          timerText(timerSecondsString(1)),
-                          timerText('.'),
-                          timerText(timerMillisecondsString(0)),
-                        ],
-                      );
-                    },
+                  child: AnimatedOpacity(
+                    opacity: animationStarted ? 1.0 : 0.0,
+                    duration: animationStarted
+                        ? kThemeAnimationDuration
+                        : const Duration(milliseconds: 50),
+                    child: AnimatedBuilder(
+                      animation: controller,
+                      builder: (context, _) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            timerText(timerMinutesString(0)),
+                            timerText(timerMinutesString(1)),
+                            timerText(':'),
+                            timerText(timerSecondsString(0)),
+                            timerText(timerSecondsString(1)),
+                            timerText('.'),
+                            timerText(timerMillisecondsString(0)),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Center(
+                  child: AnimatedOpacity(
+                    opacity: animationStarted ? 0.0 : 1.0,
+                    duration: animationStarted
+                        ? const Duration(milliseconds: 50)
+                        : kThemeAnimationDuration,
+                    child: FutureBuilder(
+                        future: getDuration,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                selectTime(0, snapshot.data),
+                                selectTime(1, snapshot.data),
+                              ],
+                            );
+                          }
+                          return Container();
+                        }),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 24.0,
           ),
           RaisedButton(
@@ -289,7 +386,18 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                   controller.stop();
                 });
               } else {
-                animationStarted = true;
+                setState(() {
+                  animationStarted = true;
+                  FileManager.readFile('exercise.json').then((contents) {
+                    dynamic content = contents[widget.name];
+                    if (content.length == 3)
+                      content.add(controller.duration.inSeconds);
+                    else
+                      content[3] = controller.duration.inSeconds;
+                    FileManager.writeToFile(
+                        'exercise.json', widget.name, content);
+                  });
+                });
                 controller.reverse(
                   from: controller.value == 0.0 ? 1.0 : controller.value,
                 );
