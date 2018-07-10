@@ -34,11 +34,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     List<Activity> activities = [];
     contents.forEach((key, value) {
       IconData icon = getIconFromName(key);
+      String description = getDescriptionFromName(key);
       if (icon != null) {
         activities.add(
           Activity(
             name: key,
             icon: icon,
+            description: description,
             completionState: getCompletionState(value),
             showNotification: showNotification,
           ),
@@ -93,6 +95,18 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     return iconData;
   }
 
+  String getDescriptionFromName(String name) {
+    String description;
+    packageList.forEach((package) {
+      if (package.name == name) description = package.description;
+    });
+    if (description != null) return description;
+    allTasks.forEach((task) {
+      if (task.name == name) description = task.description;
+    });
+    return description;
+  }
+
   int getId(String name) {
     int id;
     for (int i = 0; i < packageList.length; i++) {
@@ -112,6 +126,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         builder: (context) => StartActivityScreen(
               name: payload,
               icon: getIconFromName(payload),
+              description: getDescriptionFromName(payload),
             ),
       ),
     );
@@ -303,14 +318,14 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
 class Activity extends StatelessWidget {
   const Activity({
-    this.icon: Icons.help,
+    @required this.icon,
     @required this.name,
     @required this.completionState,
+    @required this.description,
     this.showNotification,
   });
   final IconData icon;
-  final String name;
-  final String completionState;
+  final String name, completionState, description;
   final Function showNotification;
   @override
   Widget build(BuildContext context) {
@@ -340,6 +355,7 @@ class Activity extends StatelessWidget {
               builder: (context) => StartActivityScreen(
                     icon: icon,
                     name: name,
+                    description: description,
                   ),
             ),
           );

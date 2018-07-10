@@ -9,9 +9,9 @@ import 'newActivity.dart' show Package;
 
 class StartActivityScreen extends StatelessWidget {
   StartActivityScreen({
-    this.icon: Icons.help,
+    @required this.icon,
     @required this.name,
-    this.description,
+    @required this.description,
     this.packageTasks,
   });
 
@@ -29,7 +29,8 @@ class StartActivityScreen extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(
             0.0, MediaQuery.of(context).padding.top + 4.0, 0.0, 16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,8 +67,7 @@ class StartActivityScreen extends StatelessWidget {
                             builder: (context) => AddActivityScreen(
                                   icon: icon,
                                   name: name,
-                                  description: description ??
-                                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                                  description: description,
                                   packageTasks: packageTasks ?? [],
                                   updateActivity: true,
                                 ),
@@ -154,6 +154,9 @@ class Timer extends StatefulWidget {
 
 class _TimerState extends State<Timer> with TickerProviderStateMixin {
   AnimationController controller;
+  AnimationController fadeController;
+  Animation<double> fadeOut;
+  Animation<double> fadeIn;
   bool animationStarted = false;
   bool loaded = false;
 
@@ -164,6 +167,36 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
       vsync: this,
       duration: Duration(),
     );
+    fadeController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
+    fadeOut = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(
+      CurvedAnimation(
+        parent: fadeController,
+        curve: Interval(
+          0.0,
+          0.55,
+          curve: Curves.easeIn,
+        ),
+      ),
+    );
+    fadeIn = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: fadeController,
+        curve: Interval(
+          0.45,
+          1.0,
+          curve: Curves.fastOutSlowIn,
+        ),
+      ),
+    );
     controller.value = 1.0;
     controller.addStatusListener(animationEnd);
   }
@@ -172,6 +205,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
   void dispose() {
     controller.removeStatusListener(animationEnd);
     controller.dispose();
+    fadeController.dispose();
     super.dispose();
   }
 
@@ -192,8 +226,8 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
     if (status == AnimationStatus.dismissed) {
       setState(() {
         animationStarted = false;
+        fadeController.reverse();
       });
-      controller.value = 1.0;
     }
   }
 
@@ -298,27 +332,9 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
             aspectRatio: 1.0,
             child: Stack(
               children: <Widget>[
-                Positioned.fill(
-                  child: AnimatedBuilder(
-                    animation: controller,
-                    builder: (context, _) {
-                      return CustomPaint(
-                        painter: TimerPainter(
-                          animation: controller,
-                          backgroundColor:
-                              darkMode ? Colors.white12 : Colors.black12,
-                          color: darkMode ? Colors.lightBlue : Colors.blue,
-                        ),
-                      );
-                    },
-                  ),
-                ),
                 Center(
-                  child: AnimatedOpacity(
-                    opacity: animationStarted ? 1.0 : 0.0,
-                    duration: animationStarted
-                        ? kThemeAnimationDuration
-                        : const Duration(milliseconds: 50),
+                  child: FadeTransition(
+                    opacity: fadeIn,
                     child: AnimatedBuilder(
                       animation: controller,
                       builder: (context, _) {
@@ -338,13 +354,12 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                Center(
-                  child: AnimatedOpacity(
-                    opacity: animationStarted ? 0.0 : 1.0,
-                    duration: animationStarted
-                        ? const Duration(milliseconds: 50)
-                        : kThemeAnimationDuration,
-                    child: FutureBuilder(
+                IgnorePointer(
+                  ignoring: animationStarted ? true : false,
+                  child: Center(
+                    child: FadeTransition(
+                      opacity: fadeOut,
+                      child: FutureBuilder(
                         future: getDuration,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -357,7 +372,26 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                             );
                           }
                           return Container();
-                        }),
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: AnimatedBuilder(
+                      animation: controller,
+                      builder: (context, _) {
+                        return CustomPaint(
+                          painter: TimerPainter(
+                            animation: controller,
+                            backgroundColor:
+                                darkMode ? Colors.white12 : Colors.black12,
+                            color: darkMode ? Colors.lightBlue : Colors.blue,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -388,6 +422,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
               } else {
                 setState(() {
                   animationStarted = true;
+                  fadeController.forward();
                   FileManager.readFile('exercise.json').then((contents) {
                     dynamic content = contents[widget.name];
                     if (content.length == 3)

@@ -193,9 +193,9 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
 
 class Package extends StatelessWidget {
   Package({
-    this.icon: Icons.help,
+    @required this.icon,
     @required this.name,
-    this.description,
+    @required this.description,
     this.packageTasks,
   });
   final IconData icon;
@@ -204,10 +204,11 @@ class Package extends StatelessWidget {
   final List<Task> packageTasks;
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    final double width = MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.height;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      constraints: const BoxConstraints(
-        minWidth: 180.0,
+      constraints: BoxConstraints(
+        minWidth: width / 5 + 96.0,
       ),
       child: RaisedButton(
         elevation: darkMode ? 0.0 : 2.0,
@@ -225,8 +226,7 @@ class Package extends StatelessWidget {
               builder: (context) => AddActivityScreen(
                     icon: icon,
                     name: name,
-                    description: description ??
-                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                    description: description,
                     packageTasks: packageTasks ?? [],
                   ),
             ),
@@ -270,9 +270,9 @@ class Package extends StatelessWidget {
 
 class Task extends StatelessWidget {
   const Task({
-    this.icon: Icons.help,
+    @required this.icon,
     @required this.name,
-    this.description,
+    @required this.description,
   });
 
   final IconData icon;
@@ -308,15 +308,15 @@ class Task extends StatelessWidget {
       ),
       onPressed: () {
         Navigator.push(
-            context,
-            FadingPageRoute(
-              builder: (context) => AddActivityScreen(
-                    icon: icon,
-                    name: name,
-                    description: description ??
-                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                  ),
-            ));
+          context,
+          FadingPageRoute(
+            builder: (context) => AddActivityScreen(
+                  icon: icon,
+                  name: name,
+                  description: description,
+                ),
+          ),
+        );
       },
     );
   }

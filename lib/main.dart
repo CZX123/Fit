@@ -146,6 +146,18 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return iconData;
   }
 
+  String getDescriptionFromName(String name) {
+    String description;
+    packageList.forEach((package) {
+      if (package.name == name) description = package.description;
+    });
+    if (description != null) return description;
+    allTasks.forEach((task) {
+      if (task.name == name) description = task.description;
+    });
+    return description;
+  }
+
   int getId(String name) {
     int id;
     for (int i = 0; i < packageList.length; i++) {
@@ -165,6 +177,7 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         builder: (context) => StartActivityScreen(
           name: payload,
           icon: getIconFromName(payload),
+          description: getDescriptionFromName(payload),
         ),
       ),
     );

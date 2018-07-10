@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'customWidgets.dart';
-import 'data/dietList.dart';
+import 'customWidgets.dart' show Grid;
+import 'data/dietList.dart' show dietList;
 
 class DietScreen extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -114,12 +114,10 @@ class Diet extends StatelessWidget {
     this.icon: Icons.help,
     this.image,
     @required this.name,
-    @required this.onPressed,
+    this.description,
   });
   final IconData icon;
-  final String image;
-  final String name;
-  final VoidCallback onPressed;
+  final String image, name, description;
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -141,7 +139,7 @@ class Diet extends StatelessWidget {
             const Radius.circular(8.0),
           ),
         ),
-        onPressed: onPressed,
+        onPressed: () {},
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,

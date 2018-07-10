@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
+import 'profile.dart';
 
 class SettingsScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -29,17 +29,27 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: padding),
             title: const Text('Profile'),
-            subtitle: const Text('Details like your height and weight, age, etc.'),
-            onTap: () {},
+            subtitle:
+                const Text('Details like your height and weight, age, etc.'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                ),
+              );
+            },
           ),
           ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: padding),
             title: const Text('Notifications'),
-            subtitle: const Text('Choose when to notify you before each activity'),
+            subtitle:
+                const Text('Choose when to notify you before each activity'),
             onTap: () {},
           ),
           ListTile(
-            contentPadding: EdgeInsets.fromLTRB(padding, 0.0, padding - 8.0, 0.0),
+            contentPadding:
+                EdgeInsets.fromLTRB(padding, 0.0, padding - 8.0, 0.0),
             title: const Text('Step Count'),
             onTap: () {},
             trailing: Switch(
@@ -49,16 +59,19 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            contentPadding: EdgeInsets.fromLTRB(padding, 0.0, padding - 8.0, 0.0),
+            contentPadding:
+                EdgeInsets.fromLTRB(padding, 0.0, padding - 8.0, 0.0),
             title: const Text('Dark Mode'),
             onTap: () {
-              App.of(context).changeBrightness(darkMode ? Brightness.light: Brightness.dark);
+              App.of(context).changeBrightness(
+                  darkMode ? Brightness.light : Brightness.dark);
             },
             trailing: Switch(
               value: darkMode,
               activeColor: darkMode ? Colors.lightBlue : Colors.blue,
               onChanged: (_) {
-                App.of(context).changeBrightness(darkMode ? Brightness.light: Brightness.dark);
+                App.of(context).changeBrightness(
+                    darkMode ? Brightness.light : Brightness.dark);
               },
             ),
           ),

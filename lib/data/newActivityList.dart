@@ -23,13 +23,13 @@ List<Package> packageList = [
     icon: SportsIcons.circuit_training,
     name: 'Circuit Training',
     description:
-        ' Circuit training is a type of endurance or resistance training utilising high intensity, targeting strength building or muscular endurance. Exercises are performed with no rest in between, and is done in a cycle. Once one cycle is complete, the individual starts again after a short break.',
+        'Circuit training is a type of endurance or resistance training utilising high intensity, targeting strength building or muscular endurance. Exercises are performed with no rest in between, and is done in a cycle. Once one cycle is complete, the individual starts again after a short break.',
   ),
   Package(
     icon: SportsIcons.pilates,
     name: 'Pilates',
     description:
-        'Pilates is a fitness system that is designed to improve physical strength, flexibility, and posture, and enhance mental awareness.',
+        'Pilates is a fitness system that is designed to improve physical strength, flexibility, posture, and enhance mental awareness.',
   ),
   Package(
     icon: SportsIcons.stretching,
@@ -118,54 +118,63 @@ List<Task> sportsList = [
   Task(
     icon: SportsIcons.badminton,
     name: 'Badminton',
+    description: 'Playing badminton burns body fat, as well as 450 calories per hour. It is also fantastic for leg, core, arm and back muscles, as well as social and psychological health as a byproduct.',
   ),
   Task(
     icon: SportsIcons.basketball,
     name: 'Basketball',
+    description: 'While burning a great deal of calories, it is great for cardiovascular health, bone strength, spatial awareness and optimizes motor skills and coordination among all.',
   ),
   Task(
     icon: SportsIcons.cycling,
     name: 'Cycling',
+    description: 'Being one of the easiest to fit into daily routines, cycling is also one of the best protections from serious diseases such as stroke, heart attack and obesity.',
   ),
   Task(
     icon: SportsIcons.frisbee,
     name: 'Frisbee',
+    description: 'Frisbee provides players with definite elements of “High Intensity Interval Training” and a full body workout, hence burning more calories, increases resting metabolic rate and agility.',
   ),
   Task(
     icon: SportsIcons.handball,
     name: 'Handball',
-  ),
-  Task(
-    icon: SportsIcons.hiking,
-    name: 'Hiking',
+    description: 'Handball is a fun way to optimise cardiovascular fitness while burning calories and fat. It also teaches you to be balanced and agile, and keeps you fit as you age.',
   ),
   Task(
     icon: SportsIcons.running,
     name: 'Running',
+    // TODO: update description
+    description: 'By now, you should have known how good running is for your health.',
   ),
   Task(
     icon: SportsIcons.soccer_football,
     name: 'Soccer',
+    description: 'While being a convenient sport, soccer/football raises aerobic capacity, bone strength and cardiovascular health, all while building muscle strength and self-esteem as well',
   ),
   Task(
     icon: SportsIcons.swimming,
     name: 'Swimming',
+    description: 'Swimming does not strain your skeletal system, hence being an ideal sport to work on stiff muscles and sore joints, effectively increasing muscular strength and tone.',
   ),
   Task(
     icon: SportsIcons.table_tennis,
     name: 'Table Tennis',
+    description: 'As addictive as it is, an hour of table tennis burns more than 200 calories easily. It also improves hand-eye coordination and is easy on the joints, making it an enjoyable sport.',
   ),
   Task(
     icon: SportsIcons.tennis,
     name: 'Tennis',
+    description: 'As it provides a full body workout, it improves health both aerobically and anaerobically. It also enhances flexibility, balance and coordination.',
   ),
   Task(
     icon: SportsIcons.volleyball,
     name: 'Volleyball',
+    description: 'Volleyball builds agility, coordination, speed and balance, increasing metabolic rate and aerobic ability simultaneously. Needless to say, it burns calories and fats too.',
   ),
   Task(
     icon: SportsIcons.walking,
     name: 'Walking',
+    description: "While walking seems simple, but by walking 30 minutes everyday, your pants may begin to fit more loosely (a.k.a you've become slimmer), while slashing your risk of chronic diseases.",
   ),
 ];
 
@@ -173,66 +182,88 @@ List<Task> gymList = [
   Task(
     icon: SportsIcons.armcurl,
     name: 'Arm Curls',
+    description: 'While obviously building arm size, arm curls develop body stability and build bone and grip strength simultaneously, hence being an effective way to promote fat loss.',
   ),
   Task(
     icon: SportsIcons.arm_extension,
     name: 'Arm Extensions',
+    description: 'It is a no-no to solely work on the biceps without working on triceps, which can make up half the size of your arm. Arm extensions do exactly that.',
   ),
   Task(
     icon: SportsIcons.deadlift,
     name: 'Deadlifts',
+    description: 'Undeniably, deadlifts targets the butt and hence strengthens the gluteus maximus, translating to better endurance, power and pain prevention.',
   ),
   Task(
     icon: SportsIcons.elliptical_trainer,
     name: 'Elliptical Trainer',
+    description: 'While being easy to your joints, elliptical trainers incorporate moving poles, thus providing a full body workout. The incline and resistance can be varied, and hence is able to suit everyone easily.',
   ),
   Task(
     icon: SportsIcons.exercise_bike,
     name: 'Exercise Bike',
+    // TODO: update description
+    description: 'Offering similar benefits as cycling while in your comfortable gym.',
   ),
   Task(
     icon: SportsIcons.front_raise,
     name: 'Front Raises',
+    description: 'Usually done with dumbbells, front raises tone your anterior deltoid muscles while allowing you to improve your functional ability and stabilising muscle strength.',
   ),
   Task(
     icon: SportsIcons.lat_pull_down,
     name: 'Lat Pull-Downs',
+    description: 'Lat pull-downs can be extremely beneficial in building upper body strength and keeping the shoulder healthy, targeting muscles that stabilize the spine for maximum effectiveness.',
   ),
   Task(
     icon: SportsIcons.lateral_raise,
     name: 'Lateral Raises',
+    description: 'Lateral raises offer us more than just bigger, broader, and more defined slabs of muscle onto our frames, but also offers muscle hypertrophy, greater control of full range of motion, and corrects muscle imbalances and asymmetries.',
   ),
   Task(
     icon: SportsIcons.leg_curl,
     name: 'Leg Curls',
+    description: 'Weighted reverse leg curls build knee stability and muscle balance, lowering the chance of injury. It also strengthens your smaller thigh muscles and your calf muscle, increasing your lower body strength.',
   ),
   Task(
     icon: SportsIcons.leg_extension,
     name: 'Leg Extensions',
+    description: 'While only targeting your quadriceps, leg extensions strengthens key attachments for the knee joints at the same time. Simple, yet effective.',
   ),
   Task(
     icon: SportsIcons.leg_press,
     name: 'Leg Presses',
+    description: 'Leg presses are great for adding pure size to your legs, and takes a load off the back as it does not require direct pressure on the back.',
+  ),
+  Task(
+    icon: SportsIcons.pull_up,
+    name: 'Pull-Ups',
+    description: 'This exercise in a fundamental compound upper-body exercise, targeting the back and biceps, and also increases grip strength, undeniably losing fat in the process.',
   ),
   Task(
     icon: SportsIcons.rowing_machine,
     name: 'Rowing Machine',
+    description: 'This is an effective aerobic exercise, requiring the use of many major muscle groups, making it effective in raising heart rates and hence oxygen intake for an effective cardio workout.',
   ),
   Task(
     icon: SportsIcons.shoulder,
     name: 'Shoulder Presses',
+    description: 'Shoulder presses allow us to build bigger deltoids (a major muscle group in the shoulder), get wider shoulders, work the stabilizer muscles and achieve symmetry.',
   ),
   Task(
     icon: SportsIcons.step_machine,
     name: 'Step Machine',
+    description: 'This exercise is a low-impact workout, hence there will be no strains on your knees. Even so, it is very effective in building lower body strength and burning calories simultaneously.',
   ),
   Task(
     icon: SportsIcons.treadmill,
     name: 'Treadmill',
+    description: 'Treadmill walking helps you to maintain a healthy musculoskeletal system, keeps the joints flexible, and keeps your metabolic rate up. It is also more convenient as you do not need to worry about external disruptions (weather, outdoor air quality).',
   ),
   Task(
     icon: SportsIcons.weight_machine,
     name: 'Weight Machine',
+    description: 'Using weightlifting machines focuses not only on the health benefits, but also on developing definition in specific muscles. It is also efficient as it places resistance specifically on the contractile element of muscle.',
   ),
 ];
 
