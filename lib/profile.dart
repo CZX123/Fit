@@ -37,10 +37,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
           child: Container(
             height: MediaQuery.of(context).size.height -
-                MediaQuery.of(context).padding.top -
                 52.0 -
                 64.0,
             child: Stepper(
@@ -144,7 +142,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         persistentFooterButtons: <Widget>[
           FlatButton(
             child: Text('NEXT'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           )
         ],
       ),

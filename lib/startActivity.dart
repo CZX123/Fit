@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'picker.dart' show CupertinoPicker;
 import 'fileManager.dart' show FileManager;
 import 'addActivity.dart' show AddActivityScreen;
 import 'customWidgets.dart' show FadingPageRoute;
