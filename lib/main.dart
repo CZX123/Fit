@@ -47,7 +47,7 @@ class App extends StatefulWidget {
 class AppState extends State<App> {
   final String _key = 'darkMode';
   Brightness brightness = Brightness.light;
-  Color primaryColor = Colors.blue;
+  Color primaryColor = Colors.grey[200];
   Color accentColor = Colors.deepOrangeAccent;
 
   @override
@@ -57,7 +57,8 @@ class AppState extends State<App> {
       if (darkMode) {
         setState(() {
           brightness = Brightness.dark;
-          primaryColor = Colors.grey[900];
+          primaryColor = Colors.grey[800];
+          accentColor = Colors.limeAccent;
         });
       }
     });
@@ -93,6 +94,7 @@ class AppState extends State<App> {
         theme: ThemeData(
           brightness: brightness,
           primaryColor: primaryColor,
+          primaryColorBrightness: Brightness.dark,
           accentColor: accentColor,
         ),
         home: widget.child,
@@ -175,10 +177,10 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       context,
       MaterialPageRoute(
         builder: (context) => StartActivityScreen(
-          name: payload,
-          icon: getIconFromName(payload),
-          description: getDescriptionFromName(payload),
-        ),
+              name: payload,
+              icon: getIconFromName(payload),
+              description: getDescriptionFromName(payload),
+            ),
       ),
     );
   }
@@ -206,24 +208,9 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   void changeScreen() {
-    index = controller.index;
-    bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    if (index == 0 && !darkMode)
-      changeColor(Colors.blue, Colors.deepOrangeAccent);
-    else if (index == 0)
-      changeColor(Colors.grey[900], Colors.deepOrangeAccent);
-    else if (index == 1 && !darkMode)
-      changeColor(Colors.green, Colors.limeAccent);
-    else if (index == 1)
-      changeColor(Colors.grey[900], Colors.limeAccent[700]);
-    else if (index == 2 && !darkMode)
-      changeColor(Colors.blueGrey, Colors.blueGrey);
-    else
-      changeColor(Colors.grey[900], Colors.blueGrey);
-  }
-
-  void changeColor(Color newPrimaryColor, Color newAccentColor) {
-    App.of(context).changeColors(newPrimaryColor, newAccentColor);
+    setState(() {
+      index = controller.index;
+    });
   }
 
   @override
@@ -243,6 +230,7 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       floatingActionButton: index == 0
           ? FloatingActionButton(
+              backgroundColor: darkMode ? Colors.grey[800] : Colors.deepOrangeAccent,
               onPressed: () async {
                 String value = await Navigator.push(
                     context,
@@ -255,14 +243,21 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 }
               },
               tooltip: 'New Activity',
-              child: const Icon(Icons.add),
+              child: Icon(
+                Icons.add,
+                color: darkMode ? Colors.limeAccent : Colors.white,
+              ),
             )
           : null,
       bottomNavigationBar: Material(
         color: darkMode ? Colors.grey[850] : Colors.white,
         elevation: 8.0,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).orientation == Orientation.portrait ? 0.0 : 72.0),
+          padding: EdgeInsets.symmetric(
+              horizontal:
+                  MediaQuery.of(context).orientation == Orientation.portrait
+                      ? 0.0
+                      : 72.0),
           child: TabIcons(
             controller: controller,
           ),

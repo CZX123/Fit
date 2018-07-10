@@ -278,135 +278,146 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
           ),
         ),
       ),
-      body: Builder(
-        builder: (context) {
-          if (_updateActivity &&
-              !_snackbarShown &&
-              (widget.updateActivity == null || !widget.updateActivity))
-            WidgetsBinding.instance
-                .addPostFrameCallback((_) => showSnackbar(context));
-          return SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 72.0, vertical: 32.0),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: height - 120.0 - windowTopPadding,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(),
-                  SizedBox(
-                    height: 96.0,
-                    width: 96.0,
-                    child: Hero(
-                      tag: (widget.updateActivity != null &&
-                              widget.updateActivity != false)
-                          ? name + 'a'
-                          : name,
-                      child: FittedBox(
-                        child: Icon(
-                          icon,
-                          color: darkMode ? Colors.lightBlue : Colors.blue,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 8.0),
-                    child: Text(
-                      name,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        height: 1.2,
-                        fontFamily: 'Renner*',
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(description),
-                  ),
-                  const Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 4.0),
-                    child: const Text(
-                      'Frequency',
-                      style: const TextStyle(
-                        height: 1.2,
-                        fontFamily: 'Renner*',
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    alignment: Alignment.centerLeft,
-                    child: OutlineButton(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: const BorderRadius.all(
-                          const Radius.circular(4.0),
-                        ),
-                      ),
-                      highlightElevation: 0.0,
-                      highlightedBorderColor:
-                          darkMode ? Colors.lightBlue : Colors.blue,
-                      borderSide: BorderSide(
-                        color: darkMode ? Colors.grey[600] : Colors.grey[350],
-                        width: 2.0,
-                      ),
-                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 4.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(_selectedFrequency),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 2.0),
-                            child: Icon(
-                              Icons.arrow_drop_down,
-                              color: darkMode ? Colors.white : Colors.black54,
-                            ),
+      body: Theme(
+        data: ThemeData(
+          brightness: darkMode ? Brightness.dark : Brightness.light,
+          primaryColor: Colors.blue,
+          accentColor: darkMode ? Colors.limeAccent : Colors.deepOrangeAccent,
+        ),
+        child: Builder(
+          builder: (context) {
+            if (_updateActivity &&
+                !_snackbarShown &&
+                (widget.updateActivity == null || !widget.updateActivity))
+              WidgetsBinding.instance
+                  .addPostFrameCallback((_) => showSnackbar(context));
+            return SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 72.0, vertical: 32.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: height - 120.0 - windowTopPadding,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const SizedBox(),
+                    SizedBox(
+                      height: 96.0,
+                      width: 96.0,
+                      child: Hero(
+                        tag: (widget.updateActivity != null &&
+                                widget.updateActivity != false)
+                            ? name + 'a'
+                            : name,
+                        child: FittedBox(
+                          child: Icon(
+                            icon,
+                            color: darkMode ? Colors.lightBlue : Colors.blue,
                           ),
-                        ],
-                      ),
-                      onPressed: () {
-                        _changeFrequency();
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 4.0),
-                    child: Text(
-                      _fromTime.length == 1 ? 'Time' : 'Timings',
-                      style: const TextStyle(
-                        height: 1.2,
-                        fontFamily: 'Renner*',
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Column(
-                      children: listTimings,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 8.0),
+                      child: Text(
+                        name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          height: 1.2,
+                          fontFamily: 'Renner*',
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(),
-                  const SizedBox(),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(description),
+                    ),
+                    const Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 4.0),
+                      child: const Text(
+                        'Frequency',
+                        style: const TextStyle(
+                          height: 1.2,
+                          fontFamily: 'Renner*',
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      alignment: Alignment.centerLeft,
+                      child: OutlineButton(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: const BorderRadius.all(
+                            const Radius.circular(4.0),
+                          ),
+                        ),
+                        highlightElevation: 0.0,
+                        highlightedBorderColor:
+                            darkMode ? Colors.lightBlue : Colors.blue,
+                        borderSide: BorderSide(
+                          color: darkMode ? Colors.grey[600] : Colors.grey[350],
+                          width: 2.0,
+                        ),
+                        padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 4.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(_selectedFrequency),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 2.0),
+                              child: Icon(
+                                Icons.arrow_drop_down,
+                                color: darkMode ? Colors.white : Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onPressed: () {
+                          _changeFrequency();
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 4.0),
+                      child: Text(
+                        _fromTime.length == 1 ? 'Time' : 'Timings',
+                        style: const TextStyle(
+                          height: 1.2,
+                          fontFamily: 'Renner*',
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        children: listTimings,
+                      ),
+                    ),
+                    const SizedBox(),
+                    const SizedBox(),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       floatingActionButton: _validate
           ? FloatingActionButton(
+              backgroundColor: darkMode ? Colors.grey[800] : Colors.deepOrangeAccent,
               tooltip: _updateActivity ? 'Save Edits' : 'Add Activity',
-              child: Icon(_updateActivity ? Icons.save : Icons.check),
+              child: Icon(
+                _updateActivity ? Icons.save : Icons.check,
+                color: darkMode ? Colors.limeAccent : Colors.white,
+              ),
               onPressed: () {
                 if (_validate) {
                   writeToFile(name, [

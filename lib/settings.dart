@@ -63,15 +63,36 @@ class SettingsScreen extends StatelessWidget {
                 EdgeInsets.fromLTRB(padding, 0.0, padding - 8.0, 0.0),
             title: const Text('Dark Mode'),
             onTap: () {
-              App.of(context).changeBrightness(
-                  darkMode ? Brightness.light : Brightness.dark);
+              bool lightMode = Theme.of(context).brightness == Brightness.light;
+              if (lightMode) {
+                App
+                    .of(context)
+                    .changeColors(Colors.grey[800], Colors.limeAccent);
+                App.of(context).changeBrightness(Brightness.dark);
+              } else {
+                App
+                    .of(context)
+                    .changeColors(Colors.grey[200], Colors.deepOrangeAccent);
+                App.of(context).changeBrightness(Brightness.light);
+              }
             },
             trailing: Switch(
               value: darkMode,
               activeColor: darkMode ? Colors.lightBlue : Colors.blue,
               onChanged: (_) {
-                App.of(context).changeBrightness(
-                    darkMode ? Brightness.light : Brightness.dark);
+                bool lightMode =
+                    Theme.of(context).brightness == Brightness.light;
+                if (lightMode) {
+                  App
+                      .of(context)
+                      .changeColors(Colors.grey[800], Colors.limeAccent);
+                  App.of(context).changeBrightness(Brightness.dark);
+                } else {
+                  App
+                      .of(context)
+                      .changeColors(Colors.grey[200], Colors.deepOrangeAccent);
+                  App.of(context).changeBrightness(Brightness.light);
+                }
               },
             ),
           ),
