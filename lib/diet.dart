@@ -23,49 +23,64 @@ class DietScreen extends StatefulWidget {
 
 class DietScreenState extends State<DietScreen> {
   final String fileName = 'diet.json';
+  Diet activeDiet;
+  List<ExpansionPanelItem> dietPanels = [];
+  bool loaded = false;
+  String imageAsset = 'assets/diet-icons/weight-loss.webp',
+      name = 'Weight Loss';
 
   @override
   void initState() {
     super.initState();
+    getActiveDiet().then(updateDietScreen);
   }
 
-  Future<Map<Diet, List<ExpansionPanelItem>>> get getActiveDiet async {
+  void updateDietScreen([Diet diet]) {
+    List<ExpansionPanelItem> items = [];
+    if (diet != null && diet.data != null && diet.data.keys != null) {
+      IconData icon = Icons.local_pizza;
+      for (int j = 0; j < diet.data.keys.length; j++) {
+        String meal = diet.data.keys.toList()[j];
+        if (meal == 'breakfast')
+          icon = Icons.local_cafe;
+        else if (meal == 'lunch')
+          icon = Icons.restaurant_menu;
+        else if (meal == 'dinner') icon = Icons.local_bar;
+        items.add(
+          ExpansionPanelItem(
+            isExpanded: false,
+            header: meal,
+            icon: icon,
+            body: Container(
+              height: 100.0,
+            ),
+          ),
+        );
+      }
+    }
+    if (mounted) {
+      setState(() {
+        loaded = true;
+        activeDiet = diet ?? null;
+        dietPanels = items ?? [];
+        if (activeDiet != null) {
+          imageAsset = activeDiet.image;
+          name = activeDiet.name;
+        }
+      });
+    }
+  }
+
+  Future<Diet> getActiveDiet() async {
     Map<String, dynamic> fileContent = await FileManager.readFile(fileName);
     if (fileContent != null && fileContent.length != 0) {
-      List<ExpansionPanelItem> items = [];
       for (int i = 0; i < dietList.length; i++) {
         if (dietList[i].name == fileContent['activeDiet']) {
-          IconData icon = Icons.local_pizza;
-          for (int j = 0; j < dietList[i].data.keys.length; j++) {
-            String meal = dietList[i].data.keys.toList()[j];
-            if (meal == 'breakfast')
-              icon = Icons.local_cafe;
-            else if (meal == 'lunch')
-              icon = Icons.restaurant_menu;
-            else if (meal == 'dinner') icon = Icons.local_bar;
-            ExpansionPanelItem item = ExpansionPanelItem(
-              isExpanded: false,
-              header: meal,
-              icon: icon,
-              body: Container(
-                height: 100.0,
-              ),
-            );
-            bool itemExists = false;
-            for (int k = 0; k < items.length; k++) {
-              if (items[k].header == item.header) itemExists = true;
-            }
-            if (!itemExists) items.add(item);
-          }
-          return {dietList[i]: items};
+          return dietList[i];
         }
       }
     }
     return null;
-  }
-
-  void updateScreen() {
-    setState(() {});
   }
 
   @override
@@ -76,49 +91,77 @@ class DietScreenState extends State<DietScreen> {
     final double height = MediaQuery.of(context).size.height;
     final double windowTopPadding = MediaQuery.of(context).padding.top;
     final double containerHeight = 172.0;
-    return SingleChildScrollView(
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0.0,
-            right: 0.0,
-            left: 0.0,
-            height: containerHeight + windowTopPadding,
-            child: Container(
-              color: darkMode ? Colors.grey[900] : Colors.green,
+    return /*NotificationListener(
+      onNotification: (v) {
+        if (v is ScrollUpdateNotification) {
+          print(v.scrollDelta);
+        }
+      },
+      child: */SingleChildScrollView(
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              top: 0.0,
+              right: 0.0,
+              left: 0.0,
+              height: containerHeight + windowTopPadding,
+              child: Container(
+                color: darkMode ? Colors.grey[900] : Colors.green,
+              ),
             ),
-          ),
-          Positioned(
-            top: containerHeight - 1 + windowTopPadding,
-            right: 0.0,
-            left: 0.0,
-            bottom: -64.0,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: FractionalOffset.topCenter,
-                  end: FractionalOffset.bottomCenter,
-                  colors: <Color>[
-                    darkMode ? Colors.grey[900] : Colors.green,
-                    darkMode ? Colors.grey[900] : Colors.green[50],
-                  ],
+            Positioned(
+              top: containerHeight - 1 + windowTopPadding,
+              right: 0.0,
+              left: 0.0,
+              bottom: -64.0,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: FractionalOffset.topCenter,
+                    end: FractionalOffset.bottomCenter,
+                    colors: <Color>[
+                      darkMode ? Colors.grey[900] : Colors.green,
+                      darkMode ? Colors.grey[900] : Colors.green[50],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            color: darkMode ? Colors.grey[900] : null,
-            constraints: BoxConstraints(
-              minHeight: height - 48.0,
+            Positioned(
+              top: 0.0,
+              left: 0.0,
+              right: 0.0,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
+                    24.0 + windowTopPadding, portrait ? 16.0 : 72.0, 12.0),
+                child: const Text(
+                  'Diet',
+                  style: const TextStyle(
+                    height: 1.2,
+                    color: Colors.white,
+                    fontFamily: 'Renner*',
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
-            padding: EdgeInsets.only(top: windowTopPadding),
-            child: FutureBuilder<Map<Diet, List<ExpansionPanelItem>>>(
-              future: getActiveDiet,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data.length != 0) {
-                  print('no');
-                  Diet activeDiet = snapshot.data.keys.toList()[0];
-                  return Column(
+            Container(
+              color: darkMode ? Colors.grey[900] : null,
+              constraints: BoxConstraints(
+                minHeight: height - 48.0,
+              ),
+              padding: EdgeInsets.only(top: windowTopPadding),
+              child: AnimatedOpacity(
+                duration: Duration(milliseconds: 500),
+                curve: Cubic(1.0, 0.0, 0.0, 0.0),
+                opacity: loaded ? 1.0 : 0.0,
+                child: AnimatedCrossFade(
+                  duration: Duration(milliseconds: 200),
+                  crossFadeState: activeDiet != null
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
@@ -138,64 +181,79 @@ class DietScreenState extends State<DietScreen> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(0.0, 8.4, 8.0, 0.0),
-                            child: Material(
-                              color: Colors.transparent,
-                              type: MaterialType.circle,
-                              child: PopupMenuButton<String>(
-                                icon: Icon(
-                                  Theme.of(context).platform ==
-                                          TargetPlatform.iOS
-                                      ? Icons.more_horiz
-                                      : Icons.more_vert,
-                                  color: Colors.white,
-                                ),
-                                onSelected: (value) {
-                                  if (value == 'Remove') {
-                                    FileManager
-                                        .removeFromFile(
-                                            'diet.json', 'activeDiet')
-                                        .then((_) {
-                                      DietScreen.of(context).updateScreen();
-                                    });
-                                  }
-                                },
-                                itemBuilder: (BuildContext context) {
-                                  return <PopupMenuItem<String>>[
-                                    PopupMenuItem<String>(
-                                      value: 'Remove',
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.delete,
-                                            color: darkMode
-                                                ? Colors.white
-                                                : Colors.black87,
-                                          ),
-                                          const SizedBox(
-                                            width: 16.0,
-                                          ),
-                                          const Text('Remove'),
-                                        ],
+                          Builder(
+                            builder: (context) => Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      0.0, 8.4, portrait ? 8.0 : 80.0, 0.0),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    type: MaterialType.circle,
+                                    child: PopupMenuButton<String>(
+                                      icon: Icon(
+                                        Theme.of(context).platform ==
+                                                TargetPlatform.iOS
+                                            ? Icons.more_horiz
+                                            : Icons.more_vert,
+                                        color: Colors.white,
                                       ),
+                                      onSelected: (value) {
+                                        if (value == 'Remove') {
+                                          FileManager
+                                              .removeFromFile(
+                                                  'diet.json', 'activeDiet')
+                                              .then((_) {
+                                            DietScreen
+                                                .of(context)
+                                                .updateDietScreen();
+                                          });
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return <PopupMenuItem<String>>[
+                                          PopupMenuItem<String>(
+                                            value: 'Remove',
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.delete,
+                                                  color: darkMode
+                                                      ? Colors.white
+                                                      : Colors.black87,
+                                                ),
+                                                const SizedBox(
+                                                  width: 16.0,
+                                                ),
+                                                const Text('Remove'),
+                                              ],
+                                            ),
+                                          ),
+                                        ];
+                                      },
                                     ),
-                                  ];
-                                },
-                              ),
-                            ),
+                                  ),
+                                ),
                           ),
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: portrait
+                            ? EdgeInsets.all(16.0)
+                            : EdgeInsets.symmetric(
+                                horizontal: 72.0, vertical: 16.0),
                         child: Row(
                           children: <Widget>[
-                            Image.asset(
-                              activeDiet.image,
-                              width: 96.0,
-                              height: 96.0,
+                            Builder(
+                              builder: (context) {
+                                if (activeDiet != null)
+                                  return Image.asset(
+                                    imageAsset,
+                                    width: 96.0,
+                                    height: 96.0,
+                                  );
+                                return const SizedBox(
+                                  width: 96.0,
+                                );
+                              },
                             ),
                             const SizedBox(
                               width: 16.0,
@@ -205,16 +263,16 @@ class DietScreenState extends State<DietScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  activeDiet.name,
+                                  name,
                                   style: const TextStyle(
                                     fontFamily: 'Renner*',
                                     color: Colors.white,
-                                    fontSize: 40.0,
+                                    fontSize: 36.0,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 const SizedBox(
-                                  height: 4.0,
+                                  height: 6.0,
                                 ),
                                 Text(
                                   ' CURRENT DIET',
@@ -229,82 +287,102 @@ class DietScreenState extends State<DietScreen> {
                           ],
                         ),
                       ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
-                            12.0, portrait ? 16.0 : 72.0, 12.0),
-                        child: DietPanels(
-                          items: snapshot.data[activeDiet],
-                        ),
+                      Builder(
+                        builder: (context) {
+                          if (dietPanels != null && dietPanels.length != 0) {
+                            return Container(
+                              padding: EdgeInsets.fromLTRB(
+                                  portrait ? 16.0 : 72.0,
+                                  12.0,
+                                  portrait ? 16.0 : 72.0,
+                                  20.0),
+                              child: DietPanels(
+                                items: dietPanels,
+                              ),
+                            );
+                          }
+                          return Container();
+                        },
                       ),
                     ],
-                  );
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
-                            24.0, portrait ? 16.0 : 72.0, 12.0),
-                        child: const Text(
-                          'Diet',
-                          style: const TextStyle(
-                            height: 1.2,
-                            color: Colors.white,
-                            fontFamily: 'Renner*',
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
-                                8.0, portrait ? 16.0 : 72.0, 0.0),
-                            child: const Text(
-                              'Hello',
-                              style: const TextStyle(
-                                height: 1.2,
-                                color: Colors.white,
-                                fontFamily: 'Renner*',
-                                fontSize: 48.0,
-                                fontWeight: FontWeight.w500,
-                              ),
+                  ),
+                  secondChild: Container(
+                    constraints: BoxConstraints(
+                      minHeight: height - 48.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
+                              24.0, portrait ? 16.0 : 72.0, 12.0),
+                          child: const Text(
+                            'Diet',
+                            style: const TextStyle(
+                              height: 1.2,
+                              color: Colors.white,
+                              fontFamily: 'Renner*',
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
-                                8.0, portrait ? 16.0 : 72.0, 20.0),
-                            child: const Text(
-                              'Here are some recommended diets for you:',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  portrait ? 16.0 : 72.0,
+                                  8.0,
+                                  portrait ? 16.0 : 72.0,
+                                  0.0),
+                              child: const Text(
+                                'Hello',
+                                style: const TextStyle(
+                                  height: 1.2,
+                                  color: Colors.white,
+                                  fontFamily: 'Renner*',
+                                  fontSize: 48.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(portrait ? 4.0 : 68.0, 0.0,
-                            portrait ? 4.0 : 68.0, 32.0),
-                        child: Grid(
-                          children: dietList,
-                          columnCount: portrait ? 2 : 3,
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  portrait ? 16.0 : 72.0,
+                                  8.0,
+                                  portrait ? 16.0 : 72.0,
+                                  20.0),
+                              child: const Text(
+                                'Here are some recommended diets for you:',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(),
-                    ],
-                  );
-                }
-                return Container();
-              },
+                        Container(
+                          padding: EdgeInsets.fromLTRB(portrait ? 4.0 : 68.0,
+                              0.0, portrait ? 4.0 : 68.0, 32.0),
+                          child: Grid(
+                            children: dietList,
+                            columnCount: portrait ? 2 : 3,
+                          ),
+                        ),
+                        const SizedBox(),
+                        const SizedBox(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      //),
     );
   }
 }
@@ -397,6 +475,15 @@ class Diet extends StatelessWidget {
   final IconData icon;
   final String image, name, description;
   final Map<String, Map<String, List<String>>> data;
+
+  Diet getDiet(String name) {
+    Diet data;
+    dietList.forEach((diet) {
+      if (diet.name == name) data = diet;
+    });
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -420,7 +507,7 @@ class Diet extends StatelessWidget {
         ),
         onPressed: () {
           FileManager.writeToFile('diet.json', 'activeDiet', name).then((_) {
-            DietScreen.of(context).updateScreen();
+            DietScreen.of(context).updateDietScreen(getDiet(name));
           });
         },
         child: Container(
