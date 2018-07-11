@@ -359,6 +359,12 @@ List<Package> packageList = [
     name: 'Abs Workout',
     description:
         'Abs Workout is a package for you to develop your abdominal muscles, so as to attain and sustain healthy abdominals.',
+    packageTasks: <Task>[
+        commonList[2], // Crunches
+        commonList[8], // Sit-Ups
+        commonList[6], // Planks
+    ],
+    timings: [180, 180, 180], 
   ),
   Package(
     icon: SportsIcons.jumping_jacks,
@@ -399,12 +405,21 @@ List<Package> packageList = [
     name: 'Stretching',
     description:
         'Stretching is primarily a warm-up activity used to increase flexibility and reduce the risk of injuries during exercise.',
+    packageTasks: <Task>[
+      hiddenList[1], // Runner's Stretch
+      hiddenList[2], // The Bound Angle
+      hiddenList[3], // Seated Back Twist
+      hiddenList[4], // Standing Side Stretch
+      hiddenList[5], // Forward Hang
+    ],  
+    timings: [40, 40, 40, 40, 40],    
   ),
   Package(
     icon: SportsIcons.aerobics,
     name: 'Aerobics',
     description:
         'Aerobics is a form of physical exercise that improves flexibility, muscular strength and cardio-vascular fitness, which is done by combining rhythmic aerobic exercise with stretching and strength training routines.',
+ 
   ),
 ];
 
@@ -511,9 +526,8 @@ List<Task> sportsList = [
   Task(
     icon: SportsIcons.running,
     name: 'Running',
-    // TODO: update description
     description:
-        'By now, you should have known how good running is for your health.',
+        'Running helps build bones, strengthens muscles, improves cardiovascular fitness and burns plenty of calories in the process.',
   ),
   Task(
     icon: SportsIcons.soccer_football,
@@ -670,6 +684,26 @@ List<Task> hiddenList = [
   Task(
     icon: SportsIcons.lunge,
     name: "Runner's Stretch",
+    description: '',
+  ),
+  Task(
+    icon: SportsIcons.lunge,
+    name: "The Bound Angle",
+    description: '',
+  ),
+  Task(
+    icon: SportsIcons.lunge,
+    name: "Seated Back Twist",
+    description: '',
+  ),
+  Task(
+    icon: SportsIcons.lunge,
+    name: "Standing Side Stretch",
+    description: '',
+  ),
+  Task(
+    icon: SportsIcons.lunge,
+    name: "Forward Hang",
     description: '',
   ),
   Task(
