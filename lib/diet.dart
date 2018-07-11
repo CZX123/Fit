@@ -36,23 +36,70 @@ class DietScreenState extends State<DietScreen> {
   }
 
   void updateDietScreen([Diet diet]) {
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     List<ExpansionPanelItem> items = [];
     if (diet != null && diet.data != null && diet.data.keys != null) {
-      IconData icon = Icons.local_pizza;
+      IconData icon;
       for (int j = 0; j < diet.data.keys.length; j++) {
         String meal = diet.data.keys.toList()[j];
         if (meal == 'breakfast')
           icon = Icons.local_cafe;
         else if (meal == 'lunch')
           icon = Icons.restaurant_menu;
-        else if (meal == 'dinner') icon = Icons.local_bar;
+        else if (meal == 'dinner')
+          icon = Icons.local_bar;
+        else
+          icon = Icons.local_pizza;
+        List<IconRow> recommended = diet.data[meal]['recommend'].map((string) {
+          return IconRow(
+            iconColor: darkMode ? Colors.grey[50] : Colors.grey[900],
+            iconData: Icons.keyboard_arrow_right,
+            padding: 4.0,
+            string: string,
+          );
+        }).toList();
+        List<IconRow> avoid = diet.data[meal]['avoid'].map((string) {
+          return IconRow(
+            iconColor: darkMode ? Colors.grey[50] : Colors.grey[800],
+            iconData: Icons.keyboard_arrow_right,
+            padding: 4.0,
+            string: string,
+          );
+        }).toList();
+        List<IconRow> rows = <IconRow>[
+              IconRow(
+                iconColor: darkMode ? Colors.green[400] : Colors.green,
+                iconData: Icons.check_circle,
+                padding: 8.0,
+                string: 'Recommended Food',
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ] +
+            recommended +
+            <IconRow>[
+              IconRow(
+                iconColor: darkMode ? Colors.redAccent[200] : Colors.red,
+                iconData: Icons.warning,
+                padding: 8.0,
+                string: 'Food to Avoid',
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ] +
+            avoid;
         items.add(
           ExpansionPanelItem(
-            isExpanded: false,
+            isExpanded: determineMealTime == meal,
             header: meal,
             icon: icon,
-            body: Container(
-              height: 100.0,
+            body: Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                children: rows,
+              ),
             ),
           ),
         );
@@ -83,6 +130,14 @@ class DietScreenState extends State<DietScreen> {
     return null;
   }
 
+  String get determineMealTime {
+    TimeOfDay now = TimeOfDay.now();
+    if (3 < now.hour && now.hour < 10) return 'breakfast';
+    else if (10 < now.hour && now.hour < 2) return 'lunch';
+    else if (4 < now.hour && now.hour < 9) return 'dinner';
+    else return 'snacks';
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -91,77 +146,73 @@ class DietScreenState extends State<DietScreen> {
     final double height = MediaQuery.of(context).size.height;
     final double windowTopPadding = MediaQuery.of(context).padding.top;
     final double containerHeight = 172.0;
-    return /*NotificationListener(
-      onNotification: (v) {
-        if (v is ScrollUpdateNotification) {
-          print(v.scrollDelta);
-        }
-      },
-      child: */SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 0.0,
-              right: 0.0,
-              left: 0.0,
-              height: containerHeight + windowTopPadding,
-              child: Container(
-                color: darkMode ? Colors.grey[900] : Colors.green,
-              ),
+    return SingleChildScrollView(
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 0.0,
+            right: 0.0,
+            left: 0.0,
+            height: containerHeight + windowTopPadding,
+            child: Container(
+              color: darkMode ? Colors.grey[900] : Colors.green,
             ),
-            Positioned(
-              top: containerHeight - 1 + windowTopPadding,
-              right: 0.0,
-              left: 0.0,
-              bottom: -64.0,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: FractionalOffset.topCenter,
-                    end: FractionalOffset.bottomCenter,
-                    colors: <Color>[
-                      darkMode ? Colors.grey[900] : Colors.green,
-                      darkMode ? Colors.grey[900] : Colors.green[50],
-                    ],
-                  ),
+          ),
+          Positioned(
+            top: containerHeight - 1 + windowTopPadding,
+            right: 0.0,
+            left: 0.0,
+            bottom: -64.0,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: FractionalOffset.topCenter,
+                  end: FractionalOffset.bottomCenter,
+                  colors: <Color>[
+                    darkMode ? Colors.grey[900] : Colors.green,
+                    darkMode ? Colors.grey[900] : Colors.green[50],
+                  ],
                 ),
               ),
             ),
-            Positioned(
-              top: 0.0,
-              left: 0.0,
-              right: 0.0,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
-                    24.0 + windowTopPadding, portrait ? 16.0 : 72.0, 12.0),
-                child: const Text(
-                  'Diet',
-                  style: const TextStyle(
-                    height: 1.2,
-                    color: Colors.white,
-                    fontFamily: 'Renner*',
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.w500,
-                  ),
+          ),
+          Positioned(
+            top: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0,
+                  24.0 + windowTopPadding, portrait ? 16.0 : 72.0, 12.0),
+              child: const Text(
+                'Diet',
+                style: const TextStyle(
+                  height: 1.2,
+                  color: Colors.white,
+                  fontFamily: 'Renner*',
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-            Container(
-              color: darkMode ? Colors.grey[900] : null,
-              constraints: BoxConstraints(
-                minHeight: height - 48.0,
-              ),
-              padding: EdgeInsets.only(top: windowTopPadding),
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 500),
-                curve: Cubic(1.0, 0.0, 0.0, 0.0),
-                opacity: loaded ? 1.0 : 0.0,
-                child: AnimatedCrossFade(
-                  duration: Duration(milliseconds: 200),
-                  crossFadeState: activeDiet != null
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                  firstChild: Column(
+          ),
+          Container(
+            color: darkMode ? Colors.grey[900] : null,
+            constraints: BoxConstraints(
+              minHeight: height - 48.0,
+            ),
+            padding: EdgeInsets.only(top: windowTopPadding),
+            child: AnimatedOpacity(
+              duration: Duration(milliseconds: 500),
+              curve: Cubic(1.0, 0.0, 0.0, 0.0),
+              opacity: loaded ? 1.0 : 0.0,
+              child: AnimatedCrossFade(
+                duration: Duration(milliseconds: 200),
+                crossFadeState: activeDiet != null
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild: IgnorePointer(
+                  ignoring: activeDiet == null,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
@@ -184,7 +235,7 @@ class DietScreenState extends State<DietScreen> {
                           Builder(
                             builder: (context) => Padding(
                                   padding: EdgeInsets.fromLTRB(
-                                      0.0, 8.4, portrait ? 8.0 : 80.0, 0.0),
+                                      0.0, 8.4, portrait ? 8.0 : 64.0, 0.0),
                                   child: Material(
                                     color: Colors.transparent,
                                     type: MaterialType.circle,
@@ -306,7 +357,10 @@ class DietScreenState extends State<DietScreen> {
                       ),
                     ],
                   ),
-                  secondChild: Container(
+                ),
+                secondChild: IgnorePointer(
+                  ignoring: activeDiet != null,
+                  child: Container(
                     constraints: BoxConstraints(
                       minHeight: height - 48.0,
                     ),
@@ -380,9 +434,48 @@ class DietScreenState extends State<DietScreen> {
                 ),
               ),
             ),
-          ],
-        ),
-      //),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class IconRow extends StatelessWidget {
+  final IconData iconData;
+  final Color iconColor;
+  final String string;
+  final double padding;
+  final TextStyle textStyle;
+  IconRow({
+    @required this.iconData,
+    @required this.iconColor,
+    @required this.string,
+    @required this.padding,
+    this.textStyle,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: padding),
+      child: Row(
+        children: <Widget>[
+          const SizedBox(width: 22.0),
+          Icon(
+            iconData,
+            color: iconColor,
+            size: 28.0,
+          ),
+          const SizedBox(width: 22.0),
+          Expanded(
+            child: Text(
+              string,
+              style: textStyle ?? const TextStyle(),
+            ),
+          ),
+          const SizedBox(width: 16.0),
+        ],
+      ),
     );
   }
 }
@@ -570,13 +663,36 @@ List<Diet> dietList = [
         'recommend': [
           'Protein (Meats, preferably non-red meat such as chicken)',
           'Dietary fibre sources (e.g. vegetables, salads without dressings)',
-          'Whole-grains'
+          'Whole-grains',
         ],
         'avoid': [
           'Refined carbohydrates (e.g. rice, pasta)',
-          'Sugary food & drinks'
+          'Sugary food & drinks',
+          'Fatty foods',
         ],
       },
+      'dinner': {
+        'recommend': [
+          'Lean proteins (Tofu, fish, pork, beans)',
+          'Whole grains (Brown rice, quinoa, whole wheat bread)',
+          'Salad greens',
+        ],
+        'avoid': [
+          'Refined carbohydrates (e.g. rice, pasta)',
+          'Sugary food & drinks',
+          'Fatty foods',
+        ],
+      },
+      'snacks': {
+        'recommend': [
+          'Fruits',
+          'Nuts',
+        ],
+        'avoid': [
+          'Sweet foods & drinks (e.g. ice cream, Coca-Cola)',
+          'Even more carbs (biscuits, wafers)',
+        ],
+      }
     },
   ),
   Diet(
