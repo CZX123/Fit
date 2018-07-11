@@ -132,9 +132,9 @@ class DietScreenState extends State<DietScreen> {
 
   String get determineMealTime {
     TimeOfDay now = TimeOfDay.now();
-    if (3 < now.hour && now.hour < 10) return 'breakfast';
-    else if (10 < now.hour && now.hour < 2) return 'lunch';
-    else if (4 < now.hour && now.hour < 9) return 'dinner';
+    if (3 < now.hour && now.hour < 11) return 'breakfast';
+    else if (11 < now.hour && now.hour < 14) return 'lunch';
+    else if (16 < now.hour && now.hour < 23) return 'dinner';
     else return 'snacks';
   }
 
