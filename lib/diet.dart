@@ -235,7 +235,7 @@ class DietScreenState extends State<DietScreen> {
                           Builder(
                             builder: (context) => Padding(
                                   padding: EdgeInsets.fromLTRB(
-                                      0.0, 8.4, portrait ? 8.0 : 64.0, 0.0),
+                                      0.0, 8.4, portrait ? 4.0 : 64.0, 0.0),
                                   child: Material(
                                     color: Colors.transparent,
                                     type: MaterialType.circle,
