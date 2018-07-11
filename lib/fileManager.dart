@@ -26,7 +26,6 @@ class FileManager {
   static Future<File> createFile(String fileName, Map<String, dynamic> content) async {
     File file = await getFile(fileName);
     file.create();
-    print(file);
     return file.writeAsString(json.encode(content));
   }
 

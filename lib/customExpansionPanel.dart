@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AnimatedContainer, AnimatedCrossFade, Animation, AnimationController, Brightness, BuildContext, Colors, Column, Container, CrossFadeState, CurvedAnimation, Curves, ExpansionPanel, ExpansionPanelCallback, ExpansionPanelList, Icon, Icons, Interval, LocalKey, MaterialGap, MaterialSlice, MergeableMaterial, MergeableMaterialItem, RotationTransition, SingleTickerProviderStateMixin, State, StatefulWidget, Theme, Tween, Widget, hashValues, kThemeAnimationDuration;
 import 'dart:math';
 
 const double _kPanelHeaderCollapsedHeight = 56.0;
@@ -64,6 +64,38 @@ class CustomExpansionPanelList extends ExpansionPanelList {
           key: new _SaltedKey<BuildContext, int>(context, index * 2),
           child: new Container(
             color: darkMode ? Colors.grey[850] : Colors.white,
+            /*
+            decoration: roundedCorners
+                ? _isChildExpanded(index)
+                    ? BoxDecoration(
+                        color: darkMode ? Colors.grey[850] : Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                      )
+                    : index == 0
+                        ? BoxDecoration(
+                            color: darkMode ? Colors.grey[850] : Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8.0),
+                              topRight: Radius.circular(8.0),
+                            ),
+                          )
+                        : index == children.length - 1
+                            ? BoxDecoration(
+                                color:
+                                    darkMode ? Colors.grey[850] : Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(8.0),
+                                  bottomRight: Radius.circular(8.0),
+                                ),
+                              )
+                            : BoxDecoration(
+                                color:
+                                    darkMode ? Colors.grey[850] : Colors.white,
+                              )
+                : BoxDecoration(
+                    color: darkMode ? Colors.grey[850] : Colors.white,
+                  ),
+            */
             child: new Column(
               children: <Widget>[
                 header,
