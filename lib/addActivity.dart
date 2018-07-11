@@ -67,7 +67,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
 
   Future getFileContents() async {
     fileContent = await FileManager.readFile(fileName);
-    if (fileContent.keys.contains(name)) {
+    if (fileContent != null && fileContent.keys.contains(name)) {
       setState(() {
         _updateActivity = true;
         _selectedFrequency = fileContent[name][2];
