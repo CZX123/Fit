@@ -6,17 +6,13 @@ import 'fileManager.dart';
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({
     Key key,
-    this.icon: Icons.help,
-    @required this.name,
-    @required this.description,
-    this.packageTasks,
+    this.task,
+    this.package,
     this.updateActivity,
   }) : super(key: key);
 
-  final IconData icon;
-  final String name;
-  final String description;
-  final List<Task> packageTasks;
+  final Task task;
+  final Package package;
   final bool updateActivity;
 
   @override
@@ -44,25 +40,44 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   Map<String, dynamic> fileContent;
   bool _updateActivity = false;
 
+  IconData iconData;
+  String name, description;
+  List<Task> packageTasks;
+  bool updateActivity;
+  List<int> timings;
+
   @override
   void initState() {
     super.initState();
     getFileContents();
+    updateActivity = widget.updateActivity;
+    if (widget.task != null) {
+      iconData = widget.task.icon;
+      name = widget.task.name;
+      description = widget.task.description;
+    }
+    else {
+      iconData = widget.package.icon;
+      name = widget.package.name;
+      description = widget.package.description;
+      packageTasks = widget.package.packageTasks;
+      timings = widget.package.timings;
+    }
   }
 
   Future getFileContents() async {
     fileContent = await FileManager.readFile(fileName);
-    if (fileContent.keys.contains(widget.name)) {
+    if (fileContent.keys.contains(name)) {
       setState(() {
         _updateActivity = true;
-        _selectedFrequency = fileContent[widget.name][2];
-        _fromTime = fileContent[widget.name][0].map((value) {
+        _selectedFrequency = fileContent[name][2];
+        _fromTime = fileContent[name][0].map((value) {
           return TimeOfDay(
             hour: value[0],
             minute: value[1],
           );
         }).toList();
-        _toTime = fileContent[widget.name][1].map((value) {
+        _toTime = fileContent[name][1].map((value) {
           return TimeOfDay(
             hour: value[0],
             minute: value[1],
@@ -76,7 +91,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     final snackBar = SnackBar(
       duration: const Duration(seconds: 5),
       content: Text(
-          'This ${widget.name} exercise has already been added. New edits you make will overwrite the old values.'),
+          'This $name exercise has already been added. New edits you make will overwrite the old values.'),
       action: SnackBarAction(
         label: 'OK',
         onPressed: () {},
@@ -256,10 +271,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
         ),
       );
     }
-
-    final IconData icon = widget.icon;
-    final String name = widget.name;
-    final String description = widget.description;
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final double height = MediaQuery.of(context).size.height;
     final double windowTopPadding = MediaQuery.of(context).padding.top;
@@ -313,7 +324,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                             : name,
                         child: FittedBox(
                           child: Icon(
-                            icon,
+                            iconData,
                             color: darkMode ? Colors.lightBlue : Colors.blue,
                           ),
                         ),
@@ -420,7 +431,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
               ),
               onPressed: () {
                 if (_validate) {
-                  writeToFile(name, [
+                  dynamic value = [
                     _fromTime.map((time) {
                       return [time.hour, time.minute];
                     }).toList(),
@@ -428,7 +439,11 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       return [time.hour, time.minute];
                     }).toList(),
                     _selectedFrequency,
-                  ]).then((_) {
+                    // TODO: implement starting day if exercise not held daily
+                    'Selected time to start',
+                  ];
+                  if (timings != null && timings.length != 0) value.add(timings);
+                  writeToFile(name, value).then((_) {
                     Navigator.pop(context);
                     Navigator.pop(context, name);
                   });

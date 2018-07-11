@@ -120,6 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 });
               },
               onStepTapped: (index) {
+                focusNode.unfocus();
                 setState(() {
                   stepIndex = index;
                 });

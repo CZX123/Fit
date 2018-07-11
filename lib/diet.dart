@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'customWidgets.dart' show Grid;
-import 'data/dietList.dart' show dietList;
 
 class DietScreen extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -175,3 +174,22 @@ class Diet extends StatelessWidget {
     );
   }
 }
+
+List<Diet> dietList = [
+  new Diet(
+    image: 'assets/diet-icons/weight-loss.webp',
+    name: 'Weight Loss',
+  ),
+  new Diet(
+    image: 'assets/diet-icons/carrot.webp',
+    name: 'Low-Calorie',
+  ),
+  new Diet(
+    image: 'assets/diet-icons/broccoli.webp',
+    name: 'Vegetarian',
+  ),
+  new Diet(
+    image: 'assets/diet-icons/detox.webp',
+    name: 'Detox',
+  ),
+];

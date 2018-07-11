@@ -5,149 +5,363 @@ import 'picker.dart' show CupertinoPicker;
 import 'fileManager.dart' show FileManager;
 import 'addActivity.dart' show AddActivityScreen;
 import 'customWidgets.dart' show FadingPageRoute;
-import 'newActivity.dart' show Package;
+import 'newActivity.dart';
+import 'customExpansionPanel.dart';
 
-class StartActivityScreen extends StatelessWidget {
-  StartActivityScreen({
-    @required this.icon,
-    @required this.name,
-    @required this.description,
-    this.packageTasks,
-  });
-
+class ExpansionPanelItem {
+  ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon});
+  bool isExpanded;
+  final String header;
+  final Widget body;
   final IconData icon;
-  final String name;
-  final String description;
-  final List<Package> packageTasks;
+}
+
+class StartActivityScreen extends StatefulWidget {
+  StartActivityScreen({
+    this.package,
+    this.task,
+    Key key,
+  }) : super(key: key);
+  final Package package;
+  final Task task;
+  _StartActivityScreenState createState() => _StartActivityScreenState();
+}
+
+class _StartActivityScreenState extends State<StartActivityScreen> {
+  String name;
+  IconData iconData;
+  List<Task> packageTasks;
+  List<int> timings;
+  List<ExpansionPanelItem> items = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.task != null) {
+      name = widget.task.name;
+      iconData = widget.task.icon;
+    } else {
+      name = widget.package.name;
+      iconData = widget.package.icon;
+      packageTasks = widget.package.packageTasks;
+      timings = widget.package.timings;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.package != null && packageTasks != null && items.length == 0) {
+      for (int i = 0; i < packageTasks.length; i++) {
+        items.add(
+          ExpansionPanelItem(
+            isExpanded: i == 0,
+            header: packageTasks[i].name,
+            icon: packageTasks[i].icon,
+            body: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: timer(context, name, i),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Widget timer(BuildContext context, String name, int index) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.height,
+        ),
+        child: Timer(
+          name: name,
+          index: index,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: darkMode ? Colors.grey[900] : Colors.white,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-            0.0, MediaQuery.of(context).padding.top + 4.0, 0.0, 16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  child: BackButton(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 16.0),
-                  child: SizedBox(
-                    height: 96.0,
-                    width: 96.0,
-                    child: Hero(
-                      tag: name + 'a',
-                      child: FittedBox(
-                        child: Icon(
-                          icon,
-                          color: darkMode ? Colors.lightBlue : Colors.blue,
+    if (widget.task != null || packageTasks == null)
+      return Scaffold(
+        backgroundColor: darkMode ? Colors.grey[900] : Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+              0.0, MediaQuery.of(context).padding.top + 4.0, 0.0, 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: BackButton(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 16.0),
+                    child: SizedBox(
+                      height: 96.0,
+                      width: 96.0,
+                      child: Hero(
+                        tag: name + 'a',
+                        child: FittedBox(
+                          child: Icon(
+                            iconData,
+                            color: darkMode ? Colors.lightBlue : Colors.blue,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: PopupMenuButton<String>(
-                    onSelected: (value) {
-                      if (value == 'Edit') {
-                        Navigator.push(
-                          context,
-                          FadingPageRoute(
-                            builder: (context) => AddActivityScreen(
-                                  icon: icon,
-                                  name: name,
-                                  description: description,
-                                  packageTasks: packageTasks ?? [],
-                                  updateActivity: true,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4.0),
+                    child: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'Edit') {
+                          Navigator.push(
+                            context,
+                            FadingPageRoute(
+                              builder: (context) => AddActivityScreen(
+                                    package: widget.package ?? null,
+                                    task: widget.task ?? null,
+                                    updateActivity: true,
+                                  ),
+                            ),
+                          );
+                        } else if (value == 'Remove') {
+                          FileManager
+                              .removeFromFile('exercise.json', name)
+                              .then((_) {
+                            Navigator.pop(context);
+                          });
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuItem<String>>[
+                          PopupMenuItem<String>(
+                            value: 'Edit',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.edit,
+                                  color:
+                                      darkMode ? Colors.white : Colors.black87,
                                 ),
+                                const SizedBox(
+                                  width: 16.0,
+                                ),
+                                const Text('Edit'),
+                              ],
+                            ),
                           ),
-                        );
-                      } else if (value == 'Remove') {
-                        FileManager
-                            .removeFromFile('exercise.json', name)
-                            .then((_) {
-                          Navigator.pop(context);
-                        });
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return <PopupMenuItem<String>>[
-                        PopupMenuItem<String>(
-                          value: 'Edit',
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.edit,
-                                color: darkMode ? Colors.white : Colors.black87,
-                              ),
-                              const SizedBox(
-                                width: 16.0,
-                              ),
-                              const Text('Edit'),
-                            ],
+                          PopupMenuItem<String>(
+                            value: 'Remove',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.delete,
+                                  color:
+                                      darkMode ? Colors.white : Colors.black87,
+                                ),
+                                const SizedBox(
+                                  width: 16.0,
+                                ),
+                                const Text('Remove'),
+                              ],
+                            ),
                           ),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'Remove',
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.delete,
-                                color: darkMode ? Colors.white : Colors.black87,
-                              ),
-                              const SizedBox(
-                                width: 16.0,
-                              ),
-                              const Text('Remove'),
-                            ],
-                          ),
-                        ),
-                      ];
-                    },
+                        ];
+                      },
+                    ),
                   ),
+                ],
+              ),
+              Text(
+                name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  height: 1.2,
+                  fontFamily: 'Renner*',
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w500,
                 ),
-              ],
-            ),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                height: 1.2,
-                fontFamily: 'Renner*',
-                fontSize: 24.0,
-                fontWeight: FontWeight.w500,
               ),
-            ),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.height,
-              ),
-              child: Timer(
-                name: name,
-                key: Key('timer'),
-              ),
-            ),
-          ],
+              timer(context, name, 0)
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    else {
+      return Scaffold(
+        backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
+        body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+              0.0, MediaQuery.of(context).padding.top + 4.0, 0.0, 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: BackButton(),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      height: 48.0,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        name,
+                        style: const TextStyle(
+                          height: 1.2,
+                          fontFamily: 'Renner*',
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4.0),
+                    child: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'Edit') {
+                          Navigator.push(
+                            context,
+                            FadingPageRoute(
+                              builder: (context) => AddActivityScreen(
+                                    package: widget.package ?? null,
+                                    task: widget.task ?? null,
+                                    updateActivity: true,
+                                  ),
+                            ),
+                          );
+                        } else if (value == 'Remove') {
+                          FileManager
+                              .removeFromFile('exercise.json', name)
+                              .then((_) {
+                            Navigator.pop(context);
+                          });
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuItem<String>>[
+                          PopupMenuItem<String>(
+                            value: 'Edit',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.edit,
+                                  color:
+                                      darkMode ? Colors.white : Colors.black87,
+                                ),
+                                const SizedBox(
+                                  width: 16.0,
+                                ),
+                                const Text('Edit'),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'Remove',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.delete,
+                                  color:
+                                      darkMode ? Colors.white : Colors.black87,
+                                ),
+                                const SizedBox(
+                                  width: 16.0,
+                                ),
+                                const Text('Remove'),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 4.0,
+              ),
+              CustomExpansionPanelList(
+                expansionCallback: (index, isExpanded) {
+                  setState(() {
+                    items[index].isExpanded = !items[index].isExpanded;
+                  });
+                },
+                children: items.map((ExpansionPanelItem item) {
+                  return ExpansionPanel(
+                    headerBuilder: (context, isExpanded) {
+                      return FlatButton(
+                        child: Container(
+                          constraints: const BoxConstraints(
+                            minHeight: 72.0,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            children: <Widget>[
+                              CircleAvatar(
+                                backgroundColor: darkMode
+                                    ? Colors.blueGrey[700]
+                                    : Colors.blue,
+                                child: Icon(
+                                  item.icon,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child: Text(
+                                    item.header,
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                      height: 1.2,
+                                      fontFamily: 'Renner*',
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              CustomExpandIcon(isExpanded),
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            item.isExpanded = !item.isExpanded;
+                          });
+                        },
+                      );
+                    },
+                    body: item.body,
+                    isExpanded: item.isExpanded,
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }
 
 class Timer extends StatefulWidget {
-  Timer({this.name, Key key}) : super(key: key);
+  Timer({this.name, this.index, Key key}) : super(key: key);
   final String name;
+  final int index;
   @override
   _TimerState createState() => _TimerState();
 }
@@ -214,9 +428,10 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
       Map<String, dynamic> contents =
           await FileManager.readFile('exercise.json');
       loaded = true;
-      if (contents[widget.name].length == 4) {
-        controller.duration = Duration(seconds: contents[widget.name][3]);
-        return contents[widget.name][3];
+      if (contents[widget.name].length == 5) {
+        controller.duration =
+            Duration(seconds: contents[widget.name][4][widget.index]);
+        return contents[widget.name][4][widget.index];
       }
     }
     return 0;
@@ -425,10 +640,10 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                   fadeController.forward();
                   FileManager.readFile('exercise.json').then((contents) {
                     dynamic content = contents[widget.name];
-                    if (content.length == 3)
-                      content.add(controller.duration.inSeconds);
+                    if (content.length == 4)
+                      content.add([controller.duration.inSeconds]);
                     else
-                      content[3] = controller.duration.inSeconds;
+                      content[4][widget.index] = controller.duration.inSeconds;
                     FileManager.writeToFile(
                         'exercise.json', widget.name, content);
                   });

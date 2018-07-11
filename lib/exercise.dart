@@ -4,7 +4,7 @@ import 'customWidgets.dart';
 import 'startActivity.dart';
 import 'sportsIcons.dart';
 import 'fileManager.dart';
-import './data/newActivityList.dart';
+import 'newActivity.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'main.dart';
 
@@ -33,14 +33,14 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   List<Activity> getActivities(Map<String, dynamic> contents) {
     List<Activity> activities = [];
     contents.forEach((key, value) {
-      IconData icon = getIconFromName(key);
-      String description = getDescriptionFromName(key);
-      if (icon != null) {
+      Package package = getPackage(key);
+      Task task;
+      if (package == null) task = getTask(key);
+      if (task != null || package != null) {
         activities.add(
           Activity(
-            name: key,
-            icon: icon,
-            description: description,
+            package: package ?? null,
+            task: task ?? null,
             completionState: getCompletionState(value),
             showNotification: showNotification,
           ),
@@ -83,28 +83,20 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         time1.hour == time2.hour && time1.minute <= time2.minute;
   }
 
-  IconData getIconFromName(String name) {
-    IconData iconData;
+  Package getPackage(String name) {
+    Package data;
     packageList.forEach((package) {
-      if (package.name == name) iconData = package.icon;
+      if (package.name == name) data = package;
     });
-    if (iconData != null) return iconData;
-    allTasks.forEach((task) {
-      if (task.name == name) iconData = task.icon;
-    });
-    return iconData;
+    return data;
   }
 
-  String getDescriptionFromName(String name) {
-    String description;
-    packageList.forEach((package) {
-      if (package.name == name) description = package.description;
-    });
-    if (description != null) return description;
+  Task getTask(String name) {
+    Task data;
     allTasks.forEach((task) {
-      if (task.name == name) description = task.description;
+      if (task.name == name) data = task;
     });
-    return description;
+    return data;
   }
 
   int getId(String name) {
@@ -120,13 +112,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   }
 
   Future onSelectNotification(String payload) async {
+    Package package = getPackage(payload);
+    Task task;
+    if (package == null) task = getTask(payload);
     await Navigator.push(
       context.ancestorStateOfType(TypeMatcher<MyHomePageState>()).context,
       MaterialPageRoute(
         builder: (context) => StartActivityScreen(
-              name: payload,
-              icon: getIconFromName(payload),
-              description: getDescriptionFromName(payload),
+              package: package ?? null,
+              task: task ?? null,
             ),
       ),
     );
@@ -245,7 +239,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 24.0, portrait ? 16.0 : 72.0, 12.0),
+                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 24.0,
+                      portrait ? 16.0 : 72.0, 12.0),
                   child: const Text(
                     'Exercise',
                     style: TextStyle(
@@ -258,7 +253,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 16.0, portrait ? 16.0 : 72.0, 24.0),
+                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 16.0,
+                      portrait ? 16.0 : 72.0, 24.0),
                   child: Row(
                     children: <Widget>[
                       const Icon(
@@ -298,11 +294,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 ),
                 Container(
                   constraints: BoxConstraints(
-                    minHeight: portrait
-                        ? height / 2
-                        : height / 4,
+                    minHeight: portrait ? height / 2 : height / 4,
                   ),
-                  padding: EdgeInsets.fromLTRB(portrait ? 4.0 : 68.0, 4.0, portrait ? 4.0 : 68.0, 32.0),
+                  padding: EdgeInsets.fromLTRB(
+                      portrait ? 4.0 : 68.0, 4.0, portrait ? 4.0 : 68.0, 32.0),
                   child: activities(portrait),
                 ),
                 const SizedBox(),
@@ -318,17 +313,26 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
 class Activity extends StatelessWidget {
   const Activity({
-    @required this.icon,
-    @required this.name,
+    this.package,
+    this.task,
     @required this.completionState,
-    @required this.description,
     this.showNotification,
   });
-  final IconData icon;
-  final String name, completionState, description;
+  final Package package;
+  final Task task;
+  final String completionState;
   final Function showNotification;
   @override
   Widget build(BuildContext context) {
+    IconData iconData;
+    String name;
+    if (task != null) {
+      iconData = task.icon;
+      name = task.name;
+    } else {
+      iconData = package.icon;
+      name = package.name;
+    }
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final bool portrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
@@ -353,9 +357,8 @@ class Activity extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => StartActivityScreen(
-                    icon: icon,
-                    name: name,
-                    description: description,
+                    task: task ?? null,
+                    package: package ?? null,
                   ),
             ),
           );
@@ -373,7 +376,7 @@ class Activity extends StatelessWidget {
                   tag: name + 'a',
                   child: FittedBox(
                     child: Icon(
-                      icon,
+                      iconData,
                       color: darkMode ? Colors.lightBlue : Colors.blue,
                     ),
                   ),

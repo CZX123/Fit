@@ -7,7 +7,6 @@ import 'diet.dart';
 import 'newActivity.dart';
 import 'settings.dart';
 import 'startActivity.dart';
-import './data/newActivityList.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
@@ -136,28 +135,28 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  IconData getIconFromName(String name) {
-    IconData iconData;
+  bool isPackage(String name) {
+    bool boolean = false;
     packageList.forEach((package) {
-      if (package.name == name) iconData = package.icon;
+      if (package.name == name) boolean = true;
     });
-    if (iconData != null) return iconData;
-    allTasks.forEach((task) {
-      if (task.name == name) iconData = task.icon;
-    });
-    return iconData;
+    return boolean;
   }
 
-  String getDescriptionFromName(String name) {
-    String description;
+  Package getPackage(String name) {
+    Package data;
     packageList.forEach((package) {
-      if (package.name == name) description = package.description;
+      if (package.name == name) data = package;
     });
-    if (description != null) return description;
+    return data;
+  }
+
+  Task getTask(String name) {
+    Task data;
     allTasks.forEach((task) {
-      if (task.name == name) description = task.description;
+      if (task.name == name) data = task;
     });
-    return description;
+    return data;
   }
 
   int getId(String name) {
@@ -173,13 +172,15 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Future onSelectNotification(String payload) async {
+    Package package = getPackage(payload);
+    Task task;
+    if (package == null) task = getTask(payload);
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => StartActivityScreen(
-              name: payload,
-              icon: getIconFromName(payload),
-              description: getDescriptionFromName(payload),
+              package: package ?? null,
+              task: task ?? null,
             ),
       ),
     );
