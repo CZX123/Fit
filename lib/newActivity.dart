@@ -364,7 +364,7 @@ List<Package> packageList = [
         commonList[8], // Sit-Ups
         commonList[6], // Planks
     ],
-    timings: [180, 180, 180], 
+    timings: [180, 180, 180],
   ),
   Package(
     icon: SportsIcons.jumping_jacks,
@@ -411,8 +411,8 @@ List<Package> packageList = [
       hiddenList[3], // Seated Back Twist
       hiddenList[4], // Standing Side Stretch
       hiddenList[5], // Forward Hang
-    ],  
-    timings: [40, 40, 40, 40, 40],    
+    ],
+    timings: [40, 40, 40, 40, 40],
   ),
   Package(
     icon: SportsIcons.aerobics,
