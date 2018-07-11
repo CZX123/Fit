@@ -348,9 +348,9 @@ List<Package> packageList = [
       hiddenList[1], // Runner's Stretch
       commonList[8], // Sit-Ups
       commonList[6], // Planking
-      hiddenList[2], // Shuttle Run
-      hiddenList[3], // Standing Broad Jump
-      hiddenList[4], // 2.4km Run
+      hiddenList[6], // Shuttle Run
+      hiddenList[7], // Standing Broad Jump
+      hiddenList[8], // 2.4km Run
     ],
     timings: [120, 60, 90, 10, 10, 600], // all in seconds
   ),
