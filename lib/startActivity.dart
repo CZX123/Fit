@@ -60,7 +60,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
             icon: packageTasks[i].icon,
             body: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: timer(context, name, i),
+              child: timer(context, name, i, true),
             ),
           ),
         );
@@ -68,13 +68,14 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
     }
   }
 
-  Widget timer(BuildContext context, String name, int index) => ConstrainedBox(
+  Widget timer(BuildContext context, String name, int index, [bool isPackage]) => ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.height,
         ),
         child: Timer(
           name: name,
           index: index,
+          isPackage: isPackage ?? false,
         ),
       );
 
@@ -359,9 +360,10 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
 }
 
 class Timer extends StatefulWidget {
-  Timer({this.name, this.index, Key key}) : super(key: key);
+  Timer({this.name, this.index, Key key, this.isPackage}) : super(key: key);
   final String name;
   final int index;
+  final bool isPackage;
   @override
   _TimerState createState() => _TimerState();
 }
@@ -517,6 +519,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
       height: 200.0,
       width: 72.0,
       child: CupertinoPicker(
+        notSoDark: widget.isPackage ?? false,
         scrollController: FixedExtentScrollController(
           initialItem: number == 0 ? minutes : seconds,
         ),

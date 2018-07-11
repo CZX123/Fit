@@ -34,6 +34,7 @@ class CupertinoPicker extends StatefulWidget {
   /// than using [Colors.transparent].
   const CupertinoPicker({
     Key key,
+    this.notSoDark,
     this.diameterRatio = _kDefaultDiameterRatio,
     this.backgroundColor = _kDefaultBackground,
     this.scrollController,
@@ -46,6 +47,8 @@ class CupertinoPicker extends StatefulWidget {
         assert(itemExtent != null),
         assert(itemExtent > 0),
         super(key: key);
+
+  final bool notSoDark;
 
   /// Relative ratio between this picker's height and the simulated cylinder's diameter.
   ///
@@ -126,16 +129,27 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
                       const Color(0xF2FFFFFF),
                       const Color(0xFFFFFFFF),
                     ]
-                  : const <Color>[
-                      const Color(0xFF212121),
-                      const Color(0xF2212121),
-                      const Color(0xDD212121),
-                      const Color(0x00212121),
-                      const Color(0x00212121),
-                      const Color(0xDD212121),
-                      const Color(0xF2212121),
-                      const Color(0xFF212121),
-                    ],
+                  : widget.notSoDark
+                      ? const <Color>[
+                          const Color(0xFF303030),
+                          const Color(0xF2303030),
+                          const Color(0xDD303030),
+                          const Color(0x00303030),
+                          const Color(0x00303030),
+                          const Color(0xDD303030),
+                          const Color(0xF2303030),
+                          const Color(0xFF303030),
+                        ]
+                      : const <Color>[
+                          const Color(0xFF212121),
+                          const Color(0xF2212121),
+                          const Color(0xDD212121),
+                          const Color(0x00212121),
+                          const Color(0x00212121),
+                          const Color(0xDD212121),
+                          const Color(0xF2212121),
+                          const Color(0xFF212121),
+                        ],
               stops: const <double>[
                 0.0,
                 0.05,
