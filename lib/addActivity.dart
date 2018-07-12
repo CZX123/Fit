@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'newActivity.dart';
 import 'fileManager.dart';
+import 'main.dart';
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({
@@ -447,6 +448,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                     Navigator.pop(context);
                     Navigator.pop(context, name);
                   });
+                  App.of(context).update();
                 }
               },
             )

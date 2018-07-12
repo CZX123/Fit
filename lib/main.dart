@@ -63,6 +63,10 @@ class AppState extends State<App> {
     });
   }
 
+  void update() {
+    setState(() {});
+  }
+
   void changeColors(Color newPrimaryColor, Color newAccentColor) {
     setState(() {
       primaryColor = newPrimaryColor;
