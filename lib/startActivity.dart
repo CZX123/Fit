@@ -304,6 +304,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                   return ExpansionPanel(
                     headerBuilder: (context, isExpanded) {
                       return FlatButton(
+                        shape: const RoundedRectangleBorder(),
                         child: Container(
                           constraints: const BoxConstraints(
                             minHeight: 72.0,

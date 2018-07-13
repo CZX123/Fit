@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart' show AnimatedContainer, AnimatedCrossFade, Animation, AnimationController, Brightness, BuildContext, Colors, Column, Container, CrossFadeState, CurvedAnimation, Curves, ExpansionPanel, ExpansionPanelCallback, ExpansionPanelList, Icon, Icons, Interval, LocalKey, MaterialGap, MaterialSlice, MergeableMaterial, MergeableMaterialItem, RotationTransition, SingleTickerProviderStateMixin, State, StatefulWidget, Theme, Tween, Widget, hashValues, kThemeAnimationDuration;
-import 'dart:math';
+import 'package:flutter/material.dart' show AnimatedContainer, AnimatedCrossFade, Animation, AnimationController, BorderRadius, Brightness, BuildContext, Colors, Column, Container, CrossFadeState, CurvedAnimation, Curves, ExpansionPanel, ExpansionPanelCallback, ExpansionPanelList, Icon, Icons, Interval, LocalKey, RotationTransition, SingleTickerProviderStateMixin, State, StatefulWidget, Theme, Tween, Widget, hashValues, kThemeAnimationDuration;
+import 'mergeableMaterial.dart' show MaterialGap, MaterialSlice, MergeableMaterial, MergeableMaterialItem;
+import 'dart:math' show pi;
 
 const double _kPanelHeaderCollapsedHeight = 56.0;
 const double _kPanelHeaderExpandedHeight = 72.0;
@@ -29,9 +30,13 @@ class _SaltedKey<S, V> extends LocalKey {
 }
 
 class CustomExpansionPanelList extends ExpansionPanelList {
-  CustomExpansionPanelList(
-      {List<ExpansionPanel> children, ExpansionPanelCallback expansionCallback})
-      : super(children: children, expansionCallback: expansionCallback);
+  CustomExpansionPanelList({
+    List<ExpansionPanel> children,
+    ExpansionPanelCallback expansionCallback,
+    this.borderRadius,
+  }) : super(children: children, expansionCallback: expansionCallback);
+
+  final double borderRadius;
 
   bool _isChildExpanded(int index) {
     return children[index].isExpanded;
@@ -63,20 +68,19 @@ class CustomExpansionPanelList extends ExpansionPanelList {
         new MaterialSlice(
           key: new _SaltedKey<BuildContext, int>(context, index * 2),
           child: new Container(
-            color: darkMode ? Colors.grey[850] : Colors.white,
             /*
-            decoration: roundedCorners
+            decoration: borderRadius != null
                 ? _isChildExpanded(index)
                     ? BoxDecoration(
                         color: darkMode ? Colors.grey[850] : Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(borderRadius),
                       )
                     : index == 0
                         ? BoxDecoration(
                             color: darkMode ? Colors.grey[850] : Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8.0),
-                              topRight: Radius.circular(8.0),
+                              topLeft: Radius.circular(borderRadius),
+                              topRight: Radius.circular(borderRadius),
                             ),
                           )
                         : index == children.length - 1
@@ -84,8 +88,8 @@ class CustomExpansionPanelList extends ExpansionPanelList {
                                 color:
                                     darkMode ? Colors.grey[850] : Colors.white,
                                 borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(8.0),
-                                  bottomRight: Radius.circular(8.0),
+                                  bottomLeft: Radius.circular(borderRadius),
+                                  bottomRight: Radius.circular(borderRadius),
                                 ),
                               )
                             : BoxDecoration(
@@ -95,7 +99,7 @@ class CustomExpansionPanelList extends ExpansionPanelList {
                 : BoxDecoration(
                     color: darkMode ? Colors.grey[850] : Colors.white,
                   ),
-            */
+                  */
             child: new Column(
               children: <Widget>[
                 header,
@@ -124,7 +128,8 @@ class CustomExpansionPanelList extends ExpansionPanelList {
     }
 
     return new MergeableMaterial(
-      elevation: darkMode ? 1 : 2,
+      borderRadius: borderRadius != null ? BorderRadius.circular(borderRadius) : BorderRadius.zero,
+      elevation: darkMode ? 0 : 2,
       hasDividers: darkMode ? false : true,
       children: items,
     );

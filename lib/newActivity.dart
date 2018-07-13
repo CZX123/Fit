@@ -136,6 +136,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                   return ExpansionPanel(
                     headerBuilder: (context, isExpanded) {
                       return FlatButton(
+                        shape: const RoundedRectangleBorder(),
                         child: Container(
                           constraints: const BoxConstraints(
                             minHeight: 72.0,
@@ -300,6 +301,7 @@ class Task extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return FlatButton(
+      shape: RoundedRectangleBorder(),
       child: Container(
         height: 56.0,
         child: Row(

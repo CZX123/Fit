@@ -223,7 +223,6 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Container(
-        color: Colors.grey[50],
         child: TabBarView(
           controller: controller,
           children: <Widget>[

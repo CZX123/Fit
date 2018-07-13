@@ -214,7 +214,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 : windowTopPadding + 128.0,
             right: 0.0,
             left: 0.0,
-            bottom: -64.0,
+            bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -222,7 +222,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   end: FractionalOffset.bottomCenter,
                   colors: <Color>[
                     darkMode ? Colors.grey[900] : Colors.blue,
-                    darkMode ? Colors.grey[900] : Colors.blue[50],
+                    darkMode ? Colors.grey[900] : Colors.blue[100],
                   ],
                 ),
               ),
