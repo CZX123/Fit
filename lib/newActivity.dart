@@ -1,3 +1,4 @@
+import 'dart:math' show Random;
 import 'package:flutter/material.dart';
 import 'addActivity.dart';
 import 'customWidgets.dart';
@@ -25,6 +26,41 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
   bool isSearching = false;
   final FocusNode focusNode = FocusNode();
   final Duration duration = Duration(milliseconds: 240);
+  final List<String> errorMessages = [
+    'Oh No!',
+    'Oops!',
+    'Yikes!',
+    'Damn!',
+    '404 Not Found',
+    'Sorry!',
+    'Well, this is awkward.'
+  ];
+  final List<IconData> errorIcons = [
+    Icons.bug_report,
+    Icons.pageview,
+    Icons.pets,
+    Icons.rowing,
+    Icons.radio,
+    Icons.weekend,
+    Icons.airplanemode_active,
+    Icons.cloud,
+    Icons.nature_people,
+    Icons.wb_incandescent,
+    Icons.directions_bike,
+    Icons.directions_run,
+    Icons.directions_walk,
+    Icons.local_cafe,
+    Icons.local_florist,
+    Icons.beach_access,
+    Icons.golf_course,
+    Icons.pool,
+    Icons.cake,
+    Icons.sentiment_dissatisfied,
+    Icons.mood_bad,
+  ];
+  String errorMessage;
+  IconData errorIcon;
+  bool changeError = true;
   List<ExpansionPanelItem> items = [
     ExpansionPanelItem(
       isExpanded: false,
@@ -64,6 +100,8 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
   @override
   void initState() {
     super.initState();
+    errorMessage = errorMessages[Random().nextInt(errorMessages.length)];
+    errorIcon = errorIcons[Random().nextInt(errorIcons.length)];
     searchController.addListener(searchUpdate);
   }
 
@@ -95,6 +133,15 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
       setState(() {
         packageListSearch = packageMatches + otherPackageMatches;
         taskListSearch = taskMatches + otherTaskMatches;
+        if (packageListSearch.length == 0 && taskListSearch.length == 0) {
+          if (changeError) {
+            errorMessage =
+                errorMessages[Random().nextInt(errorMessages.length)];
+            errorIcon = errorIcons[Random().nextInt(errorIcons.length)];
+          }
+          changeError = false;
+        } else
+          changeError = true;
         isSearching = true;
       });
     } else {
@@ -189,7 +236,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                firstCurve: Interval(0.0, 0.55),
+                firstCurve: Interval(0.0, 0.45),
                 secondChild: IgnorePointer(
                   ignoring: !searchBarActive,
                   child: Material(
@@ -201,7 +248,8 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                         border: InputBorder.none,
                         hintText: 'Search for an exercise',
                         hintStyle: TextStyle(
-                          fontFamily: 'sans-serif-condensed',
+                          fontSize: 16.0,
+                          color: Colors.black38,
                         ),
                       ),
                       style: TextStyle(
@@ -211,7 +259,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                     ),
                   ),
                 ),
-                secondCurve: Interval(0.45, 1.0),
+                secondCurve: Interval(0.55, 1.0),
               ),
             ),
           ],
@@ -268,7 +316,8 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
         child: SingleChildScrollView(
           child: Container(
             constraints: BoxConstraints(
-              minHeight: focusNode.hasFocus ? 0.0 : height - 56.0 - windowTopPadding,
+              minHeight:
+                  focusNode.hasFocus ? 0.0 : height - 56.0 - windowTopPadding,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,23 +325,25 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                 packageListSearch.length > 0
                     ? Padding(
                         padding:
-                            const EdgeInsets.fromLTRB(16.0, 28.0, 16.0, 8.0),
+                            const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 4.0),
                         child: Text(
                           'Packages',
                           style: TextStyle(
                             color: darkMode ? Colors.white : Colors.black54,
-                            fontSize: 16.0,
+                            fontSize: 15.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       )
-                    : const SizedBox(
-                        height: 24.0,
-                      ),
+                    : taskListSearch.length > 0
+                        ? const SizedBox(
+                            height: 24.0,
+                          )
+                        : const SizedBox(),
                 Container(
-                  height: packageListSearch.length > 0 ? 180.0 : 0.0,
+                  height: packageListSearch.length > 0 ? 176.0 : 0.0,
                   child: ListView(
-                    padding: const EdgeInsets.fromLTRB(4.0, 16.0, 4.0, 24.0),
+                    padding: const EdgeInsets.fromLTRB(4.0, 16.0, 4.0, 20.0),
                     scrollDirection: Axis.horizontal,
                     children: isSearching ? packageListSearch : packageList,
                   ),
@@ -300,12 +351,12 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                 taskListSearch.length > 0
                     ? Padding(
                         padding: EdgeInsets.fromLTRB(
-                            16.0, 8.0, 16.0, isSearching ? 16.0 : 24.0),
+                            16.0, 4.0, 16.0, isSearching ? 16.0 : 20.0),
                         child: Text(
                           'Tasks',
                           style: TextStyle(
                             color: darkMode ? Colors.white : Colors.black54,
-                            fontSize: 16.0,
+                            fontSize: 15.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -379,6 +430,37 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                           }).toList(),
                         ),
                 ),
+                packageListSearch.length == 0 && taskListSearch.length == 0
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Icon(
+                              errorIcon,
+                              color: Colors.black38,
+                              size: 64.0,
+                            ),
+                            const SizedBox(
+                              height: 20.0,
+                            ),
+                            Text(
+                              errorMessage,
+                              style: const TextStyle(
+                                fontFamily: 'Renner*',
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16.0,
+                            ),
+                            const Text(
+                                "We couldn't find what you were looking for. Maybe try a different search term? Or go back and browse through our entire list of packages and tasks?"),
+                          ],
+                        ),
+                      )
+                    : const SizedBox(),
               ],
             ),
           ),
