@@ -10,11 +10,7 @@ import 'startActivity.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
-  runApp(
-    App(
-      child: MyHomePage(),
-    ),
-  );
+  runApp(App());
 }
 
 class _InheritedApp extends InheritedWidget {
@@ -29,9 +25,6 @@ class _InheritedApp extends InheritedWidget {
 }
 
 class App extends StatefulWidget {
-  final Widget child;
-
-  App({@required this.child});
 
   static AppState of(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(_InheritedApp)
@@ -100,7 +93,11 @@ class AppState extends State<App> {
           primaryColorBrightness: Brightness.dark,
           accentColor: accentColor,
         ),
-        home: widget.child,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => MyHomePage(),
+          '/newActivity': (context) => NewActivityScreen(),
+        },
       ),
     );
   }
@@ -239,7 +236,6 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 String value = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      maintainState: true,
                       builder: (context) => NewActivityScreen(),
                     ));
                 if (value != null) {

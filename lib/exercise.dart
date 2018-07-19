@@ -173,7 +173,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 height: 16.0,
               ),
               Text(
-                'Add some new activities',
+                'Add some new exercises',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: darkMode ? Colors.white70 : Colors.white,

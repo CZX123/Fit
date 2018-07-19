@@ -447,6 +447,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                   writeToFile(name, value).then((_) {
                     Navigator.pop(context);
                     Navigator.pop(context, name);
+                    if (Navigator.canPop(context)) Navigator.pop(context, name);
+                    if (Navigator.canPop(context)) Navigator.pop(context, name);
                     App.of(context).update();
                   });
                 }

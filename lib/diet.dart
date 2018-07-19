@@ -382,9 +382,9 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
                                     dietPanels.length != 0) {
                                   return Container(
                                     padding: EdgeInsets.fromLTRB(
-                                        portrait ? 16.0 : 72.0,
+                                        portrait ? 8.0 : 72.0,
                                         12.0,
-                                        portrait ? 16.0 : 72.0,
+                                        portrait ? 8.0 : 72.0,
                                         20.0),
                                     child: DietPanels(
                                       items: dietPanels,
@@ -562,24 +562,13 @@ class _DietPanelsState extends State<DietPanels> {
           headerBuilder: (context, isExpanded) {
             return FlatButton(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: i == 0 ||
+                borderRadius: BorderRadius.vertical(
+                  top: i == 0 ||
                           isExpanded ||
                           (i > 0 && items[i - 1].isExpanded == true)
                       ? Radius.circular(8.0)
                       : Radius.zero,
-                  topRight: i == 0 ||
-                          isExpanded ||
-                          (i > 0 && items[i - 1].isExpanded == true)
-                      ? Radius.circular(8.0)
-                      : Radius.zero,
-                  bottomLeft: !isExpanded &&
-                          (i == items.length - 1 ||
-                              (i < items.length - 1 &&
-                                  items[i + 1].isExpanded == true))
-                      ? Radius.circular(8.0)
-                      : Radius.zero,
-                  bottomRight: !isExpanded &&
+                  bottom: !isExpanded &&
                           (i == items.length - 1 ||
                               (i < items.length - 1 &&
                                   items[i + 1].isExpanded == true))

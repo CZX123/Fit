@@ -522,7 +522,7 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
           new Container(
             decoration: new BoxDecoration(
               color: darkMode ? Colors.grey[850] : Colors.white,
-              borderRadius: widget.borderRadius != BorderRadius.zero ? _borderRadius(i - 1, widgets.isEmpty, false) : BorderRadius.zero,
+              borderRadius: widget.borderRadius != BorderRadius.zero ? _borderRadius(i - 1, true, false) : BorderRadius.zero,
               shape: BoxShape.rectangle
             ),
             child: new ListBody(

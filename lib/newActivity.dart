@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'addActivity.dart';
 import 'customWidgets.dart';
 import 'sportsIcons.dart';
 import 'customExpansionPanel.dart';
-import 'fileManager.dart';
 
 class ExpansionPanelItem {
   ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon});
@@ -20,16 +18,13 @@ class NewActivityScreen extends StatefulWidget {
 }
 
 class _NewActivityScreenState extends State<NewActivityScreen> {
-  Future<bool> isActive(String name) async {
-    Map<String, dynamic> contents = await FileManager.readFile('exercise.json');
-    List<String> keys = contents.keys;
-    bool matches = false;
-    keys.forEach((key) {
-      if (key == name) matches = true;
-    });
-    return matches;
-  }
-
+  List<Task> taskListSearch = allTasks;
+  List<Package> packageListSearch = packageList;
+  TextEditingController searchController = TextEditingController();
+  bool searchBarActive = false;
+  bool isSearching = false;
+  final FocusNode focusNode = FocusNode();
+  final Duration duration = Duration(milliseconds: 240);
   List<ExpansionPanelItem> items = [
     ExpansionPanelItem(
       isExpanded: false,
@@ -67,125 +62,326 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    searchController.addListener(searchUpdate);
+  }
+
+  @override
+  void dispose() {
+    searchController.removeListener(searchUpdate);
+    super.dispose();
+  }
+
+  void searchUpdate() {
+    if (searchController.text != '') {
+      String text = searchController.text.toLowerCase();
+      List<Package> packageMatches = [];
+      List<Package> otherPackageMatches = [];
+      for (int i = 0; i < packageList.length; i++) {
+        if (packageList[i].name.toLowerCase().startsWith(text))
+          packageMatches.add(packageList[i]);
+        else if (packageList[i].name.toLowerCase().contains(text))
+          otherPackageMatches.add(packageList[i]);
+      }
+      List<Task> taskMatches = [];
+      List<Task> otherTaskMatches = [];
+      for (int j = 0; j < allTasks.length; j++) {
+        if (allTasks[j].name.toLowerCase().startsWith(text))
+          taskMatches.add(allTasks[j]);
+        else if (allTasks[j].name.toLowerCase().contains(text))
+          otherTaskMatches.add(allTasks[j]);
+      }
+      setState(() {
+        packageListSearch = packageMatches + otherPackageMatches;
+        taskListSearch = taskMatches + otherTaskMatches;
+        isSearching = true;
+      });
+    } else {
+      setState(() {
+        isSearching = false;
+        taskListSearch = allTasks;
+        packageListSearch = packageList;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
+    final double windowTopPadding = MediaQuery.of(context).padding.top;
+    final TargetPlatform platform = Theme.of(context).platform;
     return Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: AppBar(
         backgroundColor: darkMode ? Colors.grey[800] : Colors.blue,
-        title: const Text(
-          'New Exercise',
-          style: const TextStyle(
-            height: 1.2,
-            fontFamily: 'Renner*',
-            fontSize: 20.0,
-            fontWeight: FontWeight.w500,
+        leading: Transform.scale(
+          scale: 7 / 6,
+          child: Material(
+            color: Colors.transparent,
+            type: MaterialType.circle,
+            child: IconButton(
+              iconSize: 6 / 7 * 24.0,
+              icon: AnimatedCrossFade(
+                duration: duration,
+                crossFadeState: searchBarActive && !darkMode
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                firstChild: Icon(platform == TargetPlatform.iOS
+                    ? Icons.arrow_back_ios
+                    : Icons.arrow_back),
+                secondChild: Icon(
+                  platform == TargetPlatform.iOS
+                      ? Icons.arrow_back_ios
+                      : Icons.arrow_back,
+                  color: Colors.blue,
+                ),
+              ),
+              splashColor: searchBarActive && !darkMode
+                  ? const Color(0x66C8C8C8)
+                  : const Color(0x40CCCCCC),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              tooltip: 'Back',
+            ),
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Search',
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        flexibleSpace: Stack(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 28.0, 16.0, 8.0),
-              child: Text(
-                'Packages',
-                style: TextStyle(
-                  color: darkMode ? Colors.white : Colors.black54,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
+            AnimatedPositioned(
+              duration: duration,
+              curve: Curves.decelerate,
+              top: searchBarActive
+                  ? (windowTopPadding - width) / 2 + 28.0
+                  : windowTopPadding + 28.0,
+              right: searchBarActive ? -windowTopPadding / 2 : 16.0,
+              child: AnimatedContainer(
+                height: searchBarActive ? width + windowTopPadding : 0.0,
+                width: searchBarActive ? width + windowTopPadding : 0.0,
+                duration: duration,
+                curve: Curves.decelerate,
+                decoration: BoxDecoration(
+                  color: darkMode ? Colors.grey[700] : Colors.white,
+                  borderRadius: BorderRadius.circular(
+                      searchBarActive ? (width + windowTopPadding) / 2 : 0.0),
                 ),
-              ),
-            ),
-            Container(
-              height: 180.0,
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(4.0, 16.0, 4.0, 24.0),
-                scrollDirection: Axis.horizontal,
-                children: packageList,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 24.0),
-              child: Text(
-                'Tasks',
-                style: TextStyle(
-                  color: darkMode ? Colors.white : Colors.black54,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 32.0),
-              child: CustomExpansionPanelList(
-                expansionCallback: (index, isExpanded) {
-                  setState(() {
-                    items[index].isExpanded = !items[index].isExpanded;
-                  });
-                },
-                children: items.map((ExpansionPanelItem item) {
-                  return ExpansionPanel(
-                    headerBuilder: (context, isExpanded) {
-                      return FlatButton(
-                        shape: const RoundedRectangleBorder(),
-                        child: Container(
-                          constraints: const BoxConstraints(
-                            minHeight: 72.0,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
-                            children: <Widget>[
-                              CircleAvatar(
-                                backgroundColor: darkMode
-                                    ? Colors.blueGrey[700]
-                                    : Colors.blue,
-                                child: Icon(
-                                  item.icon,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 16.0),
-                                  child: Text(
-                                    item.header,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      height: 1.2,
-                                      fontFamily: 'Renner*',
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              CustomExpandIcon(isExpanded),
-                            ],
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            item.isExpanded = !item.isExpanded;
-                          });
-                        },
-                      );
-                    },
-                    body: item.body,
-                    isExpanded: item.isExpanded,
-                  );
-                }).toList(),
               ),
             ),
           ],
+        ),
+        title: Row(
+          children: <Widget>[
+            Expanded(
+              child: AnimatedCrossFade(
+                duration: duration,
+                crossFadeState: searchBarActive
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                firstChild: const Text(
+                  'New Exercise',
+                  style: const TextStyle(
+                    height: 1.2,
+                    fontFamily: 'Renner*',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                firstCurve: Interval(0.0, 0.55),
+                secondChild: IgnorePointer(
+                  ignoring: !searchBarActive,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: TextField(
+                      controller: searchController,
+                      focusNode: focusNode,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Search for an exercise',
+                        hintStyle: TextStyle(
+                          fontFamily: 'sans-serif-condensed',
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: darkMode ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+                secondCurve: Interval(0.45, 1.0),
+              ),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          Transform.scale(
+            scale: 4 / 3,
+            child: Material(
+              color: Colors.transparent,
+              type: MaterialType.circle,
+              child: IconButton(
+                iconSize: 3 / 4 * 24.0,
+                icon: AnimatedCrossFade(
+                  crossFadeState: searchBarActive
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  duration: duration,
+                  firstChild: Icon(Icons.search),
+                  secondChild: Icon(Icons.close,
+                      color: darkMode ? Colors.white : Colors.black54),
+                ),
+                tooltip: searchBarActive ? 'Clear' : 'Search',
+                onPressed: () {
+                  if (!searchBarActive) {
+                    setState(() {
+                      searchBarActive = true;
+                    });
+                    FocusScope.of(context).requestFocus(focusNode);
+                    ModalRoute.of(context).addLocalHistoryEntry(
+                      LocalHistoryEntry(
+                        onRemove: () {
+                          setState(() {
+                            isSearching = false;
+                            searchBarActive = false;
+                          });
+                          searchController.text = '';
+                          focusNode.unfocus();
+                        },
+                      ),
+                    );
+                  } else {
+                    searchController.text = '';
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: NotificationListener(
+        onNotification: (v) {
+          if (v is ScrollUpdateNotification) focusNode.unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            constraints: BoxConstraints(
+              minHeight: focusNode.hasFocus ? 0.0 : height - 56.0 - windowTopPadding,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                packageListSearch.length > 0
+                    ? Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(16.0, 28.0, 16.0, 8.0),
+                        child: Text(
+                          'Packages',
+                          style: TextStyle(
+                            color: darkMode ? Colors.white : Colors.black54,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(
+                        height: 24.0,
+                      ),
+                Container(
+                  height: packageListSearch.length > 0 ? 180.0 : 0.0,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(4.0, 16.0, 4.0, 24.0),
+                    scrollDirection: Axis.horizontal,
+                    children: isSearching ? packageListSearch : packageList,
+                  ),
+                ),
+                taskListSearch.length > 0
+                    ? Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            16.0, 8.0, 16.0, isSearching ? 16.0 : 24.0),
+                        child: Text(
+                          'Tasks',
+                          style: TextStyle(
+                            color: darkMode ? Colors.white : Colors.black54,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 32.0),
+                  child: isSearching
+                      ? Column(
+                          children: taskListSearch,
+                        )
+                      : CustomExpansionPanelList(
+                          expansionCallback: (index, isExpanded) {
+                            setState(() {
+                              items[index].isExpanded =
+                                  !items[index].isExpanded;
+                            });
+                          },
+                          children: items.map((ExpansionPanelItem item) {
+                            return ExpansionPanel(
+                              headerBuilder: (context, isExpanded) {
+                                return FlatButton(
+                                  shape: const RoundedRectangleBorder(),
+                                  child: Container(
+                                    constraints: const BoxConstraints(
+                                      minHeight: 72.0,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        CircleAvatar(
+                                          backgroundColor: darkMode
+                                              ? Colors.blueGrey[700]
+                                              : Colors.blue,
+                                          child: Icon(
+                                            item.icon,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 16.0),
+                                            child: Text(
+                                              item.header,
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                height: 1.2,
+                                                fontFamily: 'Renner*',
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        CustomExpandIcon(isExpanded),
+                                      ],
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      item.isExpanded = !item.isExpanded;
+                                    });
+                                  },
+                                );
+                              },
+                              body: item.body,
+                              isExpanded: item.isExpanded,
+                            );
+                          }).toList(),
+                        ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -362,9 +558,9 @@ List<Package> packageList = [
     description:
         'Abs Workout is a package for you to develop your abdominal muscles, so as to attain and sustain healthy abdominals.',
     packageTasks: <Task>[
-        commonList[2], // Crunches
-        commonList[8], // Sit-Ups
-        commonList[6], // Planks
+      commonList[2], // Crunches
+      commonList[8], // Sit-Ups
+      commonList[6], // Planks
     ],
     timings: [180, 180, 180],
   ),
@@ -421,7 +617,6 @@ List<Package> packageList = [
     name: 'Aerobics',
     description:
         'Aerobics is a form of physical exercise that improves flexibility, muscular strength and cardio-vascular fitness, which is done by combining rhythmic aerobic exercise with stretching and strength training routines.',
- 
   ),
 ];
 
