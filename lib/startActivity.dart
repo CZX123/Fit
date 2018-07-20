@@ -68,7 +68,9 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
     }
   }
 
-  Widget timer(BuildContext context, String name, int index, [bool isPackage]) => ConstrainedBox(
+  Widget timer(BuildContext context, String name, int index,
+          [bool isPackage]) =>
+      ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.height,
         ),
@@ -82,6 +84,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
     if (widget.task != null || packageTasks == null)
       return Scaffold(
         backgroundColor: darkMode ? Colors.grey[900] : Colors.white,
@@ -123,13 +126,21 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                         if (value == 'Edit') {
                           Navigator.push(
                             context,
-                            FadingPageRoute(
-                              builder: (context) => AddActivityScreen(
-                                    package: widget.package ?? null,
-                                    task: widget.task ?? null,
-                                    updateActivity: true,
+                            isIos
+                                ? MaterialPageRoute(
+                                    builder: (context) => AddActivityScreen(
+                                          package: widget.package ?? null,
+                                          task: widget.task ?? null,
+                                          updateActivity: true,
+                                        ),
+                                  )
+                                : FadingPageRoute(
+                                    builder: (context) => AddActivityScreen(
+                                          package: widget.package ?? null,
+                                          task: widget.task ?? null,
+                                          updateActivity: true,
+                                        ),
                                   ),
-                            ),
                           );
                         } else if (value == 'Remove') {
                           FileManager
@@ -235,13 +246,21 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                         if (value == 'Edit') {
                           Navigator.push(
                             context,
-                            FadingPageRoute(
-                              builder: (context) => AddActivityScreen(
-                                    package: widget.package ?? null,
-                                    task: widget.task ?? null,
-                                    updateActivity: true,
+                            isIos
+                                ? MaterialPageRoute(
+                                    builder: (context) => AddActivityScreen(
+                                          package: widget.package ?? null,
+                                          task: widget.task ?? null,
+                                          updateActivity: true,
+                                        ),
+                                  )
+                                : FadingPageRoute(
+                                    builder: (context) => AddActivityScreen(
+                                          package: widget.package ?? null,
+                                          task: widget.task ?? null,
+                                          updateActivity: true,
+                                        ),
                                   ),
-                            ),
                           );
                         } else if (value == 'Remove') {
                           FileManager

@@ -27,7 +27,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   List<dynamic> _fromTime = [const TimeOfDay(hour: 12, minute: 00)];
   List<dynamic> _toTime = [const TimeOfDay(hour: 13, minute: 00)];
   bool _validate = false;
-  List<String> _frequency = [
+  final List<String> _frequency = [
     'Three Times a Day',
     'Twice a Day',
     'Daily',
@@ -37,7 +37,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     'Weekly'
   ];
   String _selectedFrequency = 'Daily';
-  String fileName = 'exercise.json';
+  final String fileName = 'exercise.json';
   Map<String, dynamic> fileContent;
   bool _updateActivity = false;
 
@@ -90,7 +90,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
 
   void showSnackbar(BuildContext context) {
     final snackBar = SnackBar(
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 3),
       content: Text(
           'This $name exercise has already been added. New edits you make will overwrite the old values.'),
       action: SnackBarAction(
@@ -275,6 +275,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final double height = MediaQuery.of(context).size.height;
     final double windowTopPadding = MediaQuery.of(context).padding.top;
+    final bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
 
     return Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
@@ -319,7 +320,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       height: 96.0,
                       width: 96.0,
                       child: Hero(
-                        tag: (widget.updateActivity != null &&
+                        tag: isIos ? name + 'iosSucks3' : (widget.updateActivity != null &&
                                 widget.updateActivity != false)
                             ? name + 'a'
                             : name,

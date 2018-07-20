@@ -17,6 +17,7 @@ class ExerciseScreen extends StatefulWidget {
 class _ExerciseScreenState extends State<ExerciseScreen> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final String fileName = 'exercise.json';
+  double top = 0.0;
 
   @override
   void initState() {
@@ -196,116 +197,127 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     double height = MediaQuery.of(context).size.height;
     double windowTopPadding = MediaQuery.of(context).padding.top;
     double containerHeight = 175.0;
-    return SingleChildScrollView(
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0.0,
-            right: 0.0,
-            left: 0.0,
-            height: containerHeight + windowTopPadding,
-            child: Container(
-              color: darkMode ? Colors.grey[900] : Colors.blue,
-            ),
-          ),
-          Positioned(
-            top: portrait
-                ? containerHeight - 1 + windowTopPadding
-                : windowTopPadding + 128.0,
-            right: 0.0,
-            left: 0.0,
-            bottom: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: FractionalOffset.topCenter,
-                  end: FractionalOffset.bottomCenter,
-                  colors: <Color>[
-                    darkMode ? Colors.grey[900] : Colors.blue,
-                    darkMode ? Colors.grey[900] : Colors.blue[100],
-                  ],
+    return NotificationListener(
+      onNotification: (v) {
+        double oldTop = top;
+        if (v is ScrollUpdateNotification) top += v.scrollDelta;
+        if (top <= 0.0 && oldTop > 0.0 || oldTop <= 0.0 && top > 0.0)
+          setState(() {});
+      },
+      child: Container(
+        color: darkMode ? Colors.grey[900] : top <= 0.0 ? Colors.blue : Colors.blue[100],
+        child: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 0.0,
+                right: 0.0,
+                left: 0.0,
+                height: containerHeight + windowTopPadding,
+                child: Container(
+                  color: darkMode ? Colors.grey[900] : Colors.blue,
                 ),
               ),
-            ),
-          ),
-          Container(
-            color: darkMode ? Colors.grey[900] : null,
-            constraints: BoxConstraints(
-              minHeight: height - 48.0,
-            ),
-            padding: EdgeInsets.only(top: windowTopPadding),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 24.0,
-                      portrait ? 16.0 : 72.0, 12.0),
-                  child: const Text(
-                    'Exercise',
-                    style: TextStyle(
-                      height: 1.2,
-                      color: Colors.white,
-                      fontFamily: 'Renner*',
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w500,
+              Positioned(
+                top: portrait
+                    ? containerHeight - 1 + windowTopPadding
+                    : windowTopPadding + 128.0,
+                right: 0.0,
+                left: 0.0,
+                bottom: 0.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: <Color>[
+                        darkMode ? Colors.grey[900] : Colors.blue,
+                        darkMode ? Colors.grey[900] : Colors.blue[100],
+                      ],
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 16.0,
-                      portrait ? 16.0 : 72.0, 24.0),
-                  child: Row(
-                    children: <Widget>[
-                      const Icon(
-                        SportsIcons.footsteps,
-                        size: 64.0,
-                        color: Colors.white,
-                        semanticLabel: 'Footstep',
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 18.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              '$counter',
-                              style: const TextStyle(
-                                fontFamily: 'Renner*',
-                                color: Colors.white,
-                                fontSize: 56.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              counter == 1 ? ' STEP' : ' STEPS',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+              ),
+              Container(
+                color: darkMode ? Colors.grey[900] : null,
+                constraints: BoxConstraints(
+                  minHeight: height - 48.0,
+                ),
+                padding: EdgeInsets.only(top: windowTopPadding),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 24.0,
+                          portrait ? 16.0 : 72.0, 12.0),
+                      child: const Text(
+                        'Exercise',
+                        style: TextStyle(
+                          height: 1.2,
+                          color: Colors.white,
+                          fontFamily: 'Renner*',
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(portrait ? 16.0 : 72.0, 16.0,
+                          portrait ? 16.0 : 72.0, 24.0),
+                      child: Row(
+                        children: <Widget>[
+                          const Icon(
+                            SportsIcons.footsteps,
+                            size: 64.0,
+                            color: Colors.white,
+                            semanticLabel: 'Footstep',
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 18.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '$counter',
+                                  style: const TextStyle(
+                                    fontFamily: 'Renner*',
+                                    color: Colors.white,
+                                    fontSize: 56.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  counter == 1 ? ' STEP' : ' STEPS',
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(
+                        minHeight: portrait ? height / 2 : height / 4,
+                      ),
+                      padding: EdgeInsets.fromLTRB(portrait ? 4.0 : 68.0, 4.0,
+                          portrait ? 4.0 : 68.0, 32.0),
+                      child: activities(portrait),
+                    ),
+                    const SizedBox(),
+                    const SizedBox(),
+                  ],
                 ),
-                Container(
-                  constraints: BoxConstraints(
-                    minHeight: portrait ? height / 2 : height / 4,
-                  ),
-                  padding: EdgeInsets.fromLTRB(
-                      portrait ? 4.0 : 68.0, 4.0, portrait ? 4.0 : 68.0, 32.0),
-                  child: activities(portrait),
-                ),
-                const SizedBox(),
-                const SizedBox(),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -339,6 +351,7 @@ class Activity extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double width =
         portrait ? (screenWidth - 24.0) / 2 : (screenWidth - 160.0) / 3;
+    final bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Container(
       height: width / (portrait ? 1.1 : 1.05),
       width: width,
@@ -373,7 +386,7 @@ class Activity extends StatelessWidget {
                 height: 64.0,
                 width: 64.0,
                 child: Hero(
-                  tag: name + 'a',
+                  tag: name + (isIos ? 'iosSucks' : 'a'),
                   child: FittedBox(
                     child: Icon(
                       iconData,

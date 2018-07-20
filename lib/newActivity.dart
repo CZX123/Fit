@@ -33,7 +33,8 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
     'Damn!',
     '404 Not Found',
     'Sorry!',
-    'Well, this is awkward.'
+    'Well, this is awkward.',
+    'Oopsie Woopsie!'
   ];
   final List<IconData> errorIcons = [
     Icons.bug_report,
@@ -159,7 +160,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     final double windowTopPadding = MediaQuery.of(context).padding.top;
-    final TargetPlatform platform = Theme.of(context).platform;
+    final bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Scaffold(
       backgroundColor: darkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: AppBar(
@@ -176,11 +177,11 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                 crossFadeState: searchBarActive && !darkMode
                     ? CrossFadeState.showSecond
                     : CrossFadeState.showFirst,
-                firstChild: Icon(platform == TargetPlatform.iOS
+                firstChild: Icon(isIos
                     ? Icons.arrow_back_ios
                     : Icons.arrow_back),
                 secondChild: Icon(
-                  platform == TargetPlatform.iOS
+                  isIos
                       ? Icons.arrow_back_ios
                       : Icons.arrow_back,
                   color: Colors.blue,
@@ -277,8 +278,17 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                       ? CrossFadeState.showSecond
                       : CrossFadeState.showFirst,
                   duration: duration,
-                  firstChild: Icon(Icons.search),
-                  secondChild: Icon(Icons.close,
+                  firstChild: Icon(isIos
+                      ? IconData(0xf4a4,
+                          fontFamily: 'CupertinoIcons',
+                          fontPackage: 'cupertino_icons')
+                      : Icons.search),
+                  secondChild: Icon(
+                      isIos
+                          ? IconData(0xf2d7,
+                              fontFamily: 'CupertinoIcons',
+                              fontPackage: 'cupertino_icons')
+                          : Icons.close,
                       color: darkMode ? Colors.white : Colors.black54),
                 ),
                 tooltip: searchBarActive ? 'Clear' : 'Search',
@@ -456,7 +466,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                               height: 16.0,
                             ),
                             const Text(
-                                "We couldn't find what you were looking for. Maybe try a different search term? Or go back and browse through our entire list of packages and tasks?"),
+                                "We couldn't find what you were looking for. Maybe try a different search term? Or you can go back and browse through our entire list of packages and tasks."),
                           ],
                         ),
                       )
@@ -497,6 +507,7 @@ class Package extends StatelessWidget {
         MediaQuery.of(context).orientation == Orientation.portrait
             ? MediaQuery.of(context).size.width
             : MediaQuery.of(context).size.height;
+    final bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       constraints: BoxConstraints(
@@ -514,11 +525,17 @@ class Package extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            FadingPageRoute(
-              builder: (context) => AddActivityScreen(
-                    package: getPackage(name),
+            isIos
+                ? MaterialPageRoute(
+                    builder: (context) => AddActivityScreen(
+                          package: getPackage(name),
+                        ),
+                  )
+                : FadingPageRoute(
+                    builder: (context) => AddActivityScreen(
+                          package: getPackage(name),
+                        ),
                   ),
-            ),
           );
         },
         child: Container(
@@ -530,7 +547,7 @@ class Package extends StatelessWidget {
                 height: 64.0,
                 width: 64.0,
                 child: Hero(
-                  tag: name,
+                  tag: name + (isIos ? 'iosSucks2' : ''),
                   child: FittedBox(
                     child: Icon(
                       icon,
@@ -578,6 +595,7 @@ class Task extends StatelessWidget {
 
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return FlatButton(
       shape: RoundedRectangleBorder(),
       child: Container(
@@ -588,7 +606,7 @@ class Task extends StatelessWidget {
               height: 32.0,
               width: 32.0,
               child: Hero(
-                tag: name,
+                tag: name + (isIos ? 'iosSucks2' : ''),
                 child: FittedBox(
                   child: Icon(
                     icon,
@@ -607,11 +625,17 @@ class Task extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          FadingPageRoute(
-            builder: (context) => AddActivityScreen(
-                  task: getTask(name),
+          isIos
+              ? MaterialPageRoute(
+                  builder: (context) => AddActivityScreen(
+                        task: getTask(name),
+                      ),
+                )
+              : FadingPageRoute(
+                  builder: (context) => AddActivityScreen(
+                        task: getTask(name),
+                      ),
                 ),
-          ),
         );
       },
     );

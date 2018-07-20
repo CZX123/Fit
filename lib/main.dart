@@ -93,11 +93,7 @@ class AppState extends State<App> {
           primaryColorBrightness: Brightness.dark,
           accentColor: accentColor,
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => MyHomePage(),
-          '/newActivity': (context) => NewActivityScreen(),
-        },
+        home: MyHomePage(),
       ),
     );
   }
