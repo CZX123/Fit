@@ -71,6 +71,13 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
     fadeController.addStatusListener(fadeStatus);
   }
 
+  @override
+  void dispose() {
+    fadeController.removeStatusListener(fadeStatus);
+    fadeController.dispose();
+    super.dispose();
+  }
+
   void fadeStatus(AnimationStatus status) {
     if (status == AnimationStatus.dismissed)
       setState(() {
