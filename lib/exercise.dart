@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'customWidgets.dart';
 import 'startActivity.dart';
 import 'sportsIcons.dart';
-import 'fileManager.dart';
 import 'newActivity.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'main.dart';
@@ -18,6 +17,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final String fileName = 'exercise.json';
   double top = 0.0;
+  Map<String, dynamic> contents = {};
 
   @override
   void initState() {
@@ -29,6 +29,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         selectNotification: onSelectNotification);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    //Map<String, dynamic> contents = App.of(context).exerciseContents;
   }
 
   List<Activity> getActivities(Map<String, dynamic> contents) {
@@ -151,41 +157,38 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   Widget activities(bool portrait) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return FutureBuilder<Map<String, dynamic>>(
-      future: FileManager.readFile(fileName),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data.length != 0) {
-          return Grid(
-            children: getActivities(snapshot.data),
-            columnCount: portrait ? 2 : 3,
-          );
-        }
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          alignment: Alignment.center,
-          child: Column(
-            children: <Widget>[
-              Icon(
-                Icons.directions_run,
-                color: darkMode ? Colors.white70 : Colors.white,
-                size: 64.0,
-              ),
-              const SizedBox(
-                height: 16.0,
-              ),
-              Text(
-                'Add some new exercises',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: darkMode ? Colors.white70 : Colors.white,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+    Map<String, dynamic> contents = App.of(context).exerciseContents;
+    print(contents);
+    if (contents != null && contents.length > 0) {
+      return Grid(
+        children: getActivities(contents),
+        columnCount: portrait ? 2 : 3,
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      alignment: Alignment.center,
+      child: Column(
+        children: <Widget>[
+          Icon(
+            Icons.directions_run,
+            color: darkMode ? Colors.white70 : Colors.white,
+            size: 64.0,
           ),
-        );
-      },
+          const SizedBox(
+            height: 16.0,
+          ),
+          Text(
+            'Add some new exercises',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: darkMode ? Colors.white70 : Colors.white,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -205,7 +208,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           setState(() {});
       },
       child: Container(
-        color: darkMode ? Colors.grey[900] : top <= 0.0 ? Colors.blue : Colors.blue[100],
+        color: darkMode
+            ? Colors.grey[900]
+            : top <= 0.0 ? Colors.blue : Colors.blue[100],
         child: SingleChildScrollView(
           child: Stack(
             children: <Widget>[

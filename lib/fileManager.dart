@@ -29,23 +29,28 @@ class FileManager {
     return file.writeAsString(json.encode(content));
   }
 
-  static Future<File> writeToFile(String fileName, String key, dynamic value) async {
+  static Future<Map<String, dynamic>> writeToFile(String fileName, String key, dynamic value) async {
     Map<String, dynamic> content = {key: value};
     File file = await getFile(fileName);
     Map<String, dynamic> jsonFileContent = await readFile(fileName);
     if (jsonFileContent != null) {
       jsonFileContent.addAll(content);
-      return file.writeAsStringSync(json.encode(jsonFileContent));
+      file.writeAsStringSync(json.encode(jsonFileContent));
     }
-    else return createFile(fileName, content);
+    else {
+      jsonFileContent = content;
+      createFile(fileName, jsonFileContent);
+    }
+    return jsonFileContent;
   }
 
-  static Future<File> removeFromFile(String fileName, String key) async {
+  static Future<Map<String, dynamic>> removeFromFile(String fileName, String key) async {
     File file = await getFile(fileName);
     Map<String, dynamic> jsonFileContent = await readFile(fileName);
     if (jsonFileContent == null) return null;
     jsonFileContent.remove(key);
-    return file.writeAsStringSync(json.encode(jsonFileContent));
+    file.writeAsStringSync(json.encode(jsonFileContent));
+    return jsonFileContent;
   }
 
   static Future<File> removeFile(String fileName) async {

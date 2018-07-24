@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'main.dart' show App;
 import 'fileManager.dart' show FileManager;
 import 'customWidgets.dart' show Grid;
 import 'customExpansionPanel.dart';
@@ -25,7 +25,7 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
   final String fileName = 'diet.json';
   Diet activeDiet;
   List<ExpansionPanelItem> dietPanels = [];
-  bool loaded = false;
+  bool loaded;
   String imageAsset = 'assets/diet-icons/weight-loss.webp',
       name = 'Weight Loss';
   AnimationController fadeController;
@@ -37,7 +37,7 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    getActiveDiet().then(updateDietScreen);
+    loaded = false;
     fadeController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 300),
@@ -69,6 +69,26 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
       ),
     );
     fadeController.addStatusListener(fadeStatus);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Map<String, dynamic> contents = App.of(context).dietContents;
+    Diet diet;
+    if (contents != null && contents.length > 0) {
+      for (int i = 0; i < dietList.length; i++) {
+        if (dietList[i].name == contents['activeDiet']) {
+          diet = dietList[i];
+        }
+      }
+    } else {
+      diet = null;
+    }
+    if (activeDiet != diet || !loaded) {
+      activeDiet = diet;
+      updateDietScreen(activeDiet);
+    }
   }
 
   @override
@@ -172,18 +192,6 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
         loaded = true;
       });
     }
-  }
-
-  Future<Diet> getActiveDiet() async {
-    Map<String, dynamic> fileContent = await FileManager.readFile(fileName);
-    if (fileContent != null && fileContent.length != 0) {
-      for (int i = 0; i < dietList.length; i++) {
-        if (dietList[i].name == fileContent['activeDiet']) {
-          return dietList[i];
-        }
-      }
-    }
-    return null;
   }
 
   String get determineMealTime {
@@ -330,6 +338,9 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
                                                             'diet.json',
                                                             'activeDiet')
                                                         .then((_) {
+                                                      App
+                                                          .of(context)
+                                                          .changeDiet({});
                                                       DietScreen
                                                           .of(context)
                                                           .updateDietScreen();
@@ -707,6 +718,7 @@ class Diet extends StatelessWidget {
         ),
         onPressed: () {
           FileManager.writeToFile('diet.json', 'activeDiet', name).then((_) {
+            App.of(context).changeDiet({'activeDiet': name});
             DietScreen.of(context).updateDietScreen(getDiet(name));
           });
         },

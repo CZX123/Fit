@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'main.dart' show App;
 import 'picker.dart' show CupertinoPicker;
 import 'fileManager.dart' show FileManager;
 import 'addActivity.dart' show AddActivityScreen;
@@ -145,7 +146,8 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                         } else if (value == 'Remove') {
                           FileManager
                               .removeFromFile('exercise.json', name)
-                              .then((_) {
+                              .then((contents) {
+                            App.of(context).changeExercises(contents);
                             Navigator.pop(context);
                           });
                         }
@@ -265,7 +267,8 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                         } else if (value == 'Remove') {
                           FileManager
                               .removeFromFile('exercise.json', name)
-                              .then((_) {
+                              .then((contents) {
+                            App.of(context).changeExercises(contents);
                             Navigator.pop(context);
                           });
                         }

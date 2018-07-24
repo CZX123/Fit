@@ -7,6 +7,7 @@ import 'diet.dart';
 import 'newActivity.dart';
 import 'settings.dart';
 import 'startActivity.dart';
+import 'fileManager.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;
@@ -25,7 +26,6 @@ class _InheritedApp extends InheritedWidget {
 }
 
 class App extends StatefulWidget {
-
   static AppState of(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(_InheritedApp)
             as _InheritedApp)
@@ -41,6 +41,8 @@ class AppState extends State<App> {
   Brightness brightness = Brightness.light;
   Color primaryColor = Colors.grey[200];
   Color accentColor = Colors.deepOrangeAccent;
+  Map<String, dynamic> exerciseContents = {};
+  Map<String, dynamic> dietContents = {};
 
   @override
   void initState() {
@@ -51,6 +53,16 @@ class AppState extends State<App> {
           brightness = Brightness.dark;
           primaryColor = Colors.grey[800];
           accentColor = Colors.limeAccent;
+        });
+      }
+    });
+    _loadContents().then((list) {
+      bool hasExercises = list[0] != null && list[0].length > 0;
+      bool hasDiet = list[1] != null && list[1].length > 0;
+      if (hasExercises || hasDiet) {
+        setState(() {
+          if (hasExercises) exerciseContents = list[0];
+          if (hasDiet) dietContents = list[1];
         });
       }
     });
@@ -75,9 +87,28 @@ class AppState extends State<App> {
     await prefs.setBool(_key, brightness == Brightness.dark);
   }
 
+  void changeExercises(Map<String, dynamic> contents) {
+    setState(() {
+      exerciseContents = contents;
+    });
+  }
+
+  void changeDiet(Map<String, dynamic> contents) {
+    setState(() {
+      dietContents = contents;
+    });
+  }
+
   Future<bool> _loadBrightness() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return (prefs.getBool(_key) ?? false);
+  }
+
+  Future<List<Map<String, dynamic>>> _loadContents() async {
+    return [
+      await FileManager.readFile('exercise.json'),
+      await FileManager.readFile('diet.json')
+    ];
   }
 
   @override
@@ -110,6 +141,7 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int index = 0;
   TabController controller;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  bool loaded = false;
 
   @override
   void initState() {
@@ -227,7 +259,8 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       floatingActionButton: index == 0
           ? FloatingActionButton(
-              backgroundColor: darkMode ? Colors.grey[800] : Colors.deepOrangeAccent,
+              backgroundColor:
+                  darkMode ? Colors.grey[800] : Colors.deepOrangeAccent,
               onPressed: () async {
                 String value = await Navigator.push(
                     context,

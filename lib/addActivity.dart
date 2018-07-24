@@ -38,7 +38,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   ];
   String _selectedFrequency = 'Daily';
   final String fileName = 'exercise.json';
-  Map<String, dynamic> fileContent;
   bool _updateActivity = false;
 
   IconData iconData;
@@ -50,41 +49,37 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   @override
   void initState() {
     super.initState();
-    getFileContents();
-    updateActivity = widget.updateActivity;
-    if (widget.task != null) {
-      iconData = widget.task.icon;
-      name = widget.task.name;
-      description = widget.task.description;
-    }
-    else {
-      iconData = widget.package.icon;
-      name = widget.package.name;
-      description = widget.package.description;
-      packageTasks = widget.package.packageTasks;
-      timings = widget.package.timings;
-    }
-  }
-
-  Future getFileContents() async {
-    fileContent = await FileManager.readFile(fileName);
-    if (fileContent != null && fileContent.keys.contains(name)) {
+    FileManager.readFile(fileName).then((contents) {
+      if (contents != null && contents.keys.contains(name)) {
       setState(() {
         _updateActivity = true;
-        _selectedFrequency = fileContent[name][2];
-        _fromTime = fileContent[name][0].map((value) {
+        _selectedFrequency = contents[name][2];
+        _fromTime = contents[name][0].map((value) {
           return TimeOfDay(
             hour: value[0],
             minute: value[1],
           );
         }).toList();
-        _toTime = fileContent[name][1].map((value) {
+        _toTime = contents[name][1].map((value) {
           return TimeOfDay(
             hour: value[0],
             minute: value[1],
           );
         }).toList();
       });
+    }
+    });
+    updateActivity = widget.updateActivity;
+    if (widget.task != null) {
+      iconData = widget.task.icon;
+      name = widget.task.name;
+      description = widget.task.description;
+    } else {
+      iconData = widget.package.icon;
+      name = widget.package.name;
+      description = widget.package.description;
+      packageTasks = widget.package.packageTasks;
+      timings = widget.package.timings;
     }
   }
 
@@ -102,16 +97,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     setState(() {
       _snackbarShown = true;
     });
-  }
-
-  Future writeToFile(String key, dynamic value) async {
-    FileManager.writeToFile(fileName, key, value);
-    fileContent = await FileManager.readFile(fileName);
-  }
-
-  Future removeFromFile(String key) async {
-    FileManager.removeFromFile(fileName, key);
-    fileContent = await FileManager.readFile(fileName);
   }
 
   void setFrequency(String newValue) {
@@ -320,10 +305,12 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       height: 96.0,
                       width: 96.0,
                       child: Hero(
-                        tag: isIos ? name + 'iosSucks3' : (widget.updateActivity != null &&
-                                widget.updateActivity != false)
-                            ? name + 'a'
-                            : name,
+                        tag: isIos
+                            ? name + 'iosSucks3'
+                            : (widget.updateActivity != null &&
+                                    widget.updateActivity != false)
+                                ? name + 'a'
+                                : name,
                         child: FittedBox(
                           child: Icon(
                             iconData,
@@ -425,7 +412,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       ),
       floatingActionButton: _validate
           ? FloatingActionButton(
-              backgroundColor: darkMode ? Colors.grey[800] : Colors.deepOrangeAccent,
+              backgroundColor:
+                  darkMode ? Colors.grey[800] : Colors.deepOrangeAccent,
               tooltip: _updateActivity ? 'Save Edits' : 'Add Activity',
               child: Icon(
                 _updateActivity ? Icons.save : Icons.check,
@@ -444,13 +432,15 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                     // TODO: implement starting day if exercise not held daily
                     'Selected time to start',
                   ];
-                  if (timings != null && timings.length != 0) value.add(timings);
-                  writeToFile(name, value).then((_) {
+                  if (timings != null && timings.length != 0)
+                    value.add(timings);
+                  FileManager.writeToFile(fileName, name, value).then((contents) {
+                    App.of(context).changeExercises(contents);
+                    print('contents when added: $contents');
                     Navigator.pop(context);
                     Navigator.pop(context, name);
                     if (Navigator.canPop(context)) Navigator.pop(context, name);
                     if (Navigator.canPop(context)) Navigator.pop(context, name);
-                    App.of(context).update();
                   });
                 }
               },
