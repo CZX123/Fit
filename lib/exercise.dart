@@ -158,7 +158,6 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   Widget activities(bool portrait) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     Map<String, dynamic> contents = App.of(context).exerciseContents;
-    print(contents);
     if (contents != null && contents.length > 0) {
       return Grid(
         children: getActivities(contents),

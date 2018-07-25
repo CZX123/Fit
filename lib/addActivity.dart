@@ -436,7 +436,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                     value.add(timings);
                   FileManager.writeToFile(fileName, name, value).then((contents) {
                     App.of(context).changeExercises(contents);
-                    print('contents when added: $contents');
                     Navigator.pop(context);
                     Navigator.pop(context, name);
                     if (Navigator.canPop(context)) Navigator.pop(context, name);

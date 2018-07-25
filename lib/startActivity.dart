@@ -61,7 +61,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
             icon: packageTasks[i].icon,
             body: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: timer(context, name, i, true),
+              child: timer(name, i, true),
             ),
           ),
         );
@@ -69,18 +69,20 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
     }
   }
 
-  Widget timer(BuildContext context, String name, int index,
-          [bool isPackage]) =>
-      ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.height,
-        ),
-        child: Timer(
-          name: name,
-          index: index,
-          isPackage: isPackage ?? false,
-        ),
-      );
+  Widget timer(String name, int index, [bool isPackage]) {
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    return SizedBox(
+      width: portrait
+          ? MediaQuery.of(context).size.width
+          : MediaQuery.of(context).size.height,
+      child: TimeTab(
+        name: name,
+        index: index,
+        isPackage: isPackage ?? false,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +204,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              timer(context, name, 0)
+              timer(name, 0)
             ],
           ),
         ),
@@ -382,16 +384,172 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
   }
 }
 
-class Timer extends StatefulWidget {
-  Timer({this.name, this.index, Key key, this.isPackage}) : super(key: key);
+class TimeTab extends StatefulWidget {
+  TimeTab({this.name, this.index, this.isPackage: false});
+  final String name;
+  final int index;
+  final bool isPackage;
+  _TimeTabState createState() => _TimeTabState();
+}
+
+class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
+  TabController controller;
+  int index = 0;
+  AnimationController tabIconController;
+  Animation<double> timerRotate;
+  Animation<double> stopwatchRotate;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(vsync: this, length: 2);
+    tabIconController = AnimationController(
+      duration: const Duration(milliseconds: 280),
+      vsync: this,
+    );
+    timerRotate = Tween<double>(
+      begin: 0.5,
+      end: 0.0,
+    ).animate(
+      CurvedAnimation(
+        parent: tabIconController,
+        curve: Interval(
+          0.0,
+          0.5,
+          curve: Curves.easeIn,
+        ),
+      ),
+    );
+    stopwatchRotate = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: tabIconController,
+        curve: Interval(
+          0.5,
+          1.0,
+          curve: Curves.fastOutSlowIn,
+        ),
+      ),
+    );
+    controller.addListener(indexChange);
+    controller.animation.addStatusListener(animationListener);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(indexChange);
+    controller.animation.removeStatusListener(animationListener);
+    controller.dispose();
+    tabIconController.dispose();
+    super.dispose();
+  }
+
+  void indexChange() {
+    setState(() {
+      index = controller.index;
+    });
+    if (index == 0)
+      tabIconController.reverse();
+    else
+      tabIconController.forward();
+  }
+
+  void animationListener(AnimationStatus status) {
+    setState(() {
+      if (status == AnimationStatus.forward ||
+          status == AnimationStatus.reverse) {
+        index = 2;
+        tabIconController.value = 0.5;
+      } else
+        indexChange();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.only(top: 16.0),
+          width: 96.0,
+          child: Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.zero),
+            child: TabBar(
+              indicatorColor: darkMode ? Colors.lightBlue : Colors.blue,
+              labelColor: darkMode ? Colors.lightBlue : Colors.blue,
+              unselectedLabelColor:
+                  darkMode ? Colors.grey[600] : Colors.grey[400],
+              controller: controller,
+              tabs: <Widget>[
+                Tab(
+                  child: RotationTransition(
+                    turns: timerRotate,
+                    child: AnimatedCrossFade(
+                      crossFadeState: index == 0
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: index == 0 ? 160 : 240),
+                      firstChild: const Icon(Icons.hourglass_full),
+                      secondChild: const Icon(Icons.hourglass_empty),
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: RotationTransition(
+                    turns: stopwatchRotate,
+                    child: AnimatedCrossFade(
+                      crossFadeState: index == 1
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: index == 1 ? 140 : 240),
+                      firstChild: const Icon(Icons.timer),
+                      secondChild: const Icon(Icons.timer_off),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          height: portrait
+              ? MediaQuery.of(context).size.width
+              : MediaQuery.of(context).size.height,
+          child: TabBarView(
+            controller: controller,
+            children: <Widget>[
+              TimerWidget(
+                name: widget.name,
+                index: widget.index,
+                isPackage: widget.isPackage,
+              ),
+              Container(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class TimerWidget extends StatefulWidget {
+  TimerWidget({this.name, this.index, Key key, this.isPackage})
+      : super(key: key);
   final String name;
   final int index;
   final bool isPackage;
   @override
-  _TimerState createState() => _TimerState();
+  _TimerWidgetState createState() => _TimerWidgetState();
 }
 
-class _TimerState extends State<Timer> with TickerProviderStateMixin {
+class _TimerWidgetState extends State<TimerWidget>
+    with TickerProviderStateMixin {
   AnimationController controller;
   AnimationController fadeController;
   Animation<double> fadeOut;
