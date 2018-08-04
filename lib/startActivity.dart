@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'main.dart' show App;
 import 'picker.dart' show CupertinoPicker;
@@ -32,7 +31,6 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
   String name;
   IconData iconData;
   List<Task> packageTasks;
-  List<int> timings;
   List<ExpansionPanelItem> items = [];
 
   @override
@@ -45,7 +43,6 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
       name = widget.package.name;
       iconData = widget.package.icon;
       packageTasks = widget.package.packageTasks;
-      timings = widget.package.timings;
     }
   }
 
@@ -305,7 +302,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                                 const SizedBox(
                                   width: 16.0,
                                 ),
-                                const Text('Remove'),
+                                const Text('End Diet'),
                               ],
                             ),
                           ),
@@ -393,16 +390,24 @@ class TimeTab extends StatefulWidget {
 }
 
 class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
-  TabController controller;
+  TabController tabController;
   int index = 0;
   AnimationController tabIconController;
   Animation<double> timerRotate;
   Animation<double> stopwatchRotate;
+  AnimationController timerController;
+  AnimationController timerFadeController;
+  Stopwatch stopwatch = Stopwatch();
+  AnimationController stopwatchController;
+  bool timerAnimationStarted = false;
+  String timerButtonText = 'START';
+  String stopwatchButtonText = 'START';
+  bool disableTouch = false;
 
   @override
   void initState() {
     super.initState();
-    controller = TabController(vsync: this, length: 2);
+    tabController = TabController(vsync: this, length: 2);
     tabIconController = AnimationController(
       duration: const Duration(milliseconds: 280),
       vsync: this,
@@ -433,26 +438,45 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
         ),
       ),
     );
-    controller.addListener(indexChange);
-    controller.animation.addStatusListener(animationListener);
+    tabController.addListener(indexChange);
+    tabController.animation.addStatusListener(animationListener);
+    timerController = AnimationController(
+      vsync: this,
+      duration: Duration(),
+    );
+    timerController.value = 1.0;
+    timerController.addStatusListener(timerAnimationEnd);
+    timerFadeController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
+    stopwatchController = AnimationController(
+      vsync: this,
+      duration: Duration(days: 7),
+    );
   }
 
   @override
   void dispose() {
-    controller.removeListener(indexChange);
-    controller.animation.removeStatusListener(animationListener);
-    controller.dispose();
+    tabController.removeListener(indexChange);
+    tabController.animation.removeStatusListener(animationListener);
+    tabController.dispose();
     tabIconController.dispose();
+    timerController.removeStatusListener(timerAnimationEnd);
+    timerController.dispose();
+    timerFadeController.dispose();
+    stopwatchController.dispose();
     super.dispose();
   }
 
   void indexChange() {
     setState(() {
-      index = controller.index;
+      index = tabController.index;
     });
-    if (index == 0)
+    if (index == 0) {
       tabIconController.reverse();
-    else
+      stopwatchController.reset();
+    } else
       tabIconController.forward();
   }
 
@@ -467,6 +491,17 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
     });
   }
 
+  void timerAnimationEnd(AnimationStatus status) {
+    if (status == AnimationStatus.dismissed) {
+      setState(() {
+        disableTouch = false;
+        timerAnimationStarted = false;
+        timerButtonText = 'RESTART';
+        timerFadeController.reverse();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool portrait =
@@ -474,64 +509,182 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: <Widget>[
-        Container(
-          padding: const EdgeInsets.only(top: 16.0),
-          width: 96.0,
-          child: Material(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.zero),
-            child: TabBar(
-              indicatorColor: darkMode ? Colors.lightBlue : Colors.blue,
-              labelColor: darkMode ? Colors.lightBlue : Colors.blue,
-              unselectedLabelColor:
-                  darkMode ? Colors.grey[600] : Colors.grey[400],
-              controller: controller,
-              tabs: <Widget>[
-                Tab(
-                  child: RotationTransition(
-                    turns: timerRotate,
-                    child: AnimatedCrossFade(
-                      crossFadeState: index == 0
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: index == 0 ? 160 : 240),
-                      firstChild: const Icon(Icons.hourglass_full),
-                      secondChild: const Icon(Icons.hourglass_empty),
+        IgnorePointer(
+          ignoring: disableTouch,
+          child: Container(
+            width: 96.0,
+            child: Material(
+              color: darkMode
+                  ? (widget.isPackage ? Colors.grey[850] : Colors.grey[900])
+                  : Colors.white,
+              borderRadius: BorderRadius.all(Radius.zero),
+              child: TabBar(
+                indicatorColor: darkMode ? Colors.lightBlue : Colors.blue,
+                labelColor: darkMode ? Colors.lightBlue : Colors.blue,
+                unselectedLabelColor:
+                    darkMode ? Colors.grey[600] : Colors.grey[400],
+                controller: tabController,
+                tabs: <Widget>[
+                  Tab(
+                    child: RotationTransition(
+                      turns: timerRotate,
+                      child: AnimatedCrossFade(
+                        crossFadeState: index == 0
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration:
+                            Duration(milliseconds: index == 0 ? 160 : 240),
+                        firstChild: const Icon(Icons.hourglass_full),
+                        secondChild: const Icon(Icons.hourglass_empty),
+                      ),
                     ),
                   ),
-                ),
-                Tab(
-                  child: RotationTransition(
-                    turns: stopwatchRotate,
-                    child: AnimatedCrossFade(
-                      crossFadeState: index == 1
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: index == 1 ? 140 : 240),
-                      firstChild: const Icon(Icons.timer),
-                      secondChild: const Icon(Icons.timer_off),
+                  Tab(
+                    child: RotationTransition(
+                      turns: stopwatchRotate,
+                      child: AnimatedCrossFade(
+                        crossFadeState: index == 1
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration:
+                            Duration(milliseconds: index == 1 ? 140 : 240),
+                        firstChild: const Icon(Icons.timer),
+                        secondChild: const Icon(Icons.timer_off),
+                      ),
                     ),
                   ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        IgnorePointer(
+          ignoring: disableTouch,
+          child: Container(
+            padding: const EdgeInsets.only(top: 16.0),
+            height: portrait
+                ? MediaQuery.of(context).size.width - 72.0
+                : MediaQuery.of(context).size.height,
+            child: TabBarView(
+              controller: tabController,
+              children: <Widget>[
+                TimerWidget(
+                  name: widget.name,
+                  index: widget.index,
+                  isPackage: widget.isPackage,
+                  timerController: timerController,
+                  timerFadeController: timerFadeController,
                 ),
+                StopwatchWidget(
+                  name: widget.name,
+                  index: widget.index,
+                  stopwatch: stopwatch,
+                  stopwatchController: stopwatchController,
+                )
               ],
             ),
           ),
         ),
-        Container(
-          height: portrait
-              ? MediaQuery.of(context).size.width
-              : MediaQuery.of(context).size.height,
-          child: TabBarView(
-            controller: controller,
-            children: <Widget>[
-              TimerWidget(
-                name: widget.name,
-                index: widget.index,
-                isPackage: widget.isPackage,
+        const SizedBox(
+          height: 16.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              color: darkMode ? Colors.lightBlue : Colors.blue,
+              colorBrightness: Brightness.dark,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(4.0),
+                ),
               ),
-              Container(),
-            ],
-          ),
+              child: Text(index == 0 ? timerButtonText : stopwatchButtonText),
+              onPressed: () {
+                disableTouch = true;
+                if (index == 0) {
+                  if (timerController.isAnimating) {
+                    setState(() {
+                      timerController.stop();
+                      timerButtonText = 'RESUME';
+                    });
+                  } else {
+                    setState(() {
+                      timerAnimationStarted = true;
+                      timerFadeController.forward();
+                      timerButtonText = 'PAUSE';
+                      dynamic content =
+                          App.of(context).exerciseContents[widget.name];
+                      if (content.length == 4)
+                        content.add([timerController.duration.inSeconds]);
+                      else
+                        content[4][widget.index] =
+                            timerController.duration.inSeconds;
+                      FileManager
+                          .writeToFile('exercise.json', widget.name, content)
+                          .then((contents) {
+                        App.of(context).changeExercises(contents);
+                      });
+                    });
+                    timerController.reverse(
+                      from: timerController.value == 0.0
+                          ? 1.0
+                          : timerController.value,
+                    );
+                  }
+                } else {
+                  setState(() {
+                    if (stopwatch.isRunning) {
+                      stopwatch.stop();
+                      stopwatchButtonText = 'RESUME';
+                    } else {
+                      stopwatch.start();
+                      stopwatchController.forward();
+                      stopwatchButtonText = 'PAUSE';
+                    }
+                  });
+                }
+              },
+            ),
+            const SizedBox(
+              width: 16.0,
+            ),
+            RaisedButton(
+              color: darkMode ? Colors.grey[850] : Colors.white,
+              disabledColor: darkMode ? Colors.grey[850] : Colors.white,
+              textColor: darkMode ? Colors.lightBlue : Colors.blue,
+              disabledTextColor: darkMode ? Colors.grey[600] : Colors.grey[400],
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(4.0),
+                ),
+              ),
+              child: const Text('RESET'),
+              onPressed: (index == 0 && timerAnimationStarted) ||
+                      (index == 1 && stopwatch.elapsedMilliseconds != 0)
+                  ? () {
+                      disableTouch = false;
+                      if (index == 0) {
+                        setState(() {
+                          timerAnimationStarted = false;
+                          timerButtonText = 'START';
+                        });
+                        timerFadeController.reverse();
+                        timerController.value = 1.0;
+                      } else {
+                        stopwatch.stop();
+                        stopwatch.reset();
+                        setState(() {
+                          stopwatchButtonText = 'START';
+                        });
+                      }
+                    }
+                  : null,
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 16.0,
         ),
       ],
     );
@@ -539,41 +692,41 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
 }
 
 class TimerWidget extends StatefulWidget {
-  TimerWidget({this.name, this.index, Key key, this.isPackage})
-      : super(key: key);
+  TimerWidget({
+    @required this.name,
+    @required this.index,
+    @required this.isPackage,
+    @required this.timerController,
+    @required this.timerFadeController,
+    Key key,
+  }) : super(key: key);
   final String name;
   final int index;
   final bool isPackage;
+  final AnimationController timerController;
+  final AnimationController timerFadeController;
   @override
   _TimerWidgetState createState() => _TimerWidgetState();
 }
 
-class _TimerWidgetState extends State<TimerWidget>
-    with TickerProviderStateMixin {
-  AnimationController controller;
-  AnimationController fadeController;
+class _TimerWidgetState extends State<TimerWidget> {
+  AnimationController timerController;
+  AnimationController timerFadeController;
   Animation<double> fadeOut;
   Animation<double> fadeIn;
   bool animationStarted = false;
-  bool loaded = false;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: Duration(),
-    );
-    fadeController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 200),
-    );
+    timerController = widget.timerController;
+    timerFadeController = widget.timerFadeController;
     fadeOut = Tween<double>(
       begin: 1.0,
       end: 0.0,
     ).animate(
       CurvedAnimation(
-        parent: fadeController,
+        parent: timerFadeController,
         curve: Interval(
           0.0,
           0.55,
@@ -586,7 +739,7 @@ class _TimerWidgetState extends State<TimerWidget>
       end: 1.0,
     ).animate(
       CurvedAnimation(
-        parent: fadeController,
+        parent: timerFadeController,
         curve: Interval(
           0.45,
           1.0,
@@ -594,63 +747,30 @@ class _TimerWidgetState extends State<TimerWidget>
         ),
       ),
     );
-    controller.value = 1.0;
-    controller.addStatusListener(animationEnd);
-  }
-
-  @override
-  void dispose() {
-    controller.removeStatusListener(animationEnd);
-    controller.dispose();
-    fadeController.dispose();
-    super.dispose();
-  }
-
-  Future<int> get getDuration async {
-    if (!loaded) {
-      Map<String, dynamic> contents =
-          await FileManager.readFile('exercise.json');
-      loaded = true;
-      if (contents[widget.name].length == 5) {
-        controller.duration =
-            Duration(seconds: contents[widget.name][4][widget.index]);
-        return contents[widget.name][4][widget.index];
-      }
-    }
-    return 0;
-  }
-
-  void animationEnd(AnimationStatus status) {
-    if (status == AnimationStatus.dismissed) {
-      setState(() {
-        animationStarted = false;
-        fadeController.reverse();
-      });
-    }
   }
 
   void changeDuration(Duration newDuration) {
     setState(() {
-      controller.duration = newDuration;
+      timerController.duration = newDuration;
     });
   }
 
   String timerMinutesString(int index) {
-    Duration duration = controller.duration * controller.value;
+    Duration duration = timerController.duration * timerController.value;
     String minutes = duration.inMinutes.toString().padLeft(2, '0');
     if (index == 0) return minutes[0];
     return minutes[1];
   }
 
   String timerSecondsString(int index) {
-    Duration duration = controller.duration * controller.value;
+    Duration duration = timerController.duration * timerController.value;
     String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
     if (index == 0) return seconds[0];
     return seconds[1];
   }
 
   String timerMillisecondsString(int index) {
-    Duration duration = controller.duration * controller.value;
+    Duration duration = timerController.duration * timerController.value;
     String milliseconds =
         (duration.inMilliseconds % 1000).toString().padLeft(3, '0');
     if (index == 0) return milliseconds[0];
@@ -693,9 +813,16 @@ class _TimerWidgetState extends State<TimerWidget>
     return list;
   }
 
-  Widget selectTime(int number, int duration) {
-    int minutes = (duration / 60).floor();
-    int seconds = duration % 60;
+  Widget selectTime(int number) {
+    if (timerController.duration.inSeconds == 0) {
+      final Map<String, dynamic> contents = App.of(context).exerciseContents;
+      if (contents[widget.name].length == 5)
+        timerController.duration =
+            Duration(seconds: contents[widget.name][4][widget.index]);
+      assert(timerController.duration.inMinutes < 60);
+    }
+    int minutes = timerController.duration.inMinutes;
+    int seconds = timerController.duration.inSeconds % 60;
     return Container(
       height: 200.0,
       width: 72.0,
@@ -709,11 +836,19 @@ class _TimerWidgetState extends State<TimerWidget>
         children: numList,
         onSelectedItemChanged: (index) {
           if (number == 0) {
-            changeDuration(Duration(
-                minutes: index, seconds: controller.duration.inSeconds % 60));
+            changeDuration(
+              Duration(
+                minutes: index,
+                seconds: timerController.duration.inSeconds % 60,
+              ),
+            );
           } else {
-            changeDuration(Duration(
-                minutes: controller.duration.inMinutes, seconds: index));
+            changeDuration(
+              Duration(
+                minutes: timerController.duration.inMinutes,
+                seconds: index,
+              ),
+            );
           }
         },
       ),
@@ -724,7 +859,7 @@ class _TimerWidgetState extends State<TimerWidget>
   Widget build(BuildContext context) {
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 64.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 64.0),
       child: Column(
         children: <Widget>[
           AspectRatio(
@@ -735,7 +870,7 @@ class _TimerWidgetState extends State<TimerWidget>
                   child: FadeTransition(
                     opacity: fadeIn,
                     child: AnimatedBuilder(
-                      animation: controller,
+                      animation: timerController,
                       builder: (context, _) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -758,20 +893,12 @@ class _TimerWidgetState extends State<TimerWidget>
                   child: Center(
                     child: FadeTransition(
                       opacity: fadeOut,
-                      child: FutureBuilder(
-                        future: getDuration,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                selectTime(0, snapshot.data),
-                                selectTime(1, snapshot.data),
-                              ],
-                            );
-                          }
-                          return Container();
-                        },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          selectTime(0),
+                          selectTime(1),
+                        ],
                       ),
                     ),
                   ),
@@ -779,11 +906,11 @@ class _TimerWidgetState extends State<TimerWidget>
                 Positioned.fill(
                   child: IgnorePointer(
                     child: AnimatedBuilder(
-                      animation: controller,
+                      animation: timerController,
                       builder: (context, _) {
                         return CustomPaint(
                           painter: TimerPainter(
-                            animation: controller,
+                            animation: timerController,
                             backgroundColor:
                                 darkMode ? Colors.white12 : Colors.black12,
                             color: darkMode ? Colors.lightBlue : Colors.blue,
@@ -795,48 +922,6 @@ class _TimerWidgetState extends State<TimerWidget>
                 ),
               ],
             ),
-          ),
-          const SizedBox(
-            height: 24.0,
-          ),
-          RaisedButton(
-            color: darkMode ? Colors.lightBlue : Colors.blue,
-            colorBrightness: Brightness.dark,
-            shape: const RoundedRectangleBorder(
-              borderRadius: const BorderRadius.all(
-                const Radius.circular(4.0),
-              ),
-            ),
-            child: AnimatedBuilder(
-              animation: controller,
-              builder: (context, _) => Text(controller.isAnimating
-                  ? 'STOP'
-                  : animationStarted ? 'RESUME' : 'START'),
-            ),
-            onPressed: () {
-              if (controller.isAnimating) {
-                setState(() {
-                  controller.stop();
-                });
-              } else {
-                setState(() {
-                  animationStarted = true;
-                  fadeController.forward();
-                  FileManager.readFile('exercise.json').then((contents) {
-                    dynamic content = contents[widget.name];
-                    if (content.length == 4)
-                      content.add([controller.duration.inSeconds]);
-                    else
-                      content[4][widget.index] = controller.duration.inSeconds;
-                    FileManager.writeToFile(
-                        'exercise.json', widget.name, content);
-                  });
-                });
-                controller.reverse(
-                  from: controller.value == 0.0 ? 1.0 : controller.value,
-                );
-              }
-            },
           ),
         ],
       ),
@@ -872,5 +957,249 @@ class TimerPainter extends CustomPainter {
     return animation.value != old.animation.value ||
         color != old.color ||
         backgroundColor != old.backgroundColor;
+  }
+}
+
+class StopwatchWidget extends StatelessWidget {
+  StopwatchWidget({
+    this.name,
+    this.index,
+    this.stopwatch,
+    this.stopwatchController,
+    Key key,
+    this.isPackage,
+  }) : super(key: key);
+
+  final String name;
+  final int index;
+  final Stopwatch stopwatch;
+  final AnimationController stopwatchController;
+  final bool isPackage;
+
+  Container stopwatchText(String text) {
+    return Container(
+      width: 18.0,
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: const TextStyle(
+          height: 1.2,
+          fontFamily: 'Renner*',
+          fontSize: 48.0,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        StopwatchMinutes(
+          stopwatch: stopwatch,
+          stopwatchController: stopwatchController,
+        ),
+        stopwatchText(':'),
+        StopwatchSeconds(
+          stopwatch: stopwatch,
+          stopwatchController: stopwatchController,
+        ),
+        stopwatchText('.'),
+        StopwatchMilliseconds(
+          stopwatch: stopwatch,
+          stopwatchController: stopwatchController,
+        ),
+      ],
+    );
+  }
+}
+
+class StopwatchMinutes extends StatefulWidget {
+  StopwatchMinutes({
+    this.stopwatch,
+    this.stopwatchController,
+    Key key,
+  }) : super(key: key);
+  final Stopwatch stopwatch;
+  final AnimationController stopwatchController;
+  @override
+  _StopwatchMinutesState createState() => _StopwatchMinutesState();
+}
+
+class _StopwatchMinutesState extends State<StopwatchMinutes> {
+  int minutes = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.stopwatchController.addListener(minuteListener);
+    minutes = widget.stopwatch.elapsed.inMinutes % 100;
+  }
+
+  @override
+  void dispose() {
+    widget.stopwatchController.removeListener(minuteListener);
+    super.dispose();
+  }
+
+  void minuteListener() {
+    if (minutes != widget.stopwatch.elapsed.inMinutes % 100) {
+      setState(() {
+        minutes = widget.stopwatch.elapsed.inMinutes % 100;
+      });
+    }
+  }
+
+  Widget stopwatchMinutesString(int index) {
+    String minuteString = minutes.toString().padLeft(2, '0');
+    return Container(
+      width: 29.0,
+      alignment: Alignment.center,
+      child: Text(
+        minuteString[index],
+        style: const TextStyle(
+          height: 1.2,
+          fontFamily: 'Renner*',
+          fontSize: 48.0,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        stopwatchMinutesString(0),
+        stopwatchMinutesString(1),
+      ],
+    );
+  }
+}
+
+class StopwatchSeconds extends StatefulWidget {
+  StopwatchSeconds({
+    this.stopwatch,
+    this.stopwatchController,
+    Key key,
+  }) : super(key: key);
+  final Stopwatch stopwatch;
+  final AnimationController stopwatchController;
+  @override
+  _StopwatchSecondsState createState() => _StopwatchSecondsState();
+}
+
+class _StopwatchSecondsState extends State<StopwatchSeconds> {
+  int seconds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.stopwatchController.addListener(secondListener);
+    seconds = widget.stopwatch.elapsed.inSeconds % 60;
+  }
+
+  @override
+  void dispose() {
+    widget.stopwatchController.removeListener(secondListener);
+    super.dispose();
+  }
+
+  void secondListener() {
+    if (seconds != widget.stopwatch.elapsed.inSeconds % 60) {
+      setState(() {
+        seconds = widget.stopwatch.elapsed.inSeconds % 60;
+      });
+    }
+  }
+
+  Widget stopwatchSecondsString(int index) {
+    String secondString = seconds.toString().padLeft(2, '0');
+    return Container(
+      width: 29.0,
+      alignment: Alignment.center,
+      child: Text(
+        secondString[index],
+        style: const TextStyle(
+          height: 1.2,
+          fontFamily: 'Renner*',
+          fontSize: 48.0,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        stopwatchSecondsString(0),
+        stopwatchSecondsString(1),
+      ],
+    );
+  }
+}
+
+class StopwatchMilliseconds extends StatefulWidget {
+  StopwatchMilliseconds({
+    this.stopwatch,
+    this.stopwatchController,
+    Key key,
+  }) : super(key: key);
+  final Stopwatch stopwatch;
+  final AnimationController stopwatchController;
+  @override
+  _StopwatchMillisecondsState createState() => _StopwatchMillisecondsState();
+}
+
+class _StopwatchMillisecondsState extends State<StopwatchMilliseconds> {
+  int milliseconds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.stopwatchController.addListener(millisecondListener);
+    milliseconds = widget.stopwatch.elapsed.inMilliseconds % 1000;
+  }
+
+  @override
+  void dispose() {
+    widget.stopwatchController.removeListener(millisecondListener);
+    super.dispose();
+  }
+
+  void millisecondListener() {
+    if (milliseconds != widget.stopwatch.elapsed.inMilliseconds % 1000) {
+      setState(() {
+        milliseconds = widget.stopwatch.elapsed.inMilliseconds % 1000;
+      });
+    }
+  }
+
+  Widget stopwatchMillisecondsString(int index) {
+    String millisecondString = milliseconds.toString().padLeft(3, '0');
+    return Container(
+      width: 29.0,
+      alignment: Alignment.center,
+      child: Text(
+        millisecondString[index],
+        style: const TextStyle(
+          height: 1.2,
+          fontFamily: 'Renner*',
+          fontSize: 48.0,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        stopwatchMillisecondsString(0),
+        stopwatchMillisecondsString(1),
+      ],
+    );
   }
 }
