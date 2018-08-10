@@ -8,6 +8,7 @@ import 'newActivity.dart';
 import 'settings.dart';
 import 'startActivity.dart';
 import 'fileManager.dart';
+import 'steps.dart';
 
 void main() {
   MaterialPageRoute.debugEnableFadingRoutes = true;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'profile.dart';
+import 'steps.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -36,6 +37,20 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ProfileScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: padding),
+            title: const Text('Statistics'),
+            subtitle:
+                const Text('Distance'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StepScreen(),
                 ),
               );
             },
