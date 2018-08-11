@@ -359,7 +359,7 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
                                                         const SizedBox(
                                                           width: 16.0,
                                                         ),
-                                                        const Text('Remove'),
+                                                        const Text('End Diet'),
                                                       ],
                                                     ),
                                                   ),

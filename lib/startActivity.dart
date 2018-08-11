@@ -302,7 +302,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                                 const SizedBox(
                                   width: 16.0,
                                 ),
-                                const Text('End Diet'),
+                                const Text('Remove Exercise'),
                               ],
                             ),
                           ),
@@ -564,7 +564,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
             padding: const EdgeInsets.only(top: 16.0),
             height: portrait
                 ? MediaQuery.of(context).size.width - 72.0
-                : MediaQuery.of(context).size.height,
+                : MediaQuery.of(context).size.height - 72.0,
             child: TabBarView(
               controller: tabController,
               children: <Widget>[
@@ -650,7 +650,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
               width: 16.0,
             ),
             RaisedButton(
-              color: darkMode ? Colors.grey[850] : Colors.white,
+              color: darkMode ? Colors.grey[800] : Colors.white,
               disabledColor: darkMode ? Colors.grey[850] : Colors.white,
               textColor: darkMode ? Colors.lightBlue : Colors.blue,
               disabledTextColor: darkMode ? Colors.grey[600] : Colors.grey[400],
@@ -715,6 +715,7 @@ class _TimerWidgetState extends State<TimerWidget> {
   Animation<double> fadeOut;
   Animation<double> fadeIn;
   bool animationStarted = false;
+  bool loaded = false;
 
   @override
   void initState() {
@@ -814,7 +815,8 @@ class _TimerWidgetState extends State<TimerWidget> {
   }
 
   Widget selectTime(int number) {
-    if (timerController.duration.inSeconds == 0) {
+    if (!loaded) {
+      if (number == 1) loaded = true;
       final Map<String, dynamic> contents = App.of(context).exerciseContents;
       if (contents[widget.name].length == 5)
         timerController.duration =
