@@ -6,6 +6,9 @@ import 'sportsIcons.dart';
 import 'newActivity.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'main.dart';
+import 'package:location/location.dart';
+import 'package:haversine/haversine.dart';
+import 'package:sensors/sensors.dart';
 
 class ExerciseScreen extends StatefulWidget {
   ExerciseScreen({Key key}) : super(key: key);
@@ -18,6 +21,24 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   final String fileName = 'exercise.json';
   double top = 0.0;
   Map<String, dynamic> contents = {};
+  Map<String, double> _currentLocation;
+  Map<String, double> result;
+  Map<String, double> _xLocation;
+
+  StreamSubscription<Map<String, double>> _locationSubscription;
+
+  Location _location = new Location();
+  String error; 
+
+  bool currentWidget = true;
+  double _meter = 0.0;
+  double _totalDistance = 0.0;
+  double _strideLength = 0.7221;
+  // stride length = height * 0.415(M) / height * 0.413(F)
+  List<double> _userAccelerometerValues;
+  List<StreamSubscription<dynamic>> _streamSubscriptions =
+      <StreamSubscription<dynamic>>[];
+  int _steps = 0;
 
   @override
   void initState() {
@@ -29,8 +50,48 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         selectNotification: onSelectNotification);
+
+    initPlatformState();
+
+    _streamSubscriptions.add(userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+      setState(() {
+        _userAccelerometerValues = <double>[event.x, event.y, event.z];
+      });
+    })); 
+
+    _locationSubscription =
+        _location.onLocationChanged.listen((result) {
+          if (result != _currentLocation) {
+            if ((_userAccelerometerValues[0] > 0.5 || _userAccelerometerValues[0] < -0.5  ) || (_userAccelerometerValues[1] > 0.5 || _userAccelerometerValues[1] < -0.5 ) || (_userAccelerometerValues[2] > 0.5 || _userAccelerometerValues[2] < -0.5  )) {
+              setState(() {
+                _xLocation = _currentLocation;
+                _currentLocation = result;
+
+                _meter = (new Haversine.fromDegrees(latitude1: _xLocation["latitude"],
+                                                  longitude1: _xLocation["longitude"],
+                                                  latitude2: _currentLocation["latitude"],
+                                                  longitude2: _currentLocation["longitude"])).distance();
+                _totalDistance += _meter;
+                _steps = (_totalDistance / _strideLength).round();
+            });
+          }}      
+        });
   }
 
+  initPlatformState() async {
+    Map<String, double> location;
+
+      location = await _location.getLocation;
+
+      error = null;
+   
+
+    setState(() { 
+        _currentLocation = location;
+        _xLocation = location; 
+    });
+
+  }
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -192,7 +253,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   }
 
   Widget build(BuildContext context) {
-    final int counter = 500;
+    int counter = _steps;
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final bool portrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
