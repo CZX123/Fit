@@ -40,6 +40,14 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   List<StreamSubscription<dynamic>> _streamSubscriptions =
       <StreamSubscription<dynamic>>[];
   int _steps = 0;
+  TimeOfDay now = TimeOfDay.now();
+  int _hourNow;
+  int _minuteNow;
+  int _secondNow;
+  int _hourThen;
+  int _minuteThen;
+  int _secondThen;
+  int _elapsedseconds;
 
   @override
   void initState() {
@@ -79,6 +87,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       _xLocation = location;
       _steps;
       _totalDistance;
+      _hourThen = now.hour;
+      _minuteThen = now.minute;
+      _secondThen = DateTime.now().second;
+      _hourNow = now.hour;
+      _minuteNow = now.hour;
+      _secondNow = DateTime.now().second;     
     });
   }
 
@@ -97,15 +111,28 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             _xLocation = _currentLocation;
             _currentLocation = result;
 
+            _hourThen = _hourNow;
+            _hourNow = now.hour;
+            _minuteThen = _minuteNow;
+            _minuteNow = now.minute;
+            _secondThen = _secondNow;
+            _secondNow = DateTime.now().second;
+
+            _elapsedseconds = 60 * (60 * (_hourNow - _hourThen) + (_minuteNow - _minuteThen)) + (_secondNow - _secondThen);
+
             _meter = (new Haversine.fromDegrees(
                     latitude1: _xLocation["latitude"],
                     longitude1: _xLocation["longitude"],
                     latitude2: _currentLocation["latitude"],
                     longitude2: _currentLocation["longitude"]))
                 .distance();
-            _steps += (_meter / _strideLength).round();
-            prefs.setInt('_steps', _steps) ?? 0;
-            _totalDistance = _steps * _strideLength;
+
+            if ( _meter / _elapsedseconds < 4.5 ) {
+              _steps += (_meter / _strideLength).round();
+              prefs.setInt('_steps', _steps) ?? 0;
+              _totalDistance = _steps * _strideLength;
+            }
+
           });
         }
       }
