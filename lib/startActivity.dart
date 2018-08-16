@@ -10,11 +10,12 @@ import 'customExpansionPanel.dart';
 import 'activityStats.dart';
 
 class ExpansionPanelItem {
-  ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon});
+  ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon, this.completed});
   bool isExpanded;
   final String header;
   final Widget body;
   final IconData icon;
+  final bool completed;
 }
 
 class StartActivityScreen extends StatefulWidget {
@@ -62,6 +63,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
               padding: const EdgeInsets.only(bottom: 8.0),
               child: timer(packageTasks[i], name, i, true),
             ),
+            completed: false,
           ),
         );
       }
@@ -69,6 +71,8 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
   }
 
   void dialog(Task task, bool isPackage, [int stopwatchValue]) async {
+    Duration duration;
+    if (stopwatchValue != null) duration = Duration(milliseconds: stopwatchValue);
     bool completed = await showDialog<bool>(
       barrierDismissible: false,
       context: context,
@@ -120,7 +124,15 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                 const SizedBox(
                   height: 12.0,
                 ),
-                TextFormField(
+                stopwatchValue != null ? Text(
+                  duration.inMinutes.toString().padLeft(2, '0') + ':' + (duration.inSeconds % 60).toString().padLeft(2, '0') + '.' + (duration.inMilliseconds % 1000).toString().padLeft(4, '0').substring(0, 2),
+                  style: const TextStyle(
+                    fontFamily: 'Renner*',
+                    height: 1.2,
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ) : TextFormField(
                   decoration: InputDecoration(
                     border: const UnderlineInputBorder(),
                     filled: true,
@@ -141,7 +153,6 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                 child: new Text('SAVE'),
                 onPressed: () {
                   Navigator.pop(context, true);
-                  setState(() {});
                 },
               ),
             ],
@@ -151,7 +162,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
     );
     if (completed) {
       setState(() {});
-    } else {}
+    }
   }
 
   Widget timer(Task task, String name, int index, [bool isPackage]) {
@@ -740,8 +751,6 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
                   index: widget.index,
                   stopwatch: stopwatch,
                   stopwatchController: stopwatchController,
-                  dialog: widget.dialog,
-                  task: widget.task,
                 )
               ],
             ),
@@ -750,116 +759,151 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
         const SizedBox(
           height: 16.0,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Column(
           children: <Widget>[
-            RaisedButton(
-              color: darkMode ? Colors.lightBlue : Colors.blue,
-              colorBrightness: Brightness.dark,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(4.0),
-                ),
-              ),
-              child: Text(index == 0 ? timerButtonText : stopwatchButtonText),
-              onPressed: () {
-                disableTouch = true;
-                if (index == 0) {
-                  if (timerController.isAnimating) {
-                    setState(() {
-                      timerController.stop();
-                      timerButtonText = 'RESUME';
-                    });
-                  } else {
-                    setState(() {
-                      timerAnimationStarted = true;
-                      timerFadeController.forward();
-                      timerButtonText = 'PAUSE';
-                      dynamic content =
-                          App.of(context).exerciseContents[widget.name];
-                      if (content.length == 4)
-                        content.add([timerController.duration.inSeconds]);
-                      else
-                        content[4][widget.index] =
-                            timerController.duration.inSeconds;
-                      if (content.length < 6)
-                        content.add(false);
-                      else
-                        content[5][widget.index] = false;
-                      FileManager
-                          .writeToFile('exercise.json', widget.name, content)
-                          .then((contents) {
-                        App.of(context).changeExercises(contents);
-                      });
-                    });
-                    timerController.reverse(
-                      from: timerController.value == 0.0
-                          ? 1.0
-                          : timerController.value,
-                    );
-                  }
-                } else {
-                  setState(() {
-                    if (stopwatch.isRunning) {
-                      stopwatch.stop();
-                      stopwatchButtonText = 'RESUME';
-                    } else {
-                      stopwatch.start();
-                      stopwatchController.forward();
-                      stopwatchButtonText = 'PAUSE';
-                      dynamic content =
-                          App.of(context).exerciseContents[widget.name];
-                      if (content.length == 4)
-                        content.add([timerController.duration.inSeconds]);
-                      if (content.length < 6)
-                        content.add([true]);
-                      else
-                        content[5][widget.index] = true;
-                      FileManager
-                          .writeToFile('exercise.json', widget.name, content)
-                          .then((contents) {
-                        App.of(context).changeExercises(contents);
-                      });
-                    }
-                  });
-                }
-              },
-            ),
-            const SizedBox(
-              width: 16.0,
-            ),
-            RaisedButton(
-              color: darkMode ? Colors.grey[800] : Colors.white,
-              disabledColor: darkMode ? Colors.grey[850] : Colors.white,
-              textColor: darkMode ? Colors.lightBlue : Colors.blue,
-              disabledTextColor: darkMode ? Colors.grey[600] : Colors.grey[400],
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(4.0),
-                ),
-              ),
-              child: const Text('RESET'),
-              onPressed: (index == 0 && timerAnimationStarted) ||
-                      (index == 1 && stopwatch.elapsedMilliseconds != 0)
-                  ? () {
-                      disableTouch = false;
-                      if (index == 0) {
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  color: darkMode ? Colors.lightBlue : Colors.blue,
+                  colorBrightness: Brightness.dark,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(4.0),
+                    ),
+                  ),
+                  child:
+                      Text(index == 0 ? timerButtonText : stopwatchButtonText),
+                  onPressed: () {
+                    disableTouch = true;
+                    if (index == 0) {
+                      if (timerController.isAnimating) {
                         setState(() {
-                          timerAnimationStarted = false;
-                          timerButtonText = 'START';
+                          timerController.stop();
+                          timerButtonText = 'RESUME';
                         });
-                        timerFadeController.reverse();
-                        timerController.value = 1.0;
                       } else {
-                        stopwatch.stop();
-                        stopwatch.reset();
                         setState(() {
-                          stopwatchButtonText = 'START';
+                          timerAnimationStarted = true;
+                          timerFadeController.forward();
+                          timerButtonText = 'PAUSE';
+                          dynamic content =
+                              App.of(context).exerciseContents[widget.name];
+                          if (content.length == 4)
+                            content.add([timerController.duration.inSeconds]);
+                          else
+                            content[4][widget.index] =
+                                timerController.duration.inSeconds;
+                          if (content.length < 6)
+                            content.add(false);
+                          else
+                            content[5][widget.index] = false;
+                          FileManager
+                              .writeToFile(
+                                  'exercise.json', widget.name, content)
+                              .then((contents) {
+                            App.of(context).changeExercises(contents);
+                          });
                         });
+                        timerController.reverse(
+                          from: timerController.value == 0.0
+                              ? 1.0
+                              : timerController.value,
+                        );
                       }
+                    } else {
+                      setState(() {
+                        if (stopwatch.isRunning) {
+                          stopwatch.stop();
+                          stopwatchButtonText = 'RESUME';
+                        } else {
+                          stopwatch.start();
+                          stopwatchController.forward();
+                          stopwatchButtonText = 'PAUSE';
+                          dynamic content =
+                              App.of(context).exerciseContents[widget.name];
+                          if (content.length == 4)
+                            content.add([timerController.duration.inSeconds]);
+                          if (content.length < 6)
+                            content.add([true]);
+                          else
+                            content[5][widget.index] = true;
+                          FileManager
+                              .writeToFile(
+                                  'exercise.json', widget.name, content)
+                              .then((contents) {
+                            App.of(context).changeExercises(contents);
+                          });
+                        }
+                      });
                     }
-                  : null,
+                  },
+                ),
+                const SizedBox(
+                  width: 16.0,
+                ),
+                RaisedButton(
+                  color: darkMode ? Colors.grey[800] : Colors.white,
+                  disabledColor: darkMode ? Colors.grey[850] : Colors.white,
+                  textColor: darkMode ? Colors.lightBlue : Colors.blue,
+                  disabledTextColor:
+                      darkMode ? Colors.grey[600] : Colors.grey[400],
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(4.0),
+                    ),
+                  ),
+                  child: const Text('RESET'),
+                  onPressed: (index == 0 && timerAnimationStarted) ||
+                          (index == 1 && stopwatch.elapsedMilliseconds != 0)
+                      ? () {
+                          disableTouch = false;
+                          if (index == 0) {
+                            setState(() {
+                              timerAnimationStarted = false;
+                              timerButtonText = 'START';
+                            });
+                            timerFadeController.reverse();
+                            timerController.value = 1.0;
+                          } else {
+                            stopwatch.stop();
+                            stopwatch.reset();
+                            setState(() {
+                              stopwatchButtonText = 'START';
+                            });
+                          }
+                        }
+                      : null,
+                ),
+              ],
             ),
+            SizedBox(
+              height: index == 1 ? 16.0 : 0.0,
+            ),
+            index == 1
+                ? RaisedButton(
+                    color: darkMode ? Colors.green[400] : Colors.green,
+                    colorBrightness: Brightness.dark,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(4.0),
+                      ),
+                    ),
+                    child: Text('FINISH'),
+                    onPressed: stopwatch.elapsedMilliseconds != 0
+                        ? () {
+                            widget.dialog(widget.task, widget.isPackage,
+                                stopwatch.elapsedMilliseconds);
+                            stopwatch.stop();
+                            stopwatch.reset();
+                            setState(() {
+                              stopwatchFinished = true;
+                              stopwatchButtonText = 'RESTART';
+                            });
+                          }
+                        : null,
+                  )
+                : const SizedBox(),
           ],
         ),
         const SizedBox(
@@ -1147,8 +1191,6 @@ class StopwatchWidget extends StatelessWidget {
     this.index,
     this.stopwatch,
     this.stopwatchController,
-    this.dialog,
-    this.task,
     Key key,
     this.isPackage,
   }) : super(key: key);
@@ -1157,8 +1199,6 @@ class StopwatchWidget extends StatelessWidget {
   final int index;
   final Stopwatch stopwatch;
   final AnimationController stopwatchController;
-  final void Function(Task task, bool isPackage, [int stopwatchValue]) dialog;
-  final Task task;
   final bool isPackage;
 
   Container stopwatchText(String text) {
@@ -1179,43 +1219,22 @@ class StopwatchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const SizedBox(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            StopwatchMinutes(
-              stopwatch: stopwatch,
-              stopwatchController: stopwatchController,
-            ),
-            stopwatchText(':'),
-            StopwatchSeconds(
-              stopwatch: stopwatch,
-              stopwatchController: stopwatchController,
-            ),
-            stopwatchText('.'),
-            StopwatchMilliseconds(
-              stopwatch: stopwatch,
-              stopwatchController: stopwatchController,
-            ),
-          ],
+        StopwatchMinutes(
+          stopwatch: stopwatch,
+          stopwatchController: stopwatchController,
         ),
-        RaisedButton(
-          color: darkMode ? Colors.green[400] : Colors.green,
-          colorBrightness: Brightness.dark,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(4.0),
-            ),
-          ),
-          child: Text('FINISH'),
-          onPressed: stopwatch.elapsedMilliseconds != 0 ? () {
-            dialog(task, isPackage, stopwatch.elapsedMilliseconds);
-            stopwatch.stop();
-            stopwatch.reset();
-          } : null,
+        stopwatchText(':'),
+        StopwatchSeconds(
+          stopwatch: stopwatch,
+          stopwatchController: stopwatchController,
+        ),
+        stopwatchText('.'),
+        StopwatchMilliseconds(
+          stopwatch: stopwatch,
+          stopwatchController: stopwatchController,
         ),
       ],
     );

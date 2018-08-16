@@ -867,9 +867,8 @@ List<Diet> dietList = [
     },
   ),
   Diet(
-<<<<<<< HEAD
-    image: 'assets/diet-icons/broccoli.webp',
-    name: 'Mediterranean Diet',
+    image: 'assets/diet-icons/mediterranean.webp',
+    name: 'Mediterranean',
     data: {
       'breakfast': {
         'recommend': [
@@ -921,10 +920,6 @@ List<Diet> dietList = [
         ],
       }
     }
-=======
-    image: 'assets/diet-icons/mediterranean.webp',
-    name: 'Mediterranean',
->>>>>>> 318f2765ec252e233a94f7cd8116e1e19bd660a8
   ),
   Diet(
     image: 'assets/diet-icons/detox.webp',
