@@ -125,7 +125,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                   height: 12.0,
                 ),
                 stopwatchValue != null ? Text(
-                  duration.inMinutes.toString().padLeft(2, '0') + ':' + (duration.inSeconds % 60).toString().padLeft(2, '0') + '.' + (duration.inMilliseconds % 100).toString().padLeft(3, '0').substring(0, 2),
+                  duration.inMinutes.toString().padLeft(2, '0') + ':' + (duration.inSeconds % 60).toString().padLeft(2, '0') + '.' + (duration.inMilliseconds % 1000).toString().padLeft(3, '0').substring(0, 2),
                   style: const TextStyle(
                     fontFamily: 'Renner*',
                     height: 1.2,
