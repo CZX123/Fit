@@ -808,7 +808,56 @@ List<Diet> dietList = [
   ),
   Diet(
     image: 'assets/diet-icons/carrot.webp',
-    name: 'Low-Calorie',
+    name: 'Muscle Gain',
+    data: {
+      'breakfast': {
+        'recommend': [
+          'Eggs',
+          'Cereals/Oats',
+          'English Breakfast (recommended once in a while)',
+        ],
+        'avoid': [
+          'Complex carbohydrates such as white bread and cornflakes',
+          'Fast food breakfasts (unless low in calories)',
+        ],
+      },
+      'lunch': {
+        'recommend': [
+          'Lean protein (eggs, chicken, red meats occasionally) ',
+          'Any sort of carbohydrates (but minimal intake)',
+          'Coffee, Tea or water (as long as there is little to no sugar)',
+        ],
+        'avoid': [
+          'Deep-fried food such as fried chicken and french fries',
+          'Drinks with high sugar levels',
+          'Nothing (eating nothing will worsen your condition!)',
+        ],
+      },
+      'dinner': {
+        'recommend': [
+          'Poultry, fish, lean red meats',
+          'Pasta/Spaghetti (recommended)',
+          'Salads',
+        ],
+        'avoid': [
+          'Fatty salad dressings (Hollandaise, Thousand Island)',
+          'Frozen “diet” meals (usually scams)',
+          'High fructose corn syrup',
+        ],
+      },
+      'snacks': {
+        'recommend': [
+          'Nuts',
+          'Flax Seeds',
+          'Salads with vinaigrette dressing',
+        ],
+        'avoid': [
+          'High-sugar snacks (Ice cream, sugary yogurts)',
+          'Processed foods (cookies, potato chips, etc,)',
+          'Oil-soaked foods ',
+        ],
+      }
+    },                    
   ),
   Diet(
     image: 'assets/diet-icons/broccoli.webp',
@@ -817,5 +866,58 @@ List<Diet> dietList = [
   Diet(
     image: 'assets/diet-icons/detox.webp',
     name: 'Detox',
+    data: {
+      'breakfast': {
+        'recommend': [
+          'Fruit smoothie',
+          'Fresh fruits rich in Vitamins',
+          'Hot water with lemon juice',
+          'Boiled eggs'
+        ],
+        'avoid': [
+          'Foods with high calorie content',
+          'Processed Foods',
+          'Coffee and caffeinated beverages',
+        ],
+      },
+      'lunch': {
+        'recommend': [
+          'Cabbage salad',
+          'Lean proteins',
+          'Whole-grains (Brown rice)',
+          'Carrot soup',
+        ],
+        'avoid': [
+          'Fatty foods',
+          'Foods with excessive carbohydrates',
+          'Processed foods',
+        ],
+      },
+      'dinner': {
+        'recommend': [
+          'Tomato soup',
+          'Healthy greens (Kale, Asparagus)',
+          'Whole wheat bread',
+        ],
+        'avoid': [
+          'Processed foods',
+          'Oily foods',
+          'Fatty foods',
+        ],
+      },
+      'snacks': {
+        'recommend': [
+          'Corn',
+          'Fruit juice',
+          'Almonds',
+          'Oranges',
+        ],
+        'avoid': [
+          'High-sugar snacks (Ice cream, sugary yogurts)',
+          'Processed foods (cookies, potato chips, etc,)',
+          'Oil-soaked foods ',
+        ],
+      }
+    },
   ),
 ];

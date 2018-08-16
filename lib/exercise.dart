@@ -356,7 +356,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '$counter    $distance',
+                                  '$counter   $distance',
                                   style: const TextStyle(
                                     fontFamily: 'Renner*',
                                     color: Colors.white,
@@ -365,7 +365,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                   ),
                                 ),
                                 Text(
-                                  counter == 1 ? ' STEP               M' : ' STEPS               M',
+                                  counter == 1 ? ' STEP                       M' : ' STEPS                       M',
             
                                   style: const TextStyle(
                                     color: Colors.white70,
