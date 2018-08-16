@@ -898,6 +898,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
                             stopwatch.reset();
                             setState(() {
                               stopwatchFinished = true;
+                              disableTouch = false;
                               stopwatchButtonText = 'RESTART';
                             });
                           }
