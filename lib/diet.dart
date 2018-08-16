@@ -199,7 +199,7 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
       return 'breakfast';
     else if (11 < now.hour && now.hour < 14)
       return 'lunch';
-    else if (16 < now.hour && now.hour < 23)
+    else if (17 < now.hour && now.hour < 23)
       return 'dinner';
     else
       return 'snacks';
@@ -861,7 +861,58 @@ List<Diet> dietList = [
   ),
   Diet(
     image: 'assets/diet-icons/broccoli.webp',
-    name: 'Vegetarian',
+    name: 'Mediterranean Diet',
+    data: {
+      'breakfast': {
+        'recommend': [
+          'Greek yogurt + fruits',
+          'Oatmeal + dried fruits of choice',
+          'Omelet with veggies of choice + fruit of choice',
+          'Eggs and veggies, fried in olive oil'
+        ],
+        'avoid': [
+          'Refined Grains (white bread, normal pasta, cereal)',
+          'Added Sugars (chocolate, sodas)',
+        ],
+      },
+      'lunch': {
+        'recommend': [
+          'Whole-grain sandwich with veggies',
+          'Greek yogurt with strawberries, oats and nuts',
+          'Mediterranean lasagne',
+        ],
+        'avoid': [
+          'Refined Grains (white bread, normal pasta, cereal)',
+          'Highly Processed Foods',
+          'Refined Oils',
+        ],
+      },
+      'dinner': {
+        'recommend': [
+          'Tuna salad dressed in olive oil + fruit',
+          'Mediterranean lasagne',
+          'Grilled lamb/chicken, with salad and baked potato',
+        ],
+        'avoid': [
+          'Processed Meats (hot dogs, bacon)',
+          'Trans/saturated fats (margarine, butter)',
+          'Refined Oils',
+        ],
+      },
+      'snacks': {
+        'recommend': [
+          'Corn',
+          'Fruit juice',
+          'Almonds',
+          'Oranges',
+        ],
+        'avoid': [
+          'Added Sugars (chocolate, sodas))',
+          'Processed foods (cookies, potato chips, etc,)',
+          'Oil-soaked foods ',
+        ],
+      }
+    }
   ),
   Diet(
     image: 'assets/diet-icons/detox.webp',
