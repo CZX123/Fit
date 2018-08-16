@@ -7,6 +7,7 @@ import 'addActivity.dart' show AddActivityScreen;
 import 'customWidgets.dart' show FadingPageRoute;
 import 'newActivity.dart';
 import 'customExpansionPanel.dart';
+import 'activityStats.dart';
 
 class ExpansionPanelItem {
   ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon});
@@ -32,6 +33,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
   IconData iconData;
   List<Task> packageTasks;
   List<ExpansionPanelItem> items = [];
+  List<Task> completedTasks = [];
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
             icon: packageTasks[i].icon,
             body: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: timer(name, i, true),
+              child: timer(packageTasks[i], name, i, true),
             ),
           ),
         );
@@ -66,7 +68,84 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
     }
   }
 
-  Widget timer(String name, int index, [bool isPackage]) {
+  void dialog(Task task, bool isPackage, [int stopwatchValue]) async {
+    bool completed = await showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        int randomInt = Random().nextInt(4) + 1;
+        return AlertDialog(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const SizedBox(
+                height: 20.0,
+              ),
+              Image.asset(
+                'assets/exercise-complete/award$randomInt.webp',
+                height: 96.0,
+                width: 96.0,
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                'Exercise Complete!',
+                style: const TextStyle(
+                  fontFamily: 'Renner*',
+                  height: 1.2,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(
+                height: 12.0,
+              ),
+              Text(
+                'Save your results',
+                style: const TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(
+                height: 12.0,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  filled: true,
+                  labelText: 'Amount of ${task.name.toLowerCase()}',
+                ),
+                keyboardType: TextInputType.numberWithOptions(),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: new Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+            ),
+            FlatButton(
+              child: new Text('SAVE'),
+              onPressed: () {
+                Navigator.pop(context, true);
+                setState(() {});
+              },
+            ),
+          ],
+        );
+      },
+    );
+    if (completed) {
+      setState(() {});
+    } else {}
+  }
+
+  Widget timer(Task task, String name, int index, [bool isPackage]) {
     final bool portrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return SizedBox(
@@ -77,6 +156,9 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
         name: name,
         index: index,
         isPackage: isPackage ?? false,
+        dialog: dialog,
+        exerciseContents: App.of(context).exerciseContents,
+        task: task,
       ),
     );
   }
@@ -149,10 +231,36 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                             App.of(context).changeExercises(contents);
                             Navigator.pop(context);
                           });
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ActivityStatsScreen(
+                                    package: widget.package ?? null,
+                                    task: widget.task ?? null,
+                                  ),
+                            ),
+                          );
                         }
                       },
                       itemBuilder: (BuildContext context) {
                         return <PopupMenuItem<String>>[
+                          PopupMenuItem<String>(
+                            value: 'Activity History',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.insert_chart,
+                                  color:
+                                      darkMode ? Colors.white : Colors.black87,
+                                ),
+                                const SizedBox(
+                                  width: 16.0,
+                                ),
+                                const Text('Activity History'),
+                              ],
+                            ),
+                          ),
                           PopupMenuItem<String>(
                             value: 'Edit',
                             child: Row(
@@ -201,7 +309,7 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              timer(name, 0)
+              timer(widget.task, name, 0)
             ],
           ),
         ),
@@ -270,10 +378,36 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                             App.of(context).changeExercises(contents);
                             Navigator.pop(context);
                           });
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ActivityStatsScreen(
+                                    package: widget.package ?? null,
+                                    task: widget.task ?? null,
+                                  ),
+                            ),
+                          );
                         }
                       },
                       itemBuilder: (BuildContext context) {
                         return <PopupMenuItem<String>>[
+                          PopupMenuItem<String>(
+                            value: 'Activity History',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.insert_chart,
+                                  color:
+                                      darkMode ? Colors.white : Colors.black87,
+                                ),
+                                const SizedBox(
+                                  width: 16.0,
+                                ),
+                                const Text('Activity History'),
+                              ],
+                            ),
+                          ),
                           PopupMenuItem<String>(
                             value: 'Edit',
                             child: Row(
@@ -382,10 +516,19 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
 }
 
 class TimeTab extends StatefulWidget {
-  TimeTab({this.name, this.index, this.isPackage: false});
+  TimeTab(
+      {this.name,
+      this.index,
+      this.isPackage: false,
+      this.dialog,
+      this.exerciseContents,
+      this.task});
   final String name;
   final int index;
   final bool isPackage;
+  final void Function(Task task, bool isPackage, [int stopwatchValue]) dialog;
+  final Task task;
+  final Map<String, dynamic> exerciseContents;
   _TimeTabState createState() => _TimeTabState();
 }
 
@@ -407,7 +550,13 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    tabController = TabController(vsync: this, length: 2);
+    final Map<String, dynamic> contents = widget.exerciseContents;
+    bool isStopwatch = false;
+    if (contents[widget.name].length > 6)
+      isStopwatch = contents[widget.name][5][widget.index];
+    print(isStopwatch);
+    tabController = TabController(
+        vsync: this, length: 2, initialIndex: isStopwatch ? 1 : 0);
     tabIconController = AnimationController(
       duration: const Duration(milliseconds: 280),
       vsync: this,
@@ -493,6 +642,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
 
   void timerAnimationEnd(AnimationStatus status) {
     if (status == AnimationStatus.dismissed) {
+      widget.dialog(widget.task, widget.isPackage);
       setState(() {
         disableTouch = false;
         timerAnimationStarted = false;
@@ -620,6 +770,10 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
                       else
                         content[4][widget.index] =
                             timerController.duration.inSeconds;
+                      if (content.length < 6)
+                        content.add(false);
+                      else
+                        content[5][widget.index] = false;
                       FileManager
                           .writeToFile('exercise.json', widget.name, content)
                           .then((contents) {
@@ -641,6 +795,19 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
                       stopwatch.start();
                       stopwatchController.forward();
                       stopwatchButtonText = 'PAUSE';
+                      dynamic content =
+                          App.of(context).exerciseContents[widget.name];
+                      if (content.length == 4)
+                        content.add([timerController.duration.inSeconds]);
+                      if (content.length < 6)
+                        content.add([true]);
+                      else
+                        content[5][widget.index] = true;
+                      FileManager
+                          .writeToFile('exercise.json', widget.name, content)
+                          .then((contents) {
+                        App.of(context).changeExercises(contents);
+                      });
                     }
                   });
                 }

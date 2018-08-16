@@ -1,8 +1,63 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'
+    show
+        Alignment,
+        AppBar,
+        BorderRadius,
+        BorderSide,
+        BoxConstraints,
+        Brightness,
+        BuildContext,
+        Builder,
+        ButtonThemeData,
+        Color,
+        Colors,
+        Column,
+        ConstrainedBox,
+        Container,
+        CrossAxisAlignment,
+        EdgeInsets,
+        FittedBox,
+        FloatingActionButton,
+        FontWeight,
+        Hero,
+        Icon,
+        IconData,
+        Icons,
+        Key,
+        MainAxisAlignment,
+        MediaQuery,
+        Navigator,
+        OutlineButton,
+        Padding,
+        Radius,
+        RoundedRectangleBorder,
+        Row,
+        Scaffold,
+        SingleChildScrollView,
+        SizedBox,
+        SnackBar,
+        SnackBarAction,
+        State,
+        StatefulWidget,
+        StatelessWidget,
+        TargetPlatform,
+        Text,
+        TextAlign,
+        TextBaseline,
+        TextStyle,
+        Theme,
+        ThemeData,
+        TimeOfDay,
+        ValueChanged,
+        Widget,
+        WidgetsBinding,
+        showTimePicker;
 import 'newActivity.dart';
 import 'fileManager.dart';
 import 'main.dart';
+import 'customDropdown.dart'
+    show DropdownButton, DropdownButtonHideUnderline, DropdownMenuItem;
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({
@@ -20,7 +75,7 @@ class AddActivityScreen extends StatefulWidget {
   _AddActivityScreenState createState() => _AddActivityScreenState();
 }
 
-enum Answer { THRICE, TWICE, DAILY, TWODAYS, THREEDAYS, FIVEDAYS, WEEKLY }
+enum Answer { THRICE, TWICE, DAILY, WEEKLY }
 
 class _AddActivityScreenState extends State<AddActivityScreen> {
   bool _snackbarShown = false;
@@ -28,12 +83,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   List<dynamic> _toTime = [const TimeOfDay(hour: 13, minute: 00)];
   bool _validate = false;
   final List<String> _frequency = [
-    'Three Times a Day',
+    'Thrice a Day',
     'Twice a Day',
     'Daily',
-    'Every 2 Days',
-    'Every 3 Days',
-    'Every 5 Days',
     'Weekly'
   ];
   String _selectedFrequency = 'Daily';
@@ -45,29 +97,40 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   List<Task> packageTasks;
   bool updateActivity;
   List<int> timings;
+  String _dayDropdownValue;
+  final List<String> _days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
 
   @override
   void initState() {
     super.initState();
+    _dayDropdownValue = _days[DateTime.now().weekday - 1];
     FileManager.readFile(fileName).then((contents) {
       if (contents != null && contents.keys.contains(name)) {
-      setState(() {
-        _updateActivity = true;
-        _selectedFrequency = contents[name][2];
-        _fromTime = contents[name][0].map((value) {
-          return TimeOfDay(
-            hour: value[0],
-            minute: value[1],
-          );
-        }).toList();
-        _toTime = contents[name][1].map((value) {
-          return TimeOfDay(
-            hour: value[0],
-            minute: value[1],
-          );
-        }).toList();
-      });
-    }
+        setState(() {
+          _updateActivity = true;
+          _selectedFrequency = contents[name][2];
+          _fromTime = contents[name][0].map((value) {
+            return TimeOfDay(
+              hour: value[0],
+              minute: value[1],
+            );
+          }).toList();
+          _toTime = contents[name][1].map((value) {
+            return TimeOfDay(
+              hour: value[0],
+              minute: value[1],
+            );
+          }).toList();
+        });
+      }
     });
     updateActivity = widget.updateActivity;
     if (widget.task != null) {
@@ -103,60 +166,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     setState(() {
       _selectedFrequency = newValue;
     });
-  }
-
-  Future<Null> _changeFrequency() async {
-    switch (await showDialog(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: const Text(
-            'Change Frequency',
-            style: const TextStyle(
-              height: 1.2,
-              fontFamily: 'Renner*',
-            ),
-          ),
-          children: _frequency.map((String value) {
-            return SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(
-                    context, Answer.values[_frequency.indexOf(value)]);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text(
-                  value,
-                  textAlign: TextAlign.left,
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    )) {
-      case Answer.THRICE:
-        setFrequency(_frequency[0]);
-        break;
-      case Answer.TWICE:
-        setFrequency(_frequency[1]);
-        break;
-      case Answer.DAILY:
-        setFrequency(_frequency[2]);
-        break;
-      case Answer.TWODAYS:
-        setFrequency(_frequency[3]);
-        break;
-      case Answer.THREEDAYS:
-        setFrequency(_frequency[4]);
-        break;
-      case Answer.FIVEDAYS:
-        setFrequency(_frequency[5]);
-        break;
-      case Answer.WEEKLY:
-        setFrequency(_frequency[6]);
-        break;
-    }
   }
 
   @override
@@ -281,6 +290,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
           brightness: darkMode ? Brightness.dark : Brightness.light,
           primaryColor: Colors.blue,
           accentColor: darkMode ? Colors.limeAccent : Colors.deepOrangeAccent,
+          buttonTheme: ButtonThemeData(
+            alignedDropdown: true,
+          ),
         ),
         child: Builder(
           builder: (context) {
@@ -351,36 +363,64 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       alignment: Alignment.centerLeft,
-                      child: OutlineButton(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(4.0),
-                          ),
-                        ),
-                        highlightElevation: 0.0,
-                        highlightedBorderColor:
-                            darkMode ? Colors.lightBlue : Colors.blue,
-                        borderSide: BorderSide(
-                          color: darkMode ? Colors.grey[600] : Colors.grey[350],
-                          width: 2.0,
-                        ),
-                        padding: const EdgeInsets.fromLTRB(16.0, 4.0, 8.0, 4.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                      child: DropdownButtonHideUnderline(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(_selectedFrequency),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 2.0),
-                              child: Icon(
-                                Icons.arrow_drop_down,
-                                color: darkMode ? Colors.white : Colors.black54,
+                            DropdownButton<String>(
+                              isDense: true,
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w500,
+                                color: darkMode ? Colors.white : Colors.black87,
                               ),
+                              value: _selectedFrequency,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  _selectedFrequency = newValue;
+                                });
+                              },
+                              items: _frequency.map((String value) {
+                                return new DropdownMenuItem<String>(
+                                  value: value,
+                                  child: new Text(value),
+                                );
+                              }).toList(),
                             ),
+                            _selectedFrequency == 'Weekly'
+                                ? const Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4.0,
+                                    ),
+                                    child: const Text('on'),
+                                  )
+                                : const SizedBox(),
+                            _selectedFrequency == 'Weekly'
+                                ? DropdownButton<String>(
+                                    isDense: true,
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkMode
+                                          ? Colors.white
+                                          : Colors.black87,
+                                    ),
+                                    value: _dayDropdownValue,
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        _dayDropdownValue = newValue;
+                                      });
+                                    },
+                                    items: _days.map((String value) {
+                                      return new DropdownMenuItem<String>(
+                                        value: value,
+                                        child: new Text(value),
+                                      );
+                                    }).toList(),
+                                  )
+                                : const SizedBox(),
                           ],
                         ),
-                        onPressed: () {
-                          _changeFrequency();
-                        },
                       ),
                     ),
                     Padding(
@@ -401,6 +441,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                         children: listTimings,
                       ),
                     ),
+                    const SizedBox(),
                     const SizedBox(),
                     const SizedBox(),
                   ],
@@ -429,17 +470,41 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       return [time.hour, time.minute];
                     }).toList(),
                     _selectedFrequency,
-                    // TODO: implement starting day if exercise not held daily
-                    'Selected time to start',
+                    _selectedFrequency == 'Weekly' ? _dayDropdownValue : '',
+                    [0],
+                    [false],
+                    // activityStats,
                   ];
-                  if (timings != null && timings.length != 0)
-                    value.add(timings);
-                  FileManager.writeToFile(fileName, name, value).then((contents) {
+                  if (timings != null && timings.length != 0) {
+                    value[4] = timings;
+                    List<bool> isStopwatch = [];
+                    for (int i = 0; i < timings.length; i++) {
+                      isStopwatch.add(false);
+                    }
+                    value[5] = isStopwatch;
+                  }
+                  FileManager
+                      .writeToFile(fileName, name, value)
+                      .then((contents) {
                     App.of(context).changeExercises(contents);
                     Navigator.pop(context);
-                    Navigator.pop(context, name);
-                    if (Navigator.canPop(context)) Navigator.pop(context, name);
-                    if (Navigator.canPop(context)) Navigator.pop(context, name);
+                    dynamic returnValue = [
+                      name,
+                      _selectedFrequency,
+                      _fromTime.map((time) {
+                        return [time.hour, time.minute];
+                      }).toList(),
+                      _toTime.map((time) {
+                        return [time.hour, time.minute];
+                      }).toList(),
+                    ];
+                    if (_selectedFrequency == 'Weekly')
+                      returnValue.add(_dayDropdownValue);
+                    Navigator.pop(context, returnValue);
+                    if (Navigator.canPop(context))
+                      Navigator.pop(context, returnValue);
+                    if (Navigator.canPop(context))
+                      Navigator.pop(context, returnValue);
                   });
                 }
               },

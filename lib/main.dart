@@ -189,16 +189,16 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return data;
   }
 
-  int getId(String name) {
-    int id;
+  int getId(String name, int number) {
+    int id, totalNo = packageList.length + allTasks.length;
     for (int i = 0; i < packageList.length; i++) {
       if (packageList[i].name == name) id = i;
     }
-    if (id != null) return id;
+    if (id != null) return id + number * totalNo;
     for (int j = 0; j < allTasks.length; j++) {
       if (allTasks[j].name == name) id = packageList.length + j;
     }
-    return id;
+    return id + number * totalNo;
   }
 
   Future onSelectNotification(String payload) async {
@@ -216,7 +216,18 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  Future showNotification(String name, bool late) async {
+  Future showNotification(
+      int hour, int minute, String name, bool late, int number,
+      [String day]) async {
+    Time time = Time(hour, minute, 0);
+    if (!late && minute < 20)
+      time = Time(hour > 0 ? hour - 1 : 23, 40 + minute, 0);
+    else if (!late) time = Time(hour, minute - 20, 0);
+    var bigTextStyleInformation = BigTextStyleInformation(
+      late
+          ? 'You missed your $name exercise. But better late than never!'
+          : 'Your $name exercise will begin in 20 mins!',
+    );
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       name,
       name,
@@ -224,18 +235,47 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       color: Colors.blue,
       importance: Importance.Max,
       priority: Priority.High,
+      style: AndroidNotificationStyle.BigText,
+      styleInformation: bigTextStyleInformation,
     );
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        getId(name),
-        late ? 'Oh No!' : 'Heads Up!',
-        late
-            ? 'You missed your $name exercise. But better late than never!'
-            : 'Your $name exercise will begin in 20 mins!',
-        platformChannelSpecifics,
-        payload: name);
+    if (day == null) {
+      await flutterLocalNotificationsPlugin.showDailyAtTime(
+          getId(name, number),
+          late ? 'Oh No!' : 'Heads Up!',
+          late
+              ? 'You missed your $name exercise. But better late than never!'
+              : 'Your $name exercise will begin in 20 mins!',
+          time,
+          platformChannelSpecifics,
+          payload: name);
+    } else {
+      Day dayOfWeek;
+      if (day == 'Monday') dayOfWeek = Day.Monday;
+      else if (day == 'Tuesday') dayOfWeek = Day.Tuesday;
+      else if (day == 'Wednesday') dayOfWeek = Day.Wednesday;
+      else if (day == 'Thursday') dayOfWeek = Day.Thursday;
+      else if (day == 'Friday') dayOfWeek = Day.Friday;
+      else if (day == 'Saturday') dayOfWeek = Day.Saturday;
+      else if (day == 'Sunday') dayOfWeek = Day.Sunday;
+      if (!late && time.hour == 23 && time.minute > 39) {
+        for (int i = 0; i < 7; i++) {
+          if (dayOfWeek == Day(i + 1)) dayOfWeek = Day(i == 0 ? 7 : i);
+        }
+      }
+      await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
+          getId(name, number),
+          late ? 'Oh No!' : 'Heads Up!',
+          late
+              ? 'You missed your $name exercise. But better late than never!'
+              : 'Your $name exercise will begin in 20 mins!',
+          dayOfWeek,
+          time,
+          platformChannelSpecifics,
+          payload: name);
+    }
   }
 
   void changeScreen() {
@@ -263,13 +303,26 @@ class MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               backgroundColor:
                   darkMode ? Colors.grey[800] : Colors.deepOrangeAccent,
               onPressed: () async {
-                String value = await Navigator.push(
+                dynamic value = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => NewActivityScreen(),
                     ));
                 if (value != null) {
-                  showNotification(value, false);
+                  if (value[1] == 'Weekly') {
+                    assert(value.length > 4);
+                    showNotification(value[2][0][0], value[2][0][1], value[0],
+                        false, 0, value[4]);
+                    showNotification(value[3][0][0], value[3][0][1], value[0],
+                        true, 1, value[4]);
+                  } else {
+                    for (int i = 0; i < value[2].length; i++) {
+                      showNotification(
+                          value[2][i][0], value[2][i][1], value[0], false, i);
+                      showNotification(
+                          value[3][i][0], value[3][i][1], value[0], true, i + value[2].length);
+                    }
+                  }
                 }
               },
               tooltip: 'New Activity',

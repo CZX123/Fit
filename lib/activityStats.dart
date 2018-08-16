@@ -12,7 +12,7 @@ class ExerciseData {
 }
 
 class ActivityStatsScreen extends StatelessWidget {
-  ActivityStatsScreen(this.package, this.task);
+  ActivityStatsScreen({this.package, this.task});
 
   final Package package;
   final Task task;
@@ -25,8 +25,8 @@ class ActivityStatsScreen extends StatelessWidget {
       ExerciseData('2017', 42.0, Colors.yellow),
       ExerciseData('2018', 30.0, Colors.green),
     ];
-    var series = [
-      charts.Series(
+    List<charts.Series<ExerciseData, String>> series = [
+      charts.Series<ExerciseData, String>(
         id: 'Clicks',
         domainFn: (ExerciseData exerciseData, _) => exerciseData.date,
         measureFn: (ExerciseData exerciseData, _) => exerciseData.amount,
@@ -34,15 +34,20 @@ class ActivityStatsScreen extends StatelessWidget {
         data: data,
       ),
     ];
-    return Container(
-      padding: EdgeInsets.only(top: windowTopPadding),
-      child: Column(
-        children: <Widget>[
-          charts.BarChart(
-            series,
-            animate: true,
-          ),
-        ],
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.only(top: windowTopPadding),
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 324.0,
+              child: charts.BarChart(
+                series,
+                animate: true,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,4 @@
-package com.hci.fit;
+package com.fit;
 
 import android.os.Bundle;
 

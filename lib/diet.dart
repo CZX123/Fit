@@ -381,8 +381,8 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
                                 children: <Widget>[
                                   Image.asset(
                                     imageAsset,
-                                    width: 96.0,
-                                    height: 96.0,
+                                    width: 80.0,
+                                    height: 80.0,
                                   ),
                                   const SizedBox(
                                     width: 16.0,
@@ -397,12 +397,12 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
                                         style: const TextStyle(
                                           fontFamily: 'Renner*',
                                           color: Colors.white,
-                                          fontSize: 36.0,
+                                          fontSize: 40.0,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       const SizedBox(
-                                        height: 6.0,
+                                        height: 4.0,
                                       ),
                                       Text(
                                         ' CURRENT DIET',
@@ -803,12 +803,61 @@ List<Diet> dietList = [
           'Sweet foods & drinks (e.g. ice cream, Coca-Cola)',
           'Even more carbs (biscuits, wafers)',
         ],
-      }
+      },
     },
   ),
   Diet(
-    image: 'assets/diet-icons/carrot.webp',
-    name: 'Low-Calorie',
+    image: 'assets/diet-icons/6-pack.webp',
+    name: '6-Pack',
+    data: {
+      'breakfast': {
+        'recommend': [
+          'Eggs',
+          'Cereals/Oats',
+          'English Breakfast (once in a while)'
+        ],
+        'avoid': [
+          'Complex carbohydrates e.g. white bread and cornflakes',
+          'Fast food breakfasts (unless low in calories)',
+        ],
+      },
+      'lunch': {
+        'recommend': [
+          'Lean protein (eggs, chicken, red meats occasionally)',
+          'Any sort of carbohydrates (but minimal intake)',
+          'Coffee, Tea or water (with little sugar)',
+        ],
+        'avoid': [
+          'Deep-fried food',
+          'Drinks with high sugar levels',
+          'Nothing (eating nothing will worsen your condition!)',
+        ],
+      },
+      'dinner': {
+        'recommend': [
+          'Poultry, fish, lean red meats',
+          'Pasta/Spaghetti',
+          'Salads',
+        ],
+        'avoid': [
+          'Fatty salad dressings (Hollandaise, Thousand Island)',
+          'Frozen "diet" meals (usually scams)',
+          'High fructose corn syrup',
+        ],
+      },
+      'snacks': {
+        'recommend': [
+          'Nuts',
+          'Flax Seeds',
+          'Salads with vinaigrette dressing',
+        ],
+        'avoid': [
+          'High-sugar snacks (ice cream, sugary yogurts)',
+          'Processed foods (cookies, potato chips)',
+          'Oil-soaked food',
+        ],
+      },
+    },
   ),
   Diet(
     image: 'assets/diet-icons/broccoli.webp',
