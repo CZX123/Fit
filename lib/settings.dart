@@ -3,7 +3,14 @@ import 'main.dart';
 import 'profile.dart';
 import 'steps.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
+  @override
+  SettingsScreenState createState() => SettingsScreenState();
+}
+
+class SettingsScreenState extends State<SettingsScreen> {
+  bool notifications = true;
+  bool stepCount = true;
   @override
   Widget build(BuildContext context) {
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
@@ -44,8 +51,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: padding),
             title: const Text('Statistics'),
-            subtitle:
-                const Text('Distance'),
+            subtitle: const Text('Distance'),
             onTap: () {
               Navigator.push(
                 context,
@@ -56,21 +62,41 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: padding),
+            contentPadding:
+                EdgeInsets.fromLTRB(padding, 0.0, padding - 8.0, 0.0),
             title: const Text('Notifications'),
-            subtitle:
-                const Text('Choose when to notify you before each activity'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                notifications = !notifications;
+              });
+            },
+            trailing: Switch(
+              value: notifications,
+              activeColor: darkMode ? Colors.lightBlue : Colors.blue,
+              onChanged: (_) {
+                setState(() {
+                  notifications = !notifications;
+                });
+              },
+            ),
           ),
           ListTile(
             contentPadding:
                 EdgeInsets.fromLTRB(padding, 0.0, padding - 8.0, 0.0),
             title: const Text('Step Count'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                stepCount = !stepCount;
+              });
+            },
             trailing: Switch(
-              value: true,
+              value: stepCount,
               activeColor: darkMode ? Colors.lightBlue : Colors.blue,
-              onChanged: (_) {},
+              onChanged: (_) {
+                setState(() {
+                  stepCount = !stepCount;
+                });
+              },
             ),
           ),
           ListTile(

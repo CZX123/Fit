@@ -525,13 +525,14 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
 }
 
 class TimeTab extends StatefulWidget {
-  TimeTab(
-      {this.name,
-      this.index,
-      this.isPackage: false,
-      this.dialog,
-      this.exerciseContents,
-      this.task});
+  TimeTab({
+    this.name,
+    this.index,
+    this.isPackage: false,
+    this.dialog,
+    this.exerciseContents,
+    this.task,
+  });
   final String name;
   final int index;
   final bool isPackage;
@@ -555,6 +556,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
   String timerButtonText = 'START';
   String stopwatchButtonText = 'START';
   bool disableTouch = false;
+  bool stopwatchFinished = false;
 
   @override
   void initState() {
@@ -738,6 +740,8 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
                   index: widget.index,
                   stopwatch: stopwatch,
                   stopwatchController: stopwatchController,
+                  dialog: widget.dialog,
+                  task: widget.task,
                 )
               ],
             ),
@@ -1143,6 +1147,8 @@ class StopwatchWidget extends StatelessWidget {
     this.index,
     this.stopwatch,
     this.stopwatchController,
+    this.dialog,
+    this.task,
     Key key,
     this.isPackage,
   }) : super(key: key);
@@ -1151,6 +1157,8 @@ class StopwatchWidget extends StatelessWidget {
   final int index;
   final Stopwatch stopwatch;
   final AnimationController stopwatchController;
+  final void Function(Task task, bool isPackage, [int stopwatchValue]) dialog;
+  final Task task;
   final bool isPackage;
 
   Container stopwatchText(String text) {
@@ -1170,22 +1178,44 @@ class StopwatchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        StopwatchMinutes(
-          stopwatch: stopwatch,
-          stopwatchController: stopwatchController,
+        const SizedBox(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            StopwatchMinutes(
+              stopwatch: stopwatch,
+              stopwatchController: stopwatchController,
+            ),
+            stopwatchText(':'),
+            StopwatchSeconds(
+              stopwatch: stopwatch,
+              stopwatchController: stopwatchController,
+            ),
+            stopwatchText('.'),
+            StopwatchMilliseconds(
+              stopwatch: stopwatch,
+              stopwatchController: stopwatchController,
+            ),
+          ],
         ),
-        stopwatchText(':'),
-        StopwatchSeconds(
-          stopwatch: stopwatch,
-          stopwatchController: stopwatchController,
-        ),
-        stopwatchText('.'),
-        StopwatchMilliseconds(
-          stopwatch: stopwatch,
-          stopwatchController: stopwatchController,
+        RaisedButton(
+          color: darkMode ? Colors.green[400] : Colors.green,
+          colorBrightness: Brightness.dark,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(4.0),
+            ),
+          ),
+          child: Text('FINISH'),
+          onPressed: stopwatch.elapsedMilliseconds != 0 ? () {
+            dialog(task, isPackage, stopwatch.elapsedMilliseconds);
+            stopwatch.stop();
+            stopwatch.reset();
+          } : null,
         ),
       ],
     );
