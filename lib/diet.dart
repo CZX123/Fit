@@ -115,7 +115,8 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
           return IconRow(
             iconColor: darkMode ? Colors.grey[50] : Colors.grey[900],
             iconData: Icons.keyboard_arrow_right,
-            padding: 4.0,
+            iconSize: 20.0,
+            padding: 6.0,
             string: string,
           );
         }).toList();
@@ -123,7 +124,8 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
           return IconRow(
             iconColor: darkMode ? Colors.grey[50] : Colors.grey[800],
             iconData: Icons.keyboard_arrow_right,
-            padding: 4.0,
+            iconSize: 20.0,
+            padding: 6.0,
             string: string,
           );
         }).toList();
@@ -131,7 +133,8 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
               IconRow(
                 iconColor: darkMode ? Colors.green[400] : Colors.green,
                 iconData: Icons.check_circle,
-                padding: 8.0,
+                padding: 4.0,
+                paddingTop: 4.0,
                 string: 'Recommended Food',
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.w500,
@@ -143,7 +146,8 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
               IconRow(
                 iconColor: darkMode ? Colors.redAccent[200] : Colors.red,
                 iconData: Icons.warning,
-                padding: 8.0,
+                padding: 4.0,
+                paddingTop: 12.0,
                 string: 'Food to Avoid',
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.w500,
@@ -537,29 +541,32 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
 class IconRow extends StatelessWidget {
   final IconData iconData;
   final Color iconColor;
+  final double iconSize;
   final String string;
-  final double padding;
+  final double padding, paddingTop;
   final TextStyle textStyle;
   IconRow({
     @required this.iconData,
     @required this.iconColor,
+    this.iconSize,
     @required this.string,
     @required this.padding,
+    this.paddingTop,
     this.textStyle,
   });
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: padding),
+      padding: EdgeInsets.fromLTRB(0.0, paddingTop ?? padding, 0.0, padding),
       child: Row(
         children: <Widget>[
-          const SizedBox(width: 22.0),
+          SizedBox(width: iconSize != null ? 36.0 - iconSize / 2 : 22.0),
           Icon(
             iconData,
             color: iconColor,
-            size: 28.0,
+            size: iconSize ?? 28.0,
           ),
-          const SizedBox(width: 22.0),
+          SizedBox(width: iconSize != null ? 36.0 - iconSize / 2 : 22.0),
           Expanded(
             child: Text(
               string,
@@ -807,8 +814,8 @@ List<Diet> dietList = [
     },
   ),
   Diet(
-    image: 'assets/diet-icons/6-pack.webp',
-    name: '6-Pack',
+    image: 'assets/diet-icons/muscle.webp',
+    name: 'Muscle Gain',
     data: {
       'breakfast': {
         'recommend': [
@@ -860,6 +867,7 @@ List<Diet> dietList = [
     },
   ),
   Diet(
+<<<<<<< HEAD
     image: 'assets/diet-icons/broccoli.webp',
     name: 'Mediterranean Diet',
     data: {
@@ -913,6 +921,10 @@ List<Diet> dietList = [
         ],
       }
     }
+=======
+    image: 'assets/diet-icons/mediterranean.webp',
+    name: 'Mediterranean',
+>>>>>>> 318f2765ec252e233a94f7cd8116e1e19bd660a8
   ),
   Diet(
     image: 'assets/diet-icons/detox.webp',

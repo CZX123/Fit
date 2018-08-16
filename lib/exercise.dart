@@ -439,7 +439,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '$counter   $distance',
+                                  '$counter',
                                   style: const TextStyle(
                                     fontFamily: 'Renner*',
                                     color: Colors.white,
@@ -449,8 +449,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                 ),
                                 Text(
                                   counter == 1
-                                      ? ' STEP                       M'
-                                      : ' STEPS                       M',
+                                      ? ' STEP'
+                                      : ' STEPS',
                                   style: const TextStyle(
                                     color: Colors.white70,
                                     fontSize: 16.0,
@@ -459,7 +459,35 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                 ),
                               ],
                             ),
-                          ),
+                          ),/*
+                          Padding(
+                            padding: const EdgeInsets.only(left: 18.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '$distance',
+                                  style: const TextStyle(
+                                    fontFamily: 'Renner*',
+                                    color: Colors.white,
+                                    fontSize: 56.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  distance == 1
+                                      ? ' METRE'
+                                      : ' METRES',
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),*/
                         ],
                       ),
                     ),
