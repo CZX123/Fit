@@ -245,12 +245,12 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                     child: TextField(
                       controller: searchController,
                       focusNode: focusNode,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Search for an exercise',
                         hintStyle: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black38,
+                          color: darkMode ? Colors.white30 : Colors.black38,
                         ),
                       ),
                       style: TextStyle(
@@ -448,7 +448,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                           children: <Widget>[
                             Icon(
                               errorIcon,
-                              color: Colors.black38,
+                              color: darkMode ? Colors.white : Colors.black38,
                               size: 64.0,
                             ),
                             const SizedBox(

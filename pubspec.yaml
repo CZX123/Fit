@@ -29,8 +29,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/diet-icons/weight-loss.webp
-    - assets/diet-icons/6-pack.webp
-    - assets/diet-icons/broccoli.webp
+    - assets/diet-icons/muscle.webp
+    - assets/diet-icons/mediterranean.webp
     - assets/diet-icons/detox.webp
     - assets/exercise-complete/award1.webp
     - assets/exercise-complete/award2.webp

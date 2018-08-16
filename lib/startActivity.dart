@@ -73,70 +73,79 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
       barrierDismissible: false,
       context: context,
       builder: (context) {
+        bool darkMode = Theme.of(context).brightness == Brightness.dark;
         int randomInt = Random().nextInt(4) + 1;
-        return AlertDialog(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const SizedBox(
-                height: 20.0,
-              ),
-              Image.asset(
-                'assets/exercise-complete/award$randomInt.webp',
-                height: 96.0,
-                width: 96.0,
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Text(
-                'Exercise Complete!',
-                style: const TextStyle(
-                  fontFamily: 'Renner*',
-                  height: 1.2,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500,
+        return Theme(
+          data: ThemeData(
+            brightness: darkMode ? Brightness.dark : Brightness.light,
+            primaryColor: darkMode ? Colors.lightBlue : Colors.blue,
+            accentColor: darkMode ? Colors.limeAccent : Colors.blue,
+          ),
+          child: AlertDialog(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(
+                  height: 20.0,
                 ),
-              ),
-              const SizedBox(
-                height: 12.0,
-              ),
-              Text(
-                'Save your results',
-                style: const TextStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.w500,
+                Image.asset(
+                  'assets/exercise-complete/award$randomInt.webp',
+                  height: 96.0,
+                  width: 96.0,
                 ),
-              ),
-              const SizedBox(
-                height: 12.0,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  border: const UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Amount of ${task.name.toLowerCase()}',
+                const SizedBox(
+                  height: 20.0,
                 ),
-                keyboardType: TextInputType.numberWithOptions(),
+                Text(
+                  'Exercise Complete!',
+                  style: const TextStyle(
+                    fontFamily: 'Renner*',
+                    height: 1.2,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(
+                  height: 12.0,
+                ),
+                Text(
+                  'Save your results',
+                  style: const TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(
+                  height: 12.0,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    filled: true,
+                    labelText: 'Amount',
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text('CANCEL'),
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+              ),
+              FlatButton(
+                child: new Text('SAVE'),
+                onPressed: () {
+                  Navigator.pop(context, true);
+                  setState(() {});
+                },
               ),
             ],
           ),
-          actions: <Widget>[
-            FlatButton(
-              child: new Text('CANCEL'),
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-            ),
-            FlatButton(
-              child: new Text('SAVE'),
-              onPressed: () {
-                Navigator.pop(context, true);
-                setState(() {});
-              },
-            ),
-          ],
         );
       },
     );
@@ -554,7 +563,6 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
     bool isStopwatch = false;
     if (contents[widget.name].length > 6)
       isStopwatch = contents[widget.name][5][widget.index];
-    print(isStopwatch);
     tabController = TabController(
         vsync: this, length: 2, initialIndex: isStopwatch ? 1 : 0);
     tabIconController = AnimationController(
@@ -985,7 +993,7 @@ class _TimerWidgetState extends State<TimerWidget> {
     if (!loaded) {
       if (number == 1) loaded = true;
       final Map<String, dynamic> contents = App.of(context).exerciseContents;
-      if (contents[widget.name].length == 5)
+      if (contents[widget.name].length > 4)
         timerController.duration =
             Duration(seconds: contents[widget.name][4][widget.index]);
       assert(timerController.duration.inMinutes < 60);
