@@ -817,7 +817,7 @@ List<Diet> dietList = [
           'English Breakfast (once in a while)'
         ],
         'avoid': [
-          'Complex carbohydrates e.g. white bread and cornflakes',
+          'Complex carbohydrates (white bread, cornflakes)',
           'Fast food breakfasts (unless low in calories)',
         ],
       },
@@ -866,5 +866,58 @@ List<Diet> dietList = [
   Diet(
     image: 'assets/diet-icons/detox.webp',
     name: 'Detox',
+    data: {
+      'breakfast': {
+        'recommend': [
+          'Fruit smoothie',
+          'Fresh fruits rich in Vitamins',
+          'Hot water with lemon juice',
+          'Boiled eggs'
+        ],
+        'avoid': [
+          'Foods with high calorie content',
+          'Processed Foods',
+          'Coffee and caffeinated beverages',
+        ],
+      },
+      'lunch': {
+        'recommend': [
+          'Cabbage salad',
+          'Lean proteins',
+          'Whole-grains (Brown rice)',
+          'Carrot soup',
+        ],
+        'avoid': [
+          'Fatty foods',
+          'Foods with excessive carbohydrates',
+          'Processed foods',
+        ],
+      },
+      'dinner': {
+        'recommend': [
+          'Tomato soup',
+          'Healthy greens (Kale, Asparagus)',
+          'Whole wheat bread',
+        ],
+        'avoid': [
+          'Processed foods',
+          'Oily foods',
+          'Fatty foods',
+        ],
+      },
+      'snacks': {
+        'recommend': [
+          'Corn',
+          'Fruit juice',
+          'Almonds',
+          'Oranges',
+        ],
+        'avoid': [
+          'High-sugar snacks (Ice cream, sugary yogurts)',
+          'Processed foods (cookies, potato chips, etc,)',
+          'Oil-soaked foods ',
+        ],
+      }
+    },
   ),
 ];
