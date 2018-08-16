@@ -9,6 +9,7 @@ import 'main.dart';
 import 'package:location/location.dart';
 import 'package:haversine/haversine.dart';
 import 'package:sensors/sensors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExerciseScreen extends StatefulWidget {
   ExerciseScreen({Key key}) : super(key: key);
@@ -59,10 +60,33 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       });
     })); 
 
+    locationsubscription();
+  }
+
+  initPlatformState() async {
+    Map<String, double> location;
+
+    location = await _location.getLocation;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    error = null;  
+    _steps = prefs.getInt('_steps') ?? 0;
+    _totalDistance = _steps * _strideLength;
+    setState(() { 
+        _currentLocation = location;
+        _xLocation = location;     
+        _steps;
+        _totalDistance;    
+    });
+  }
+
+  locationsubscription() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _steps = prefs.getInt('_steps');
     _locationSubscription =
         _location.onLocationChanged.listen((result) {
           if (result != _currentLocation) {
             if ((_userAccelerometerValues[0] > 0.5 || _userAccelerometerValues[0] < -0.5  ) || (_userAccelerometerValues[1] > 0.5 || _userAccelerometerValues[1] < -0.5 ) || (_userAccelerometerValues[2] > 0.5 || _userAccelerometerValues[2] < -0.5  )) {
+              
               setState(() {
                 _xLocation = _currentLocation;
                 _currentLocation = result;
@@ -71,26 +95,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                                   longitude1: _xLocation["longitude"],
                                                   latitude2: _currentLocation["latitude"],
                                                   longitude2: _currentLocation["longitude"])).distance();
-                _totalDistance += _meter;
-                _steps = (_totalDistance / _strideLength).round();
-            });
-          }}      
+                _steps += (_meter / _strideLength).round();
+                prefs.setInt('_steps', _steps) ?? 0;
+                _totalDistance = _steps * _strideLength;
+              });
+          }}         
         });
-  }
-
-  initPlatformState() async {
-    Map<String, double> location;
-
-      location = await _location.getLocation;
-
-      error = null;
-   
-
-    setState(() { 
-        _currentLocation = location;
-        _xLocation = location; 
-    });
-
   }
   @override
   void didChangeDependencies() {
@@ -254,6 +264,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   Widget build(BuildContext context) {
     int counter = _steps;
+    int distance = _totalDistance.round();
     final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     final bool portrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
@@ -345,7 +356,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '$counter',
+                                  '$counter    $distance',
                                   style: const TextStyle(
                                     fontFamily: 'Renner*',
                                     color: Colors.white,
@@ -354,7 +365,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                   ),
                                 ),
                                 Text(
-                                  counter == 1 ? ' STEP' : ' STEPS',
+                                  counter == 1 ? ' STEP               M' : ' STEPS               M',
+            
                                   style: const TextStyle(
                                     color: Colors.white70,
                                     fontSize: 16.0,
