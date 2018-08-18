@@ -10,12 +10,13 @@ import 'customExpansionPanel.dart';
 import 'activityStats.dart';
 
 class ExpansionPanelItem {
-  ExpansionPanelItem({this.isExpanded, this.header, this.body, this.icon, this.completed});
+  ExpansionPanelItem(
+      {this.isExpanded, this.header, this.body, this.icon, this.completed});
   bool isExpanded;
   final String header;
   final Widget body;
   final IconData icon;
-  final bool completed;
+  bool completed;
 }
 
 class StartActivityScreen extends StatefulWidget {
@@ -72,7 +73,8 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
 
   void dialog(Task task, bool isPackage, [int stopwatchValue]) async {
     Duration duration;
-    if (stopwatchValue != null) duration = Duration(milliseconds: stopwatchValue);
+    if (stopwatchValue != null)
+      duration = Duration(milliseconds: stopwatchValue);
     bool completed = await showDialog<bool>(
       barrierDismissible: false,
       context: context,
@@ -124,22 +126,33 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                 const SizedBox(
                   height: 12.0,
                 ),
-                stopwatchValue != null ? Text(
-                  duration.inMinutes.toString().padLeft(2, '0') + ':' + (duration.inSeconds % 60).toString().padLeft(2, '0') + '.' + (duration.inMilliseconds % 1000).toString().padLeft(3, '0').substring(0, 2),
-                  style: const TextStyle(
-                    fontFamily: 'Renner*',
-                    height: 1.2,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ) : TextFormField(
-                  decoration: InputDecoration(
-                    border: const UnderlineInputBorder(),
-                    filled: true,
-                    labelText: 'Amount',
-                  ),
-                  keyboardType: TextInputType.numberWithOptions(),
-                ),
+                stopwatchValue != null
+                    ? Text(
+                        duration.inMinutes.toString().padLeft(2, '0') +
+                            ':' +
+                            (duration.inSeconds % 60)
+                                .toString()
+                                .padLeft(2, '0') +
+                            '.' +
+                            (duration.inMilliseconds % 1000)
+                                .toString()
+                                .padLeft(3, '0')
+                                .substring(0, 2),
+                        style: const TextStyle(
+                          fontFamily: 'Renner*',
+                          height: 1.2,
+                          fontSize: 28.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    : TextFormField(
+                        decoration: InputDecoration(
+                          border: const UnderlineInputBorder(),
+                          filled: true,
+                          labelText: 'Amount',
+                        ),
+                        keyboardType: TextInputType.numberWithOptions(),
+                      ),
               ],
             ),
             actions: <Widget>[
@@ -161,7 +174,37 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
       },
     );
     if (completed) {
-      setState(() {});
+      setState(() {
+        completedTasks.add(task);
+        if (widget.task != null)
+          Navigator.pop(context);
+        else {
+          for (int i = 0; i < items.length; i++) {
+            if (items[i].header == task.name) {
+              if (i == items.length - 1) {
+                Navigator.pop(context);
+              } else {
+                setState(() {
+                  items[i].completed = true;
+                  items[i].isExpanded = false;
+                  items[i + 1].isExpanded = true;
+                });
+              }
+            }
+          }
+        }
+      });
+      dynamic content = App
+          .of(context)
+          .exerciseContents[isPackage ? widget.package.name : widget.task.name];
+      content[6][isPackage ? packageTasks.indexOf(task) : 0] = true;
+      FileManager
+          .writeToFile('exercise.json',
+              isPackage ? widget.package.name : widget.task.name, content)
+          .then((contents) {
+        App.of(context).changeExercises(contents);
+        print(contents);
+      });
     }
   }
 
@@ -488,11 +531,15 @@ class _StartActivityScreenState extends State<StartActivityScreen> {
                           child: Row(
                             children: <Widget>[
                               CircleAvatar(
-                                backgroundColor: darkMode
-                                    ? Colors.blueGrey[700]
-                                    : Colors.blue,
+                                backgroundColor: item.completed
+                                    ? darkMode
+                                        ? Colors.green[400]
+                                        : Colors.green
+                                    : darkMode
+                                        ? Colors.blueGrey[700]
+                                        : Colors.blue,
                                 child: Icon(
-                                  item.icon,
+                                  item.completed ? Icons.check : item.icon,
                                   color: Colors.white,
                                 ),
                               ),
@@ -578,6 +625,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
       isStopwatch = contents[widget.name][5][widget.index];
     tabController = TabController(
         vsync: this, length: 2, initialIndex: isStopwatch ? 1 : 0);
+    index = isStopwatch ? 1 : 0;
     tabIconController = AnimationController(
       duration: const Duration(milliseconds: 280),
       vsync: this,
@@ -789,15 +837,9 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
                           timerButtonText = 'PAUSE';
                           dynamic content =
                               App.of(context).exerciseContents[widget.name];
-                          if (content.length == 4)
-                            content.add([timerController.duration.inSeconds]);
-                          else
-                            content[4][widget.index] =
+                          content[4][widget.index] =
                                 timerController.duration.inSeconds;
-                          if (content.length < 6)
-                            content.add(false);
-                          else
-                            content[5][widget.index] = false;
+                          content[5][widget.index] = false;
                           FileManager
                               .writeToFile(
                                   'exercise.json', widget.name, content)
@@ -822,12 +864,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
                           stopwatchButtonText = 'PAUSE';
                           dynamic content =
                               App.of(context).exerciseContents[widget.name];
-                          if (content.length == 4)
-                            content.add([timerController.duration.inSeconds]);
-                          if (content.length < 6)
-                            content.add([true]);
-                          else
-                            content[5][widget.index] = true;
+                          content[5][widget.index] = true;
                           FileManager
                               .writeToFile(
                                   'exercise.json', widget.name, content)
@@ -1219,7 +1256,6 @@ class StopwatchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[

@@ -50,8 +50,8 @@ class SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: padding),
-            title: const Text('Statistics'),
-            subtitle: const Text('Distance'),
+            title: const Text('Step Count'),
+            subtitle: const Text('More Information about the step tracking'),
             onTap: () {
               Navigator.push(
                 context,

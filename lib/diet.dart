@@ -398,10 +398,10 @@ class DietScreenState extends State<DietScreen> with TickerProviderStateMixin {
                                     children: <Widget>[
                                       Text(
                                         name,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontFamily: 'Renner*',
                                           color: Colors.white,
-                                          fontSize: 40.0,
+                                          fontSize: name.length > 12 ? 32.0 : 40.0,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -723,7 +723,6 @@ class Diet extends StatelessWidget {
         },
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
             vertical: 8.0,
           ),
           child: Column(

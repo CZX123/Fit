@@ -470,18 +470,20 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       return [time.hour, time.minute];
                     }).toList(),
                     _selectedFrequency,
-                    _selectedFrequency == 'Weekly' ? _dayDropdownValue : '',
-                    [0],
-                    [false],
+                    _selectedFrequency == 'Weekly' ? _dayDropdownValue : 'Not Weekly',
+                    [0], // timings
+                    [false], // stopwatch
+                    [false], // activity completion
                     // activityStats,
                   ];
                   if (timings != null && timings.length != 0) {
                     value[4] = timings;
-                    List<bool> isStopwatch = [];
+                    List<bool> list = [];
                     for (int i = 0; i < timings.length; i++) {
-                      isStopwatch.add(false);
+                      list.add(false);
                     }
-                    value[5] = isStopwatch;
+                    value[5] = list;
+                    value[6] = list;
                   }
                   FileManager
                       .writeToFile(fileName, name, value)
