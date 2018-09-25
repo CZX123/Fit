@@ -731,7 +731,7 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
         IgnorePointer(
           ignoring: disableTouch,
           child: Container(
-            width: 96.0,
+            width: 112.0,
             child: Material(
               color: darkMode
                   ? (widget.isPackage ? Colors.grey[850] : Colors.grey[900])
@@ -915,10 +915,13 @@ class _TimeTabState extends State<TimeTab> with TickerProviderStateMixin {
               ],
             ),
             SizedBox(
-              height: index == 1 ? 16.0 : 0.0,
+              height: index == 1 ? 4.0 : 0.0,
             ),
             index == 1
                 ? RaisedButton(
+                    disabledColor: darkMode ? Colors.grey[850] : Colors.white,
+                    disabledTextColor:
+                      darkMode ? Colors.grey[600] : Colors.grey[400],
                     color: darkMode ? Colors.green[400] : Colors.green,
                     colorBrightness: Brightness.dark,
                     shape: const RoundedRectangleBorder(

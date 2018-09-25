@@ -81,10 +81,40 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen> {
     ];
     final bool portrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    final bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       width: portrait
           ? MediaQuery.of(context).size.width
           : MediaQuery.of(context).size.height,
+      child: Container(
+        height: 240.0,
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.insert_chart,
+              color: darkMode ? Colors.white70 : Colors.black38,
+              size: 64.0,
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            Text(
+              'No Data Found',
+              style: TextStyle(
+                color: darkMode ? Colors.white70 : Colors.black54,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+          ],
+        ),
+      ),
+      /*
       child: Container(
         height: 324.0,
         padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
@@ -93,6 +123,7 @@ class _ActivityStatsScreenState extends State<ActivityStatsScreen> {
           animate: true,
         ),
       ),
+      */
     );
   }
 

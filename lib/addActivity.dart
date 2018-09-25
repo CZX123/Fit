@@ -550,7 +550,7 @@ class _TimePicker extends StatelessWidget {
       highlightedBorderColor: validate ? highlightedBorderColor : red,
       borderSide: BorderSide(
         color: validate ? outlineColor : red,
-        width: 2.0,
+        width: 1.0,
       ),
       padding: const EdgeInsets.all(0.0),
       child: Container(

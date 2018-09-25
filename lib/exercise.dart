@@ -77,7 +77,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   initPlatformState() async {
     Map<String, double> location;
 
-    location = await _location.getLocation;
+    location = await _location.getLocation();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     error = null;
     _steps = prefs.getInt('_steps') ?? 0;
@@ -92,14 +92,14 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       _secondThen = DateTime.now().second;
       _hourNow = now.hour;
       _minuteNow = now.hour;
-      _secondNow = DateTime.now().second;     
+      _secondNow = DateTime.now().second;
     });
   }
 
   locationsubscription() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _steps = prefs.getInt('_steps');
-    _locationSubscription = _location.onLocationChanged.listen((result) {
+    _locationSubscription = _location.onLocationChanged().listen((result) {
       if (result != _currentLocation) {
         if ((_userAccelerometerValues[0] > 0.5 ||
                 _userAccelerometerValues[0] < -0.5) ||

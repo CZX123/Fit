@@ -53,7 +53,7 @@ class FileManager {
     return jsonFileContent;
   }
 
-  static Future<File> removeFile(String fileName) async {
+  static void removeFile(String fileName) async {
     File file = await getFile(fileName);
     return file.deleteSync();
   }

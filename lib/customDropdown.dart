@@ -722,7 +722,7 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>>
       highlightedBorderColor: darkMode ? Colors.lightBlue : Colors.blue,
       borderSide: BorderSide(
         color: darkMode ? Colors.grey[600] : Colors.grey[350],
-        width: 2.0,
+        width: 1.0,
       ),
       padding: _kAlignedButtonPadding,
       child: result,

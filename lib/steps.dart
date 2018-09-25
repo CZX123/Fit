@@ -43,7 +43,7 @@ class _StepScreenState extends State<StepScreen> {
       }
     }));
 
-    _locationSubscription = _location.onLocationChanged.listen((result) {
+    _locationSubscription = _location.onLocationChanged().listen((result) {
       if (mounted &&
           result != _currentLocation &&
           ((_userAccelerometerValues[0] > 0.5 ||
@@ -73,7 +73,7 @@ class _StepScreenState extends State<StepScreen> {
     Map<String, double> location;
 
     try {
-      location = await _location.getLocation;
+      location = await _location.getLocation();
 
       error = null;
     } on PlatformException catch (e) {

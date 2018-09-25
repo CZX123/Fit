@@ -9,10 +9,7 @@ import 'settings.dart';
 import 'startActivity.dart';
 import 'fileManager.dart';
 
-void main() {
-  MaterialPageRoute.debugEnableFadingRoutes = true;
-  runApp(App());
-}
+void main() => runApp(App());
 
 class _InheritedApp extends InheritedWidget {
   final AppState data;
